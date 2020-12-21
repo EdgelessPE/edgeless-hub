@@ -7,7 +7,16 @@ export default new Vuex.Store({
   state: {
     cateData:[],
     allData:[],
-    tasks:[],
+    tasks:[[],[],[]], //保存aria2c返回的任务状态
+    ourTasksPool:[], //提供由EL Store提交的任务清单
+    globalData:{
+      downloadSpeed: "0",
+      numActive: "0",
+      numStopped: "2",
+      numStoppedTotal: "2",
+      numWaiting: "1",
+      uploadSpeed: "0"
+    },
     stationUrl:'https://pineapple.edgeless.top/api/list/1',
     theme:'light',
     downloadDir:'D:',
@@ -26,6 +35,12 @@ export default new Vuex.Store({
     },
     updateTask(state,payload){
       state.tasks[payload.index]=payload.data
+    },
+    updateGlobalData(state,data){
+      state.globalData=data
+    },
+    appendOurTasksPool(state,data){
+      state.ourTasksPool.push(data)
     }
   },
   getters:{

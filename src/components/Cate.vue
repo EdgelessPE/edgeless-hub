@@ -7,7 +7,7 @@
         {{'打包者：'+item.softAuthor}}
         <br/>
         {{'大小：'+item.softSize}}
-          <a-button :href="'/#/down?task=add&name='+item.softName+'&url='+item.softUrl" slot="actions">
+          <a-button v-on:click="addDownloadTask(item.softName,item.softUrl)" slot="actions">
             <a-icon type="cloud-download" />
             获取
           </a-button>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import DownloadManager from "@/components/DownloadManager"
 export default {
 name: "Cate",
   data(){
@@ -59,6 +60,14 @@ name: "Cate",
       else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"
+    },
+    addDownloadTask(name,url){
+      //发送添加下载事件
+      this.$root.eventHub.$emit('add-download-task',{
+        'name':name,
+        'url':url
+      })
+      //console.log("event sent")
     }
   },
   watch:{

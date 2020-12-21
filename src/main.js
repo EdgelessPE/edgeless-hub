@@ -16,8 +16,7 @@ new Vue({
   render: h => h(App),
   data(){
     return{
-      eventHub:new Vue(),
-      axiosSub:axios
+      eventHub:new Vue()
     }
   }
 }).$mount('#app')

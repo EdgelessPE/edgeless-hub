@@ -42,6 +42,7 @@
 <script>
 import TopBar from "@/components/TopBar"
 import {notification} from 'ant-design-vue'
+import DownloadManager from "@/components/DownloadManager";
 
 export default {
   data() {
@@ -104,10 +105,27 @@ export default {
     }
   },
   created() {
+    //获取列表数据
     this.refreshData()
 
+    //配置自动刷新aria2c
+    setInterval(()=>{
+      //console.log(this.$store.state.tasks)
+      DownloadManager.methods.updateMaster()
+    },1000)
+
+    //初始化DownloadManager
+    DownloadManager.methods.init(this.$axios,this.$store)
+
+    //监听事件
     this.$root.eventHub.$on('add-download-task',(data)=>{
-      console.log(data)
+      DownloadManager.methods.taskAdd(data.url,data.name)
+    })
+    this.$root.eventHub.$on('unpause-download-task',(data)=>{
+      DownloadManager.methods.taskUnpause(data.gid)
+    })
+    this.$root.eventHub.$on('pause-download-task',(data)=>{
+      DownloadManager.methods.taskPause(data.gid)
     })
   }
 };
