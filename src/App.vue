@@ -4,24 +4,25 @@
       <div class="logo" :style="{ height: '3vw' , width:'100%' , color:(theme==='light')?'black':'white'}" @click="() => {this.collapsed = !this.collapsed}">
         {{collapsed?'e':'edgElEss'}}
       </div>
-      <a-menu mode="inline" :default-selected-keys="['1']" :theme="theme">
-        <a-menu-item key="home">
+      <a-menu mode="inline" :default-selected-keys="['/']" :theme="theme" :selectedKeys="selectedKey">
+        <a-menu-item key="/">
           <a-icon type="home" />
           <span>首页</span>
-          <router-link to="/"></router-link>
+          <router-link to="/"/>
         </a-menu-item>
-        <a-sub-menu key="cate">
+        <a-sub-menu key="/cate">
           <template slot="title"> <a-icon type="unordered-list" /><span>分类</span> </template>
           <template v-for="cateItem in cateData">
             <a-menu-item :key="cateItem.name">
               {{cateItem.name}}
-              <router-link :to="'/cate?name='+cateItem.name"></router-link>
+              <router-link :to="'/cate?name='+cateItem.name"/>
             </a-menu-item>
           </template>
         </a-sub-menu>
-        <a-menu-item key="download">
+        <a-menu-item key="/down">
           <a-icon type="download" />
           <span>下载管理</span>
+          <router-link to="/down"/>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
@@ -40,18 +41,74 @@
 
 <script>
 import TopBar from "@/components/TopBar"
+import {notification} from 'ant-design-vue'
 
 export default {
   data() {
     return {
-      collapsed: false,
-      theme:'dark',
-
-      cateData:[{"name":"下载上传","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"办公编辑","time":"2020-12-10 03:25","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"即时通讯","time":"2020-12-10 03:25","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"压缩镜像","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"安全急救","time":"2020-12-10 03:25","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"安装备份","time":"2020-12-10 03:25","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"实用工具","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"开发辅助","time":"2020-12-10 03:25","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"录屏看图","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"影音播放","time":"2020-12-10 03:03","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"浏览器","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"游戏娱乐","time":"2020-12-10 03:17","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"磁盘数据","time":"2020-12-10 03:25","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"美化增强","time":"2020-12-10 03:18","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"资源管理","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"输入法","time":"2020-12-10 03:26","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"运行环境","time":"2020-12-10 03:51","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"远程连接","time":"2020-12-10 03:46","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"配置检测","time":"2020-12-10 03:42","size":4096,"type":"FOLDER","path":"/插件包/","url":null},{"name":"驱动管理","time":"2020-12-10 03:44","size":4096,"type":"FOLDER","path":"/插件包/","url":null}]
-    };
+      collapsed: false
+      };
+  },
+  methods:{
+    refreshData(){
+      let url=this.$store.state.stationUrl
+      //获取分类数据
+      this.$axios.get(url+'?path=插件包')
+          .then((res)=>{
+        //console.log(res.data.data.fileList)
+        this.$store.commit('setCateData',res.data.data.fileList)
+        this.getPluginData()
+      })
+          .catch((err)=>{
+        notification.open({
+          message:'获取分类信息失败',
+          description:"服务器错误："+err.message
+        })
+      })
+    },
+    getPluginData(){
+      let url=this.$store.state.stationUrl
+      //获取插件列表
+      for(let i=0;i<this.cateData.length;i++){
+        let queryName=this.cateData[i].name
+        this.$axios.get(url+'?path=/插件包/'+queryName)
+            .then((res)=>{
+              let tmp_ret=[]
+              res.data.data.fileList.forEach((item)=>{
+                if(item.name.indexOf('.7z')!==-1) {
+                  tmp_ret.push(item)
+                }
+              })
+              this.$store.commit('appendAllData',{
+                'cateName':queryName,
+                'files':tmp_ret
+              })
+            })
+      }
+    }
   },
   components:{
     'TopBar':TopBar
+  },
+  computed:{
+    selectedKey:function (){
+      let path=this.$route.path
+      if(path==='/cate') return [this.$route.query.name]
+       else return [path]
+    },
+    cateData:function (){
+      return this.$store.state.cateData
+    },
+    theme:function (){
+      return this.$store.state.theme
+    }
+  },
+  created() {
+    this.refreshData()
+
+    this.$root.eventHub.$on('add-download-task',(data)=>{
+      console.log(data)
+    })
   }
 };
 </script>
