@@ -1,16 +1,24 @@
 <template>
-  <a-list :grid="{ gutter: 16, column: 4 }" :data-source="processedData">
-    <a-list-item slot="renderItem" slot-scope="item, index">
-      <a-card :title="item.softName">
-        {{'版本号：'+item.softVer}}
-        <br/>
-        {{'打包者：'+item.softAuthor}}
-        <br/>
-        {{'大小：'+item.softSize}}
-        <CateButton  slot="actions" :name="item.softName" :url="item.softUrl"/>
-      </a-card>
-    </a-list-item>
-  </a-list>
+  <div>
+    <a-page-header
+        :title="cateName"
+        :sub-title="'共'+processedData.length+'个插件包'"
+        @back="() => $router.go(-1)"
+    />
+    <a-list :grid="{ gutter: 16, column: 4 }" :data-source="processedData">
+      <a-list-item slot="renderItem" slot-scope="item, index">
+        <a-card :title="item.softName">
+          {{'版本号：'+item.softVer}}
+          <br/>
+          {{'打包者：'+item.softAuthor}}
+          <br/>
+          {{'大小：'+item.softSize}}
+          <CateButton  slot="actions" :name="item.softName" :url="item.softUrl"/>
+        </a-card>
+      </a-list-item>
+    </a-list>
+  </div>
+
 </template>
 
 <script>

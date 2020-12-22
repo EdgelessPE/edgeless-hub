@@ -20,7 +20,10 @@ name: "DownloadManager",
       let trueName=splitResult[splitResult.length-1]
       let uriName=urlencode(trueName)
       //使用缓存
-      if(fs.existsSync(path.join(this.downloadDir,uriName))&&!fs.existsSync(path.join(this.downloadDir,uriName)+'.aria2')) fs.renameSync(path.join(this.downloadDir,uriName),path.join(this.downloadDir,trueName))
+      if(fs.existsSync(path.join(this.downloadDir,trueName))&&!fs.existsSync(path.join(this.downloadDir,uriName)+'.aria2')) {
+        fs.renameSync(path.join(this.downloadDir, trueName), path.join(this.downloadDir, uriName))
+        console.log('use cache')
+      }
       this.aria2cDownloader(add,false,(res)=>{
         //console.log(uriName+' true:'+trueName)
         this.store.commit('appendOurTasksPool',{
@@ -44,7 +47,7 @@ name: "DownloadManager",
     taskRestart(info){
       //删除临时文件
       let curPath=path.join(this.downloadDir,info.uriName)
-      console.log(curPath)
+      //console.log(curPath)
       if(fs.existsSync(curPath)){
         fs.unlinkSync(curPath)
         fs.unlinkSync(curPath+'.aria2')
@@ -100,6 +103,45 @@ name: "DownloadManager",
         this.store.commit('updateTask',{data:succeed,index:2})
         this.store.commit('updateTask',{data:fail,index:3})
       })
+    },
+
+    //配置Edgeless插件包目录
+    setPluginPath(){
+      let path,disk="-1"
+      for(let i=0;i<26;i++){
+        path=String.fromCharCode(65+i)+':\\Edgeless\\Resource'
+        if(fs.existsSync(path)) disk=String.fromCharCode(65+i)
+      }
+      if(disk!=="-1"){
+        this.store.commit('setPluginPath',disk)
+        console.log('plugin disk:'+disk)
+        return true
+      }else{
+        //console.log('no edgeless uDisk found')
+        return false
+      }
+    },
+    //扫描EdgelessU盘内插件包文件夹的信息
+    getPluginList(){
+      //判断目录是否仍存在
+      if(!fs.existsSync(this.store.state.pluginPath)) return false
+      //读取文件列表
+      let files=fs.readdirSync(this.store.state.pluginPath)
+      //过滤并解析
+      let result=[]
+      files.forEach((item)=>{
+        if(item.indexOf('.7z')!==-1){
+          let info=item.split('_')
+          result.push({
+            'softName':info[0],
+            'softVer':info[1],
+            'softAuthor':info[2].split('.7z')[0]
+          })
+        }
+      })
+      //console.log(result)
+      this.store.commit('setFileList',result)
+      return true
     },
 
     //辅助工具

@@ -42,12 +42,15 @@
 <script>
 import TopBar from "@/components/TopBar"
 import {notification} from 'ant-design-vue'
-import DownloadManager from "@/components/DownloadManager";
+import DownloadManager from "@/components/DownloadManager"
+const cp=window.require('child_process')
 
 export default {
   data() {
     return {
-      collapsed: false
+      collapsed: false,
+      aria2cProcess:'',
+      reScanEdgeless:false
       };
   },
   methods:{
@@ -99,6 +102,52 @@ export default {
       }else{
         console.log('gid not find')
       }
+    },
+
+    init(){
+      //启动aria2c进程
+      this.aria2cProcess=cp.exec('aria2c.exe  --conf-path=elstore.conf',{
+        cwd:this.$store.state.aria2cPath
+      },(err)=>{
+        notification.open({
+          message:'Child_Process',
+          description:"Aria2c进程提前退出："+err.message
+        })
+      })
+      //console.log(this.aria2cProcess)
+
+      //更新Edgeless启动盘插件列表
+      this.updateEdgelessDiskList(true)
+    },
+    updateEdgelessDiskList(reScan){
+      if(reScan){
+        if(DownloadManager.methods.setPluginPath()){
+          notification.open({
+            message:'检测到Edgeless启动盘',
+            description:'盘符：'+this.$store.state.pluginPath[0]
+          })
+          this.reScanEdgeless=false
+          DownloadManager.methods.getPluginList()
+        }else{
+          if(this.reScanEdgeless===false){
+            notification.open({
+              message:'未检测到Edgeless启动盘',
+              description:'请插入Edgeless启动盘以使用安装功能'
+            })
+          }
+          this.reScanEdgeless=true
+        }
+      }else{
+        //例行扫描
+        if(!DownloadManager.methods.getPluginList()){
+          this.reScanEdgeless=true
+          notification.open({
+            message:'Edgeless启动盘被拔出',
+            description:'请插入Edgeless启动盘以使用安装功能'
+          })
+        }
+      }
+
     }
   },
   components:{
@@ -118,6 +167,12 @@ export default {
     }
   },
   created() {
+    //初始化DownloadManager
+    DownloadManager.methods.init(this.$axios,this.$store)
+
+    //初始化
+    this.init()
+
     //获取列表数据
     this.refreshData()
 
@@ -137,10 +192,10 @@ export default {
           })
         })
       }
-    },1000)
 
-    //初始化DownloadManager
-    DownloadManager.methods.init(this.$axios,this.$store)
+      //更新Edgeless启动盘的相关
+      this.updateEdgelessDiskList(this.reScanEdgeless)
+    },1000)
 
     //监听事件
     this.$root.eventHub.$on('add-download-task',(data)=>{
@@ -160,6 +215,9 @@ export default {
       //重新发送下载任务
       DownloadManager.methods.taskRestart(info)
     })
+  },
+  destroyed() {
+    this.aria2cProcess.exit(0)
   }
 };
 </script>

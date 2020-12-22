@@ -22,6 +22,8 @@ export default new Vuex.Store({
     stationUrl:'https://pineapple.edgeless.top/api/list/1',
     theme:'light',
     downloadDir:'D:',
+    pluginPath:"D:\\Edgeless\\Resource",
+    aria2cPath:"D:\\CnoRPS\\aria2c懒人包_1.35.0\\core",
     aria2cUri:'http://localhost:6800/jsonrpc'
   },
   mutations: {
@@ -56,5 +58,11 @@ export default new Vuex.Store({
       }else{
         console.log('gid not find')
       }
+    },
+    setPluginPath(state,disk){
+      state.pluginPath=disk+':\\Edgeless\\Resource'
+    },
+    setFileList(state,data){
+      state.fileList=data
     }
 }})
