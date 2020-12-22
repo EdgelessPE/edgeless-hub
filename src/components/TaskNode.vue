@@ -47,7 +47,7 @@ name: "TaskNode",
   methods:{
     getSizeString(size){
       if(typeof size!="string") return "null"
-      else if(size<1024) return size.toFixed(2)+"B"
+      else if(size<1024) return Number(size).toFixed(2)+"B"
       else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"

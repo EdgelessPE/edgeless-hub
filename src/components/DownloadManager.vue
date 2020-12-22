@@ -16,10 +16,12 @@ name: "DownloadManager",
   methods:{
     //添加下载任务
     taskAdd(add,name){
+      let splitResult=add.split('/')
+      let trueName=splitResult[splitResult.length-1]
+      let uriName=urlencode(trueName)
+      //使用缓存
+      if(fs.existsSync(path.join(this.downloadDir,uriName))&&!fs.existsSync(path.join(this.downloadDir,uriName)+'.aria2')) fs.renameSync(path.join(this.downloadDir,uriName),path.join(this.downloadDir,trueName))
       this.aria2cDownloader(add,false,(res)=>{
-        let splitResult=add.split('/')
-        let trueName=splitResult[splitResult.length-1]
-        let uriName=urlencode(trueName)
         //console.log(uriName+' true:'+trueName)
         this.store.commit('appendOurTasksPool',{
           name:name,

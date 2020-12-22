@@ -15,7 +15,7 @@
   </a-button>
   <a-button v-else-if="state===3" v-on:click="reStart(info.gid)">
     <a-icon type="redo" />
-    重启
+    重试
   </a-button>
 </div>
 </template>
