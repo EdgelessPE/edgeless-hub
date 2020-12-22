@@ -1,5 +1,8 @@
 <script>
 import {notification} from 'ant-design-vue'
+const urlencode = require('urlencode')
+const fs=window.require('fs')
+const path = require('path')
 export default {
 name: "DownloadManager",
   data(){
@@ -13,10 +16,17 @@ name: "DownloadManager",
   methods:{
     //添加下载任务
     taskAdd(add,name){
-      this.aria2cDownloader(add,(res)=>{
+      this.aria2cDownloader(add,false,(res)=>{
+        let splitResult=add.split('/')
+        let trueName=splitResult[splitResult.length-1]
+        let uriName=urlencode(trueName)
+        console.log(uriName+' true:'+trueName)
         this.store.commit('appendOurTasksPool',{
           name:name,
-          gid:res.data.result
+          gid:res.data.result,
+          uri:add,
+          uriName:uriName,
+          trueName:trueName
         })
       })
     },
@@ -27,6 +37,27 @@ name: "DownloadManager",
     //取消暂停（继续下载）
     taskUnpause(gid){
       this.aria2cHelper("aria2.unpause",[gid],(data)=>{})
+    },
+    //重新开始
+    taskRestart(info){
+      //删除临时文件
+      let curPath=path.join(this.downloadDir,info.uriName)
+      console.log(curPath)
+      if(fs.existsSync(curPath)){
+        fs.unlinkSync(curPath)
+        fs.unlinkSync(curPath+'.aria2')
+      }
+
+      //重新提交任务
+      this.aria2cDownloader(info.uri,true,(res)=>{
+        this.store.commit('appendOurTasksPool',{
+          name:info.name,
+          gid:res.data.result,
+          uri:info.uri,
+          uriName:info.uriName,
+          trueName:info.trueName
+        })
+      })
     },
 
 
@@ -49,7 +80,14 @@ name: "DownloadManager",
         this.store.commit('updateTask',{data:data,index:1})
       })
       this.getTasks("aria2.tellStopped",(data)=>{
-        this.store.commit('updateTask',{data:data,index:2})
+        //分离成功的和失败的任务
+        let succeed=[],fail=[]
+        data.forEach((item)=>{
+          if(item.completedLength===item.totalLength) succeed.push(item)
+          else fail.push(item)
+        })
+        this.store.commit('updateTask',{data:succeed,index:2})
+        this.store.commit('updateTask',{data:fail,index:3})
       })
     },
 
@@ -137,19 +175,29 @@ name: "DownloadManager",
         'params':params
       }).then(callback)
       .catch((err)=>{
-        notification.open({
-          message:'Aria2cHelper',
-          description:"aria2c通讯错误："+err.message
-        })
+        //处理已知的特殊错误
+        if(method==="aria2.pause"&&err.response.data.error.code===1){
+          notification.open({
+            message:'Aria2cHelper',
+            description:"现在无法暂停此任务"
+          })
+        }else{
+          notification.open({
+            message:'Aria2cHelper：'+err.message,
+            description:err.response.data.error.message
+          })
+        }
+
       })
     },
-    aria2cDownloader(address,callback){
+    aria2cDownloader(address,overwrite,callback){
       this.axios.post(this.path,{
         'id':this.generateID(),
         'jsonrpc':"2.0",
         'method':'aria2.addUri',
         'params':[[address],{
-          'dir':this.downloadDir
+          'dir':this.downloadDir,
+          'allow-overwrite': overwrite?"true":"false"
         }]
       }).then(callback)
           .catch((err)=>{

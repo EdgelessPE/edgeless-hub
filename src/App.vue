@@ -86,6 +86,19 @@ export default {
               })
             })
       }
+    },
+    getTaskInfo(gid){
+      //查找原任务位置
+      let pointer=-1
+      this.$store.state.ourTasksPool.forEach((item,index)=>{
+        if(item.gid===gid) pointer=index
+      })
+      if(pointer!==-1){
+        //返回原任务信息
+        return this.$store.state.ourTasksPool[pointer]
+      }else{
+        console.log('gid not find')
+      }
     }
   },
   components:{
@@ -126,6 +139,14 @@ export default {
     })
     this.$root.eventHub.$on('pause-download-task',(data)=>{
       DownloadManager.methods.taskPause(data.gid)
+    })
+    this.$root.eventHub.$on('restart-download-task',(data)=>{
+      //读取原任务信息
+      let info=this.getTaskInfo(data.gid)
+      //删除原任务信息
+      this.$store.commit('removeTask',data.gid)
+      //重新发送下载任务
+      DownloadManager.methods.taskRestart(info)
     })
   }
 };

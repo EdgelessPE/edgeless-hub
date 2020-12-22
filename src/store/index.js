@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import DownloadManager from "@/components/DownloadManager";
 
 Vue.use(Vuex)
 
@@ -7,7 +8,7 @@ export default new Vuex.Store({
   state: {
     cateData:[],
     allData:[],
-    tasks:[[],[],[]], //保存aria2c返回的任务状态
+    tasks:[[],[],[],[]], //保存aria2c返回的任务状态
     ourTasksPool:[], //提供由EL Store提交的任务清单
     globalData:{
       downloadSpeed: "0",
@@ -41,12 +42,18 @@ export default new Vuex.Store({
     },
     appendOurTasksPool(state,data){
       state.ourTasksPool.push(data)
+    },
+    removeTask(state,gid){
+      let pointer=-1
+      state.ourTasksPool.forEach((item,index)=>{
+        if(item.gid===gid) pointer=index
+      })
+      //console.log(state.ourTasksPool)
+      //console.log('gid:'+gid+' index:'+pointer)
+      if(pointer!==-1){
+        state.ourTasksPool.splice(pointer,1)
+      }else{
+        console.log('gid not find')
+      }
     }
-  },
-  getters:{
-  },
-  actions: {
-  },
-  modules: {
-  }
-})
+}})
