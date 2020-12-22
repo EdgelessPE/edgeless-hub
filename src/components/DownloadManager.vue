@@ -137,7 +137,7 @@ name: "DownloadManager",
       }
       if(disk!=="-1"){
         this.store.commit('setPluginPath',disk)
-        console.log('plugin disk:'+disk)
+        //console.log('plugin disk:'+disk)
         return true
       }else{
         //console.log('no edgeless uDisk found')
@@ -161,7 +161,8 @@ name: "DownloadManager",
               'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
               'softName':info[0],
               'softVer':info[1],
-              'softAuthor':info[2].split('.7z')[0]
+              'softAuthor':info[2].split('.7z')[0],
+              'trueName':item
             })
           }
         }
@@ -169,6 +170,18 @@ name: "DownloadManager",
       //console.log(result)
       this.store.commit('setFileList',result)
       return true
+    },
+    disablePlugin(localName){
+      //检查“过期插件包”文件夹
+      if(!fs.existsSync(path.join(this.$store.state.pluginPath,'过期插件包'))) {
+        fs.mkdirSync(path.join(this.$store.state.pluginPath,'过期插件包'))
+      }
+      if(fs.existsSync(path.join(this.$store.state.pluginPath,localName))){
+        let tmp='过期插件包/'+localName+'f'
+        fs.renameSync(path.join(this.$store.state.pluginPath,localName),path.join(this.$store.state.pluginPath,tmp))
+        return true
+      }
+      return false
     },
 
     //辅助工具

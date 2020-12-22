@@ -13,7 +13,7 @@
           {{'打包者：'+item.softAuthor}}
           <br/>
           {{'大小：'+item.softSize}}
-          <CateButton  slot="actions" :name="item.softName" :url="item.softUrl"/>
+          <CateButton  slot="actions" :name="item.softName" :url="item.softUrl" :version_online="item.softVer"/>
         </a-card>
       </a-list-item>
     </a-list>

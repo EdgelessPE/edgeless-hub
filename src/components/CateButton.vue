@@ -9,10 +9,6 @@
     <a-icon type="play-circle" />
     继续
   </a-button>
-  <a-button v-else-if="state===11" disabled>
-    <a-icon type="check" />
-    已安装
-  </a-button>
   <a-button v-else-if="state===3" v-on:click="reStart(info.gid)">
     <a-icon type="redo" />
     重试
@@ -20,6 +16,14 @@
   <a-button v-else-if="state===2||state===10" disabled>
     <a-icon type="loading" />
     安装中
+  </a-button>
+  <a-button v-else-if="state===11&&version_local===version_online" disabled>
+    <a-icon type="check" />
+    已安装
+  </a-button>
+  <a-button v-else-if="state===11&&version_local!==version_online" v-on:click="addUpdateTask(name,url)" >
+    <a-icon type="arrow-up" />
+    更新
   </a-button>
 </div>
 </template>
@@ -29,7 +33,7 @@ import DownloadManager from "@/components/DownloadManager";
 
 export default {
 name: "CateButton",
-  props:['name','url'],
+  props:['name','url','version_online'],
   data(){
   return{
     state:-1, //-1未操作，0下载中，1暂停，2下载成功，3下载异常
@@ -41,7 +45,9 @@ name: "CateButton",
       uri:'null',
       uriName:'null',
       trueName:'null'
-    }
+    },
+    version_local:'',
+    localName:''
   }
   },
   methods:{
@@ -66,6 +72,14 @@ name: "CateButton",
       this.$root.eventHub.$emit('restart-download-task',{
         'gid':gid
       })
+    },
+    addUpdateTask(name,url){
+      //发送禁用插件事件
+      this.$root.eventHub.$emit('disable-plugin',{
+        'localName':this.localName
+      })
+      //添加下载任务
+      this.addDownloadTask(name,url)
     }
   },
   created() {
@@ -74,6 +88,11 @@ name: "CateButton",
       if(data.name===this.name){
         //确认是自己，解冻按钮，从广播中获取信息
         this.loading=false
+        if(data.state===11) {
+          this.version_local = data.version
+          this.localName=data.localName
+          //console.log(data.localName)
+        }
         this.info=data.info
         this.percent=data.percent
         //更新状态以刷新DOM

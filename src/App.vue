@@ -151,7 +151,7 @@ export default {
         //例行扫描
         if(!DownloadManager.methods.getPluginList()){
           this.reScanEdgeless=true
-          this.store.commit('setFileList',[])
+          this.$store.commit('setFileList',[])
           notification.open({
             message:'Edgeless启动盘被拔出',
             description:'请插入Edgeless启动盘以使用安装功能'
@@ -225,6 +225,8 @@ export default {
       this.$store.state.fileList.forEach((item)=>{
         this.$root.eventHub.$emit('state-update-node',{
           'name':item.name,
+          'version':item.softVer,
+          'localName':item.trueName,
           'state':11
         })
       })
@@ -254,6 +256,20 @@ export default {
     this.$root.eventHub.$on('delete-file',(data)=>{
       this.delConfirmData=data
       this.visible=true
+    })
+    this.$root.eventHub.$on('disable-plugin',(data)=>{
+      //console.log(data.localName)
+      if(DownloadManager.methods.disablePlugin(data.localName)){
+        notification.open({
+          message:'禁用插件包成功',
+          description:data.localName
+        })
+      }else {
+        notification.open({
+          message:'禁用插件包失败',
+          description:data.localName
+        })
+      }
     })
   },
   destroyed() {
