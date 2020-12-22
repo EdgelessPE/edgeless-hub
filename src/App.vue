@@ -151,6 +151,7 @@ export default {
         //例行扫描
         if(!DownloadManager.methods.getPluginList()){
           this.reScanEdgeless=true
+          this.store.commit('setFileList',[])
           notification.open({
             message:'Edgeless启动盘被拔出',
             description:'请插入Edgeless启动盘以使用安装功能'
@@ -205,7 +206,7 @@ export default {
       DownloadManager.methods.updateMaster()
 
       //为每个元素发送同步事件
-      for(let index=0;index<this.$store.state.tasks.length;index++){
+      for(let index=0;index<3;index++){
         this.$store.state.tasks[index].forEach((item)=>{
           this.$root.eventHub.$emit('state-update-node',{
             'name':item.name,
@@ -215,6 +216,18 @@ export default {
           })
         })
       }
+      this.$store.state.copyRunningPool.forEach((item)=>{
+        this.$root.eventHub.$emit('state-update-node',{
+          'name':item.name,
+          'state':10
+        })
+      })
+      this.$store.state.fileList.forEach((item)=>{
+        this.$root.eventHub.$emit('state-update-node',{
+          'name':item.name,
+          'state':11
+        })
+      })
 
       //更新Edgeless启动盘的相关
       this.updateEdgelessDiskList(this.reScanEdgeless)

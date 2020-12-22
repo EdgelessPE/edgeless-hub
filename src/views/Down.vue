@@ -38,12 +38,17 @@ name: "Down",
     // },1000)
     //展开第一个不为0的折叠组
     //考虑第一组
+    this.activeKey=[]
     if(this.$store.state.tasks[0].length+this.$store.state.tasks[1].length+this.$store.state.tasks[3].length>0) {
-      this.activeKey=['1']
+      this.activeKey.push('1')
+    }
+    //考虑第二组
+    if(this.$store.state.copyRunningPool.length>0){
+      this.activeKey.push('2')
     }
     //考虑第三组
-    else if(this.$store.state.tasks[2].length>0){
-      this.activeKey=['3']
+    if(this.activeKey.length===0&&this.$store.state.fileList.length>0){
+      this.activeKey.push('3')
     }
   },
   computed:{

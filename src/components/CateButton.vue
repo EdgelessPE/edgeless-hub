@@ -9,13 +9,17 @@
     <a-icon type="play-circle" />
     继续
   </a-button>
-  <a-button v-else-if="state===2" disabled>
+  <a-button v-else-if="state===11" disabled>
     <a-icon type="check" />
     已安装
   </a-button>
   <a-button v-else-if="state===3" v-on:click="reStart(info.gid)">
     <a-icon type="redo" />
     重试
+  </a-button>
+  <a-button v-else-if="state===2||state===10" disabled>
+    <a-icon type="loading" />
+    安装中
   </a-button>
 </div>
 </template>
