@@ -10,7 +10,8 @@ name: "DownloadManager",
     axios:'',
     store:'',
     path:'',
-    downloadDir:''
+    downloadDir:'',
+    $store:''
   }
   },
   methods:{
@@ -92,10 +93,25 @@ name: "DownloadManager",
           else fail.push(item)
         })
 
-        //将Urlencode的文件名重命名为正常文件名
+        //将Urlencode的文件名重命名为正常文件名，然后将其加入复制队列
         succeed.forEach((item)=>{
           if(fs.existsSync(path.join(this.downloadDir,item.info.uriName))){
-            fs.renameSync(path.join(this.downloadDir,item.info.uriName),path.join(this.downloadDir,item.info.trueName))
+            //重命名
+            if(item.info.uriName!==item.info.trueName) fs.renameSync(path.join(this.downloadDir,item.info.uriName),path.join(this.downloadDir,item.info.trueName))
+            //检查是否需要执行拷贝
+            if(this.needCopy(item.gid)){
+              //向任务池注册任务
+              this.$store.commit('addCopyingTask',{
+                name:item.name,
+                totalLength:item.totalLength,
+                gid:item.gid
+              })
+              //执行异步拷贝
+              fs.copyFile(path.join(this.downloadDir,item.info.trueName),path.join(this.$store.state.pluginPath,item.info.trueName),()=>{
+                //通知任务完成
+                this.$store.commit('delCopyingTask',item.gid)
+              })
+            }
           }
         })
 
@@ -104,7 +120,14 @@ name: "DownloadManager",
         this.store.commit('updateTask',{data:fail,index:3})
       })
     },
-
+    //从启动盘目录删除指定文件
+    delPlugin(name){
+      let curpath=path.join(this.$store.state.pluginPath,name)
+      if(fs.existsSync(curpath)){
+        fs.unlinkSync(curpath)
+        return true
+      }else return false
+    },
     //配置Edgeless插件包目录
     setPluginPath(){
       let path,disk="-1"
@@ -132,11 +155,15 @@ name: "DownloadManager",
       files.forEach((item)=>{
         if(item.indexOf('.7z')!==-1){
           let info=item.split('_')
-          result.push({
-            'softName':info[0],
-            'softVer':info[1],
-            'softAuthor':info[2].split('.7z')[0]
-          })
+          if(!this.stillCopying(info[0])){
+            result.push({
+              'name':info[0],
+              'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
+              'softName':info[0],
+              'softVer':info[1],
+              'softAuthor':info[2].split('.7z')[0]
+            })
+          }
         }
       })
       //console.log(result)
@@ -202,7 +229,24 @@ name: "DownloadManager",
         name:'Unknown'
       }
     },
-
+    //查询是否需要拷贝
+    needCopy(gid){
+      let need=true
+      this.store.state.copyRunningPool.forEach((item)=>{
+        if(item.gid===gid) need=false
+      })
+      this.store.state.copyEndedPool.forEach((item)=>{
+        if(item.gid===gid) need=false
+      })
+      return need
+    },
+    stillCopying(name){
+      let still=false
+      this.store.state.copyRunningPool.forEach((item)=>{
+        if(item.name===name) still=true
+      })
+      return still
+    },
 
     //aria2c交互工具
     generateID(){
@@ -268,6 +312,7 @@ name: "DownloadManager",
     init(axios,store){
       this.axios=axios
       this.store=store
+      this.$store=store
 
       this.path=this.store.state.aria2cUri
       this.downloadDir=this.store.state.downloadDir

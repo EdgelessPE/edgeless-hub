@@ -1,25 +1,30 @@
 <template>
   <a-list item-layout="horizontal" :data-source="data">
     <a-list-item slot="renderItem" slot-scope="item">
+      <!--第一个按钮（可选）-->
       <a-icon v-if="index==='0'" :type="'pause-circle'" slot="actions" v-on:click="unPauseOrPause(item.gid)"/>
       <a-icon v-else-if="index==='1'" :type="'play-circle'" slot="actions" v-on:click="unPauseOrPause(item.gid)"/>
       <a-icon v-else-if="index==='3'" :type="'reload'" slot="actions" v-on:click="reStart(item.gid)"/>
-      <a-icon type="close-circle" slot="actions" v-on:click="reMoveTask(item.gid)"/>
-      <a-list-item-meta :description="getSizeString(item.totalLength)">
-        <div slot="title">{{ item.name }}</div>
+      <!--第二个按钮（删除）-->
+      <a-icon v-if="index==='11'" type="close-circle" slot="actions" v-on:click="deleteFile(item)"/>
+      <a-icon v-else-if="index!=='10'" type="close-circle" slot="actions" v-on:click="reMoveTask(item.gid)"/>
+
+      <a-list-item-meta>
+        <div slot="title">{{item.name}}</div>
+
+        <div slot="description" v-if="index==='11'">
+          {{'Ver '+item.softVer+' By '+item.softAuthor}}
+          <br/>
+          {{getSizeString(item.totalLength)}}
+        </div>
+        <div slot="description" v-else>{{getSizeString(item.totalLength)}}</div>
+
         <a-progress v-if="index==='0'" slot="avatar" :width="80" type="circle" :percent="getPercent(item.completedLength,item.totalLength)"/>
         <a-progress v-else-if="index==='1'" slot="avatar" :width="80" type="circle" :percent="getPercent(item.completedLength,item.totalLength)" :stroke-color="'#FF9800'" status="exception" :show-info="false"/>
         <a-progress v-else-if="index==='2'" slot="avatar" :width="80" type="circle" :percent="100"/>
         <a-progress v-else-if="index==='3'" slot="avatar" :width="80" type="circle" :percent="getPercent(item.completedLength,item.totalLength)" status="exception"/>
-
-<!--                    :status="()=>{-->
-<!--          if(index!=='2') return 'normal'-->
-<!--          else {-->
-<!--            if(getPercent(item.completedLength,item.totalLength)!==100) return 'exception'-->
-<!--            else return 'success'-->
-<!--          }-->
-<!--        }" -->
-
+        <a-avatar v-else-if="index==='10'" slot="avatar" :size="60" icon="loading" style="color: #f56a00; backgroundColor: #ffffff"/>
+        <a-progress v-else-if="index==='11'" slot="avatar" :width="80" type="circle" :percent="100"/>
       </a-list-item-meta>
       <div v-if="(index==='0')">
         {{getSizeString(item.downloadSpeed)+'/s'}}
@@ -29,6 +34,9 @@
       </div>
       <div v-else-if="(index==='3')">
         错误
+      </div>
+      <div v-else-if="(index==='10')">
+        正在安装...
       </div>
     </a-list-item>
   </a-list>
@@ -46,8 +54,7 @@ name: "TaskNode",
   props:['index'],
   methods:{
     getSizeString(size){
-      if(typeof size!="string") return "null"
-      else if(size<1024) return Number(size).toFixed(2)+"B"
+      if(size<1024) return Number(size).toFixed(2)+"B"
       else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"
@@ -56,7 +63,14 @@ name: "TaskNode",
       return Number(((ready/total)*100).toFixed(1))
     },
     updateData(){
-      this.data=this.$store.state.tasks[this.index]
+      if(this.index<10) this.data=this.$store.state.tasks[this.index]
+      else if(this.index==='10'){
+        //正在复制中的任务
+        this.data=this.$store.state.copyRunningPool
+      }else if(this.index==='11'){
+        //U盘内的文件列表
+        this.data=this.$store.state.fileList
+      }
     },
     getText(item){
       switch (this.index){
@@ -82,6 +96,13 @@ name: "TaskNode",
       //发送重新下载事件
       this.$root.eventHub.$emit('restart-download-task',{
         'gid':gid
+      })
+    },
+    deleteFile(item){
+      //发送删除文件事件
+      this.$root.eventHub.$emit('delete-file',{
+        'trueName':item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z',
+        'name':item.softName
       })
     }
   },

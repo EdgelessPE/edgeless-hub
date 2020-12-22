@@ -1,42 +1,47 @@
 <template>
-  <a-layout id="main" :style="{ height: '100%' , width:'100%'}">
-    <a-layout-sider v-model="collapsed" :trigger="null" collapsible :theme="theme">
-      <div class="logo" :style="{ height: '3vw' , width:'100%' , color:(theme==='light')?'black':'white'}" @click="() => {this.collapsed = !this.collapsed}">
-        {{collapsed?'e':'edgElEss'}}
-      </div>
-      <a-menu mode="inline" :default-selected-keys="['/']" :theme="theme" :selectedKeys="selectedKey">
-        <a-menu-item key="/">
-          <a-icon type="home" />
-          <span>首页</span>
-          <router-link to="/"/>
-        </a-menu-item>
-        <a-sub-menu key="/cate">
-          <template slot="title"> <a-icon type="unordered-list" /><span>分类</span> </template>
-          <template v-for="cateItem in cateData">
-            <a-menu-item :key="cateItem.name">
-              {{cateItem.name}}
-              <router-link :to="'/cate?name='+cateItem.name"/>
-            </a-menu-item>
-          </template>
-        </a-sub-menu>
-        <a-menu-item key="/down">
-          <a-icon type="download" />
-          <span>下载管理</span>
-          <router-link to="/down"/>
-        </a-menu-item>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout>
-      <a-layout-header style="background: #fff; padding: 0">
-        <TopBar/>
-      </a-layout-header>
-      <a-layout-content
-          :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
-      >
-        <router-view/>
-      </a-layout-content>
+  <div>
+    <a-layout id="main" :style="{ height: '100%' , width:'100%'}">
+      <a-layout-sider v-model="collapsed" :trigger="null" collapsible :theme="theme">
+        <div class="logo" :style="{ height: '3vw' , width:'100%' , color:(theme==='light')?'black':'white'}" @click="() => {this.collapsed = !this.collapsed}">
+          {{collapsed?'e':'edgElEss'}}
+        </div>
+        <a-menu mode="inline" :default-selected-keys="['/']" :theme="theme" :selectedKeys="selectedKey">
+          <a-menu-item key="/">
+            <a-icon type="home" />
+            <span>首页</span>
+            <router-link to="/"/>
+          </a-menu-item>
+          <a-sub-menu key="/cate">
+            <template slot="title"> <a-icon type="unordered-list" /><span>分类</span> </template>
+            <template v-for="cateItem in cateData">
+              <a-menu-item :key="cateItem.name">
+                {{cateItem.name}}
+                <router-link :to="'/cate?name='+cateItem.name"/>
+              </a-menu-item>
+            </template>
+          </a-sub-menu>
+          <a-menu-item key="/down">
+            <a-icon type="download" />
+            <span>下载管理</span>
+            <router-link to="/down"/>
+          </a-menu-item>
+        </a-menu>
+      </a-layout-sider>
+      <a-layout>
+        <a-layout-header style="background: #fff; padding: 0">
+          <TopBar/>
+        </a-layout-header>
+        <a-layout-content
+            :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+        >
+          <router-view/>
+        </a-layout-content>
+      </a-layout>
     </a-layout>
-  </a-layout>
+    <a-modal v-model="visible" title="删除插件包" @ok="handleConfirmDelete" okText="确定" cancelText="取消">
+      {{'您确认要将'+delConfirmData.name+'从启动盘中删除吗？'}}
+    </a-modal>
+  </div>
 </template>
 
 <script>
@@ -50,7 +55,12 @@ export default {
     return {
       collapsed: false,
       aria2cProcess:'',
-      reScanEdgeless:false
+      reScanEdgeless:false,
+      visible:false,
+      delConfirmData:{
+        'trueName':'',
+        'name':''
+      }
       };
   },
   methods:{
@@ -147,7 +157,20 @@ export default {
           })
         }
       }
-
+    },
+    handleConfirmDelete(){
+      this.visible=false
+      if(DownloadManager.methods.delPlugin(this.delConfirmData.trueName)){
+        notification.open({
+          message:'删除插件包成功',
+          description:this.delConfirmData.trueName+'已被删除'
+        })
+      }else{
+        notification.open({
+          message:'删除插件包失败',
+          description:this.delConfirmData.trueName
+        })
+      }
     }
   },
   components:{
@@ -214,6 +237,10 @@ export default {
       this.$store.commit('removeTask',data.gid)
       //重新发送下载任务
       DownloadManager.methods.taskRestart(info)
+    })
+    this.$root.eventHub.$on('delete-file',(data)=>{
+      this.delConfirmData=data
+      this.visible=true
     })
   },
   destroyed() {

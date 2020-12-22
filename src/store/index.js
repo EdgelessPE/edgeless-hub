@@ -24,7 +24,11 @@ export default new Vuex.Store({
     downloadDir:'D:',
     pluginPath:"D:\\Edgeless\\Resource",
     aria2cPath:"D:\\CnoRPS\\aria2c懒人包_1.35.0\\core",
-    aria2cUri:'http://localhost:6800/jsonrpc'
+    aria2cUri:'http://localhost:6800/jsonrpc',
+
+    //复制队列相关
+    copyRunningPool:[],
+    copyEndedPool:[]
   },
   mutations: {
     setCateData(state,d){
@@ -64,5 +68,24 @@ export default new Vuex.Store({
     },
     setFileList(state,data){
       state.fileList=data
+    },
+    addCopyingTask(state,payload){
+      //console.log('start copy:'+payload.name)
+      state.copyRunningPool.push(payload)
+    },
+    delCopyingTask(state,gid){
+      let index=-1
+      for(let i=0;i<state.copyRunningPool.length;i++){
+        if(state.copyRunningPool[i].gid===gid){
+          index=i
+          break
+        }
+      }
+      if(index!==-1){
+        state.copyEndedPool.push(state.copyRunningPool[index])
+        state.copyRunningPool.splice(index,1)
+      }else{
+        console.log('gid not found:'+gid)
+      }
     }
 }})
