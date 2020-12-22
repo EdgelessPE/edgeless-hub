@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Cate from "@/views/Cate"
 import Down from "../views/Down.vue"
+import Search from "@/views/Search"
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path:'/down',
     name:'Down',
     component: Down
+  },
+  {
+    path:'/search',
+    name:'Search',
+    component: Search
   }
 ]
 

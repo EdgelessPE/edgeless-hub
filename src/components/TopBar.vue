@@ -3,11 +3,11 @@
    <a-col span="19"/>
 
    <a-col span="4" v-if="!searchBarCollapsed">
-     <a-input-search placeholder="搜索" class="search-bar" @search="onSearch" />
+     <a-input-search v-model="input" placeholder="搜索" class="search-bar" @search="onSearch" />
    </a-col>
 
    <a-col span="3" v-if="searchBarCollapsed"/>
-   <a-col span="1" v-if="searchBarCollapsed" @click="()=>{this.searchBarCollapsed=!this.searchBarCollapsed;console.log(this.searchBarCollapsed)}">
+   <a-col span="1" v-if="searchBarCollapsed" @click="()=>{this.searchBarCollapsed=!this.searchBarCollapsed}">
      <a-avatar icon="search"/>
    </a-col>
 
@@ -24,11 +24,14 @@ name: "TopBar",
   methods:{
     onSearch(){
       this.searchBarCollapsed=true
+      //console.log(this.$store.state.allData)
+      window.location='/#/search?keyword='+this.input
     }
   },
   data(){
     return {
-      searchBarCollapsed:true
+      searchBarCollapsed:true,
+      input:''
     }
   }
 }

@@ -9,6 +9,7 @@ export default new Vuex.Store({
     cateData:[],
     allData:[],
     tasks:[[],[],[],[]], //保存aria2c返回的任务状态
+    fileList:[], //保存由U盘获取的文件列表
     ourTasksPool:[], //提供由EL Store提交的任务清单
     globalData:{
       downloadSpeed: "0",

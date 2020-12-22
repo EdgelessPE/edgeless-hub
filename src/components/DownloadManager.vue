@@ -20,7 +20,7 @@ name: "DownloadManager",
         let splitResult=add.split('/')
         let trueName=splitResult[splitResult.length-1]
         let uriName=urlencode(trueName)
-        console.log(uriName+' true:'+trueName)
+        //console.log(uriName+' true:'+trueName)
         this.store.commit('appendOurTasksPool',{
           name:name,
           gid:res.data.result,
@@ -86,6 +86,15 @@ name: "DownloadManager",
           if(item.completedLength===item.totalLength) succeed.push(item)
           else fail.push(item)
         })
+
+        //将Urlencode的文件名重命名为正常文件名
+        succeed.forEach((item)=>{
+          if(fs.existsSync(path.join(this.downloadDir,item.info.uriName))){
+            fs.renameSync(path.join(this.downloadDir,item.info.uriName),path.join(this.downloadDir,item.info.trueName))
+          }
+        })
+
+        //更新到Vuex中
         this.store.commit('updateTask',{data:succeed,index:2})
         this.store.commit('updateTask',{data:fail,index:3})
       })
