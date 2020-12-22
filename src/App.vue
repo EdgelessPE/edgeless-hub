@@ -121,10 +121,22 @@ export default {
     //获取列表数据
     this.refreshData()
 
-    //配置自动刷新aria2c
+    //配置定时任务
     setInterval(()=>{
-      //console.log(this.$store.state.tasks)
+      //与aria2c同步状态
       DownloadManager.methods.updateMaster()
+
+      //为每个元素发送同步事件
+      for(let index=0;index<this.$store.state.tasks.length;index++){
+        this.$store.state.tasks[index].forEach((item)=>{
+          this.$root.eventHub.$emit('state-update-node',{
+            'name':item.name,
+            'state':index,
+            'info':item.info,
+            'percent':((item.completedLength/item.totalLength))*100
+          })
+        })
+      }
     },1000)
 
     //初始化DownloadManager

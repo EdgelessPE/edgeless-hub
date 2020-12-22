@@ -120,6 +120,7 @@ name: "DownloadManager",
             if(info.isOurTask) {
               let tmp=item
               tmp['name']=info.name
+              tmp['info']=info.info
               selected.push(tmp)
             }
           })
@@ -129,17 +130,19 @@ name: "DownloadManager",
     },
     //查询是否是Edgeless Store创建的任务
     getTaskInfo(gid){
-      let pool=this.store.state.ourTasksPool,name=""
+      let pool=this.store.state.ourTasksPool,name="",info
       pool.forEach((item)=>{
         if(item.gid===gid) {
           name=item.name
+          info=item
         }
       })
 
       if(name!=="") {
         return {
           isOurTask:true,
-          name:name
+          name:name,
+          info:info
         }
       }else return {
         isOurTask:false,
