@@ -9,7 +9,7 @@
         <a-icon v-else-if="index==='12'" :type="loading?'loading':'cloud-download'" slot="actions" v-on:click="update(item)"/>
         <!--第二个按钮（删除）-->
         <a-icon v-if="index==='11'||index==='12'" type="close-circle" slot="actions" v-on:click="deleteFile(item)"/>
-        <a-icon v-else-if="index==='13'&&index_wait!==0" :type="loading?'loading':'close-circle'" slot="actions" v-on:click="reMoveCopyTask(item.gid)"/>
+        <a-icon v-else-if="index==='13'&&index_wait!==0&&runningCopy" :type="loading?'loading':'close-circle'" slot="actions" v-on:click="reMoveCopyTask(item.gid)"/>
         <a-icon v-else-if="index!=='10'&&index!=='13'" :type="loading?'loading':'close-circle'" slot="actions" v-on:click="reMoveTask(item.gid)"/>
 
         <a-list-item-meta>
@@ -33,7 +33,7 @@
           <a-progress v-else-if="index==='1'" slot="avatar" :width="80" type="circle" :percent="getPercent(item.completedLength,item.totalLength)" :stroke-color="'#FF9800'" status="exception" :show-info="false"/>
           <a-progress v-else-if="index==='2'" slot="avatar" :width="80" type="circle" :percent="100"/>
           <a-progress v-else-if="index==='3'" slot="avatar" :width="80" type="circle" :percent="getPercent(item.completedLength,item.totalLength)" status="exception"/>
-          <a-avatar v-else-if="index==='13'&&index_wait===0" slot="avatar" :size="60" icon="loading" style="color: #f56a00; backgroundColor: #ffffff"/>
+          <a-avatar v-else-if="index==='13'&&index_wait===0&&runningCopy" slot="avatar" :size="60" icon="loading" style="color: #f56a00; backgroundColor: #ffffff"/>
           <a-avatar v-else-if="index==='13'" slot="avatar" :size="60" icon="clock-circle" style="color: #f56a00; backgroundColor: #ffffff"/>
           <a-avatar v-else-if="index==='11'" slot="avatar" :size="80" icon="check" style="color: #4caf50; backgroundColor: #ffffff"/>
           <a-avatar v-else-if="index==='12'" slot="avatar" :size="80" icon="arrow-up" style="color: #3f51b5; backgroundColor: #ffffff"/>
@@ -47,7 +47,7 @@
         <div v-else-if="(index==='3')">
           错误
         </div>
-        <div v-else-if="(index==='13'&&index_wait===0)">
+        <div v-else-if="(index==='13'&&index_wait===0&&runningCopy)">
           正在安装...
         </div>
         <div v-else-if="(index==='11'&&item.onlineVer==='null')">
@@ -71,7 +71,8 @@ name: "TaskNode",
   return{
     data:[],
     interval:'',
-    loading:false //针对actions插槽的按钮
+    loading:false, //针对actions插槽的按钮
+    runningCopy:false
   }
   },
   props:['index'],
@@ -87,6 +88,7 @@ name: "TaskNode",
     },
     updateData(){
       this.loading=false
+      this.runningCopy=(this.$store.state.copyRunningPool.length!==0)
       if(this.index<10) this.data=this.$store.state.tasks[this.index]
       else if(this.index==='10'){
         //正在复制中的任务

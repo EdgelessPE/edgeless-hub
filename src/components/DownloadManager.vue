@@ -126,6 +126,10 @@ name: "DownloadManager",
         this.$store.commit('updateTask',{data:fail,index:3})
       })
     },
+    //是否存在U盘
+    usbIn(){
+      return fs.existsSync(this.$store.state.pluginPath)
+    },
     //将指定插件包从下载目录拷贝至U盘中（传入任务信息对象）
     copyFile(task){
       //console.log('run copy:'+task.name)

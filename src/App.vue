@@ -251,7 +251,7 @@ export default {
       this.updateEdgelessDiskList(this.reScanEdgeless)
 
       //检查是否需要启动拷贝操作
-      if(this.$store.state.copyWaitingPool.length>0&&!this.copyBusy){
+      if(this.$store.state.copyWaitingPool.length>0&&!this.copyBusy&&DownloadManager.methods.usbIn()){
         if(!DownloadManager.methods.copyFile(this.$store.state.copyWaitingPool[0])){
           notification.open({
             message:'有一个进程在安装时出现了错误，所有安装操作暂停',

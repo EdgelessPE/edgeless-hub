@@ -58,7 +58,7 @@ name: "Down",
       this.activeKey.push('1')
     }
     //考虑第二组
-    if(this.$store.state.copyRunningPool.length>0){
+    if(this.$store.state.copyWaitingPool.length>0){
       this.activeKey.push('2')
     }
     //考虑第三组
