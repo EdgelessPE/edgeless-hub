@@ -9,7 +9,7 @@
         <a-icon v-else-if="index==='12'" :type="loading?'loading':'cloud-download'" slot="actions" v-on:click="update(item)"/>
         <!--第二个按钮（删除）-->
         <a-icon v-if="index==='11'||index==='12'" type="close-circle" slot="actions" v-on:click="deleteFile(item)"/>
-        <a-icon v-else-if="index==='13'&&index_wait!==0&&runningCopy" :type="loading?'loading':'close-circle'" slot="actions" v-on:click="reMoveCopyTask(item.gid)"/>
+        <a-icon v-else-if="index==='13'&&(index_wait!==0||!runningCopy)" :type="loading?'loading':'close-circle'" slot="actions" v-on:click="reMoveCopyTask(item.gid)"/>
         <a-icon v-else-if="index!=='10'&&index!=='13'" :type="loading?'loading':'close-circle'" slot="actions" v-on:click="reMoveTask(item.gid)"/>
 
         <a-list-item-meta>

@@ -62,7 +62,8 @@ export default {
         'name':''
       },
       downloadingTasks:0,
-      copyBusy:false //保存现在是否正在进行拷贝任务
+      copyBusy:false, //保存现在是否正在进行拷贝任务
+      notificationSent:false //是否发送过“请插入启动盘”通知
       };
   },
   methods:{
@@ -134,6 +135,7 @@ export default {
     updateEdgelessDiskList(reScan){
       if(reScan){
         if(DownloadManager.methods.setPluginPath()){
+          this.notificationSent=false
           notification.open({
             message:'检测到Edgeless启动盘',
             description:'盘符：'+this.$store.state.pluginPath[0]
@@ -251,14 +253,25 @@ export default {
       this.updateEdgelessDiskList(this.reScanEdgeless)
 
       //检查是否需要启动拷贝操作
-      if(this.$store.state.copyWaitingPool.length>0&&!this.copyBusy&&DownloadManager.methods.usbIn()){
-        if(!DownloadManager.methods.copyFile(this.$store.state.copyWaitingPool[0])){
-          notification.open({
-            message:'有一个进程在安装时出现了错误，所有安装操作暂停',
-            description:'DownloadManager.copyFile:false'
-          })
+      if(this.$store.state.copyWaitingPool.length>0&&!this.copyBusy){
+        if(DownloadManager.methods.usbIn()){
+          if(!DownloadManager.methods.copyFile(this.$store.state.copyWaitingPool[0])){
+            notification.open({
+              message:'有一个进程在安装时出现了错误，所有安装操作暂停',
+              description:'DownloadManager.copyFile:false'
+            })
+          }
+          this.copyBusy=true
+        }else{
+          if(!this.notificationSent){
+            this.notificationSent=true
+            notification.open({
+              message:'插件包已下载完成，正在等待启动盘插入',
+              description:'请插入Edgeless启动盘以使用安装功能'
+            })
+          }
         }
-        this.copyBusy=true
+
       }
     },1000)
 
