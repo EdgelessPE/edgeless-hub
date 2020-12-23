@@ -8,8 +8,10 @@ export default new Vuex.Store({
   state: {
     cateData:[],
     allData:[],
+    versionCache:[],
     tasks:[[],[],[],[]], //保存aria2c返回的任务状态
     fileList:[], //保存由U盘获取的文件列表
+    updateList:[], //保存需要更新的插件列表
     ourTasksPool:[], //提供由EL Store提交的任务清单
     globalData:{
       downloadSpeed: "0",
@@ -69,6 +71,9 @@ export default new Vuex.Store({
     setFileList(state,data){
       state.fileList=data
     },
+    setUpdateList(state,data){
+      state.updateList=data
+    },
     addCopyingTask(state,payload){
       //console.log('start copy:'+payload.name)
       state.copyRunningPool.push(payload)
@@ -87,5 +92,8 @@ export default new Vuex.Store({
       }else{
         console.log('gid not found:'+gid)
       }
+    },
+    appendVersionCache(state,data){
+      state.versionCache.push(data)
     }
 }})

@@ -21,8 +21,8 @@
             </template>
           </a-sub-menu>
           <a-menu-item key="/down">
-            <a-icon type="download" />
-            <span>下载管理</span>
+            <a-icon type="appstore" />
+            <span>任务管理{{(downloadingTasks===0)?'':('（'+downloadingTasks+'）')}}</span>
             <router-link to="/down"/>
           </a-menu-item>
         </a-menu>
@@ -60,7 +60,8 @@ export default {
       delConfirmData:{
         'trueName':'',
         'name':''
-      }
+      },
+      downloadingTasks:0
       };
   },
   methods:{
@@ -192,7 +193,7 @@ export default {
   },
   created() {
     //初始化DownloadManager
-    DownloadManager.methods.init(this.$axios,this.$store)
+    DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
     //初始化
     this.init()
@@ -205,8 +206,11 @@ export default {
       //与aria2c同步状态
       DownloadManager.methods.updateMaster()
 
+      //更新本地的任务数
+      this.downloadingTasks=this.$store.state.tasks[0].length+this.$store.state.copyRunningPool.length
+
       //为每个元素发送同步事件
-      for(let index=0;index<3;index++){
+      for(let index=0;index<4;index++){
         this.$store.state.tasks[index].forEach((item)=>{
           this.$root.eventHub.$emit('state-update-node',{
             'name':item.name,
@@ -220,6 +224,14 @@ export default {
         this.$root.eventHub.$emit('state-update-node',{
           'name':item.name,
           'state':10
+        })
+      })
+      this.$store.state.updateList.forEach((item)=>{
+        this.$root.eventHub.$emit('state-update-node',{
+          'name':item.name,
+          'version':item.softVer,
+          'localName':item.trueName,
+          'state':11
         })
       })
       this.$store.state.fileList.forEach((item)=>{
@@ -261,15 +273,24 @@ export default {
       //console.log(data.localName)
       if(DownloadManager.methods.disablePlugin(data.localName)){
         notification.open({
-          message:'禁用插件包成功',
+          message:'禁用旧版插件包成功',
           description:data.localName
         })
       }else {
         notification.open({
-          message:'禁用插件包失败',
+          message:'禁用旧版插件包失败',
           description:data.localName
         })
       }
+    })
+    this.$root.eventHub.$on('copy-file-finish',(data)=>{
+      //从ourTask中移除
+      this.$store.commit('removeTask',data.gid)
+      //发送通知
+      notification.open({
+        message:data.name+'安装成功',
+        description:'当前版本：'+data.version
+      })
     })
   },
   destroyed() {

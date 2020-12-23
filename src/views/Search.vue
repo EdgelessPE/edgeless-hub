@@ -15,7 +15,7 @@
           {{'分类：'+item.softVer}}
           <br/>
           {{'大小：'+item.softSize}}
-          <CateButton  slot="actions" :name="item.softName" :url="item.softUrl"/>
+          <CateButton  slot="actions" :name="item.softName" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
         </a-card>
       </a-list-item>
     </a-list>

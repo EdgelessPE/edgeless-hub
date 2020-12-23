@@ -21,7 +21,7 @@
     <a-icon type="check" />
     已安装
   </a-button>
-  <a-button v-else-if="state===11&&version_local!==version_online" v-on:click="addUpdateTask(name,url)" >
+  <a-button v-else-if="state===11&&version_local!==version_online" v-on:click="addUpdateTask(name,url)" type="primary">
     <a-icon type="arrow-up" />
     更新
   </a-button>
@@ -47,7 +47,8 @@ name: "CateButton",
       trueName:'null'
     },
     version_local:'',
-    localName:''
+    localName:'',
+    interval:''
   }
   },
   methods:{
@@ -82,7 +83,43 @@ name: "CateButton",
       this.addDownloadTask(name,url)
     }
   },
+  watch:{
+    state:function (){
+      if(this.state===2||this.state===10){
+        //安装中状态
+        if(this.interval===''){
+          //启动定时检查
+          this.interval=setInterval(()=>{
+            if(!(this.state===2||this.state===10)){
+              clearInterval(this.interval)
+              this.interval=''
+            }
+            //console.log('running...')
+            let inside=false
+            for(let i=0;i<this.$store.state.copyRunningPool.length;i++){
+              if(this.$store.state.copyRunningPool[i].name===this.name){
+                inside=true
+                break
+              }
+            }
+            if(!inside&&(this.state===2||this.state===10)) {
+              //console.log('checked')
+              this.state = -1
+              clearInterval(this.interval)
+              this.interval=''
+            }
+          },1500)
+        }
+      }else{
+        if(this.interval!=='') {
+          clearInterval(this.interval)
+          this.interval=''
+        }
+      }
+    }
+  },
   created() {
+    this.version_local=this.version_online
     //监听状态更新事件
     this.$root.eventHub.$on('state-update-node',(data)=>{
       if(data.name===this.name){
@@ -96,7 +133,11 @@ name: "CateButton",
         this.info=data.info
         this.percent=data.percent
         //更新状态以刷新DOM
-        if(this.state!==Number(data.state)) this.state=Number(data.state)
+        if(this.state!==Number(data.state)) {
+          //console.log('update form broadcast')
+          //console.log(data)
+          this.state = Number(data.state)
+        }
       }
     })
   }

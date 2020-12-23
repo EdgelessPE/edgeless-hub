@@ -13,7 +13,7 @@
 
    <a-col span="1"/>
    <a-col span="1">
-     <a-popover :title="(downloadingTasks===0)?'无任务':globalSpeed" placement="bottomRight">
+     <a-popover :title="(downloadingTasks===0)?'无下载任务':globalSpeed" placement="bottomRight">
        <template slot="content">
          <TaskNodeNaive v-for="(item) in $store.state.tasks[0]" :name="compressString(item.name)" :percent="getPercent(item.completedLength,item.totalLength)"/>
        </template>

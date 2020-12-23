@@ -7,11 +7,11 @@ export default {
 name: "DownloadManager",
   data(){
   return{
-    axios:'',
-    store:'',
     path:'',
     downloadDir:'',
-    $store:''
+    $store:'',
+    $axios:'',
+    $root:''
   }
   },
   methods:{
@@ -27,7 +27,7 @@ name: "DownloadManager",
       }
       this.aria2cDownloader(add,false,(res)=>{
         //console.log(uriName+' true:'+trueName)
-        this.store.commit('appendOurTasksPool',{
+        this.$store.commit('appendOurTasksPool',{
           name:name,
           gid:res.data.result,
           uri:add,
@@ -56,7 +56,7 @@ name: "DownloadManager",
 
       //重新提交任务
       this.aria2cDownloader(info.uri,true,(res)=>{
-        this.store.commit('appendOurTasksPool',{
+        this.$store.commit('appendOurTasksPool',{
           name:info.name,
           gid:res.data.result,
           uri:info.uri,
@@ -75,15 +75,15 @@ name: "DownloadManager",
     },
     updateGlobalState(){
       this.aria2cHelper_noParams('aria2.getGlobalStat',(res)=>{
-        this.store.commit('updateGlobalData',res.data.result)
+        this.$store.commit('updateGlobalData',res.data.result)
       })
     },
     updateRunningTasks(){
       this.getTasks("aria2.tellActive",(data)=>{
-        this.store.commit('updateTask',{data:data,index:0})
+        this.$store.commit('updateTask',{data:data,index:0})
       })
       this.getTasks("aria2.tellWaiting",(data)=>{
-        this.store.commit('updateTask',{data:data,index:1})
+        this.$store.commit('updateTask',{data:data,index:1})
       })
       this.getTasks("aria2.tellStopped",(data)=>{
         //分离成功的和失败的任务
@@ -109,6 +109,12 @@ name: "DownloadManager",
               //执行异步拷贝
               fs.copyFile(path.join(this.downloadDir,item.info.trueName),path.join(this.$store.state.pluginPath,item.info.trueName),()=>{
                 //通知任务完成
+                this.$root.eventHub.$emit('copy-file-finish',{
+                  'name':item.name,
+                  'version':item.info.trueName.split('_')[1],
+                  'gid':item.gid
+                })
+                //移动此任务在Vuex中的位置
                 this.$store.commit('delCopyingTask',item.gid)
               })
             }
@@ -116,8 +122,8 @@ name: "DownloadManager",
         })
 
         //更新到Vuex中
-        this.store.commit('updateTask',{data:succeed,index:2})
-        this.store.commit('updateTask',{data:fail,index:3})
+        this.$store.commit('updateTask',{data:succeed,index:2})
+        this.$store.commit('updateTask',{data:fail,index:3})
       })
     },
     //从启动盘目录删除指定文件
@@ -136,7 +142,7 @@ name: "DownloadManager",
         if(fs.existsSync(path)) disk=String.fromCharCode(65+i)
       }
       if(disk!=="-1"){
-        this.store.commit('setPluginPath',disk)
+        this.$store.commit('setPluginPath',disk)
         //console.log('plugin disk:'+disk)
         return true
       }else{
@@ -147,28 +153,56 @@ name: "DownloadManager",
     //扫描EdgelessU盘内插件包文件夹的信息
     getPluginList(){
       //判断目录是否仍存在
-      if(!fs.existsSync(this.store.state.pluginPath)) return false
+      if(!fs.existsSync(this.$store.state.pluginPath)) return false
       //读取文件列表
-      let files=fs.readdirSync(this.store.state.pluginPath)
+      let files=fs.readdirSync(this.$store.state.pluginPath)
       //过滤并解析
-      let result=[]
+      let result=[],update=[],data_tmp
       files.forEach((item)=>{
         if(item.indexOf('.7z')!==-1){
           let info=item.split('_')
-          if(!this.stillCopying(info[0])){
+          //识别文件名不规范的7z压缩包
+          if(info.length!==3){
             result.push({
-              'name':info[0],
+              'name':item.split('.7z')[0],
               'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
-              'softName':info[0],
-              'softVer':info[1],
-              'softAuthor':info[2].split('.7z')[0],
+              'softName':item.split('.7z')[0],
+              'softVer':'unknown',
+              'softAuthor':'unknown',
+              'onlineVer':'null',
               'trueName':item
             })
+          }else if(!this.stillCopying(info[0])){
+            //判断是否需要升级
+            data_tmp=this.getVersionAndUrl(info[0])
+            if(data_tmp.version==='null'||data_tmp.version===info[1]){
+              result.push({
+                'name':info[0],
+                'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
+                'softName':info[0],
+                'softVer':info[1],
+                'softAuthor':info[2].split('.7z')[0],
+                'onlineVer':data_tmp.version,
+                'trueName':item
+              })
+            }else{
+              update.push({
+                'name':info[0],
+                'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
+                'softName':info[0],
+                'softVer':info[1],
+                'softAuthor':info[2].split('.7z')[0],
+                'trueName':item,
+                'onlineVer':data_tmp.version,
+                'url':data_tmp.url
+              })
+            }
           }
         }
       })
       //console.log(result)
-      this.store.commit('setFileList',result)
+      this.$store.commit('setFileList',result)
+      this.$store.commit('setUpdateList',update)
       return true
     },
     disablePlugin(localName){
@@ -185,6 +219,38 @@ name: "DownloadManager",
     },
 
     //辅助工具
+    //获取插件最新版本号
+    getVersionAndUrl(name){
+      let version='null',url=''
+      for(let i=0;i<this.$store.state.versionCache.length;i++){
+        if(this.$store.state.versionCache[i].name===name) {
+          version=this.$store.state.versionCache[i].version
+          url=this.$store.state.versionCache[i].url
+          break
+        }
+      }
+      if(version==='null'){
+        for(let i=0;i<this.$store.state.allData.length;i++){
+          for (let j=0;j<this.$store.state.allData[i].files.length;j++){
+            if(this.$store.state.allData[i].files[j].name.split('_')[0]===name){
+              version=this.$store.state.allData[i].files[j].name.split('_')[1]
+              url=this.$store.state.allData[i].files[j].url
+              break
+            }
+          }
+        }
+        //写入缓存，无论是否找到结果
+        this.$store.commit('appendVersionCache',{
+          name:name,
+          version:version,
+          url:url
+        })
+      }
+      return {
+        version:version,
+        url:url
+      }
+    },
     //负责填充参数数组、过滤结果
     getTasks(method,callback){
       let params=[]
@@ -223,7 +289,7 @@ name: "DownloadManager",
     },
     //查询是否是Edgeless Store创建的任务
     getTaskInfo(gid){
-      let pool=this.store.state.ourTasksPool,name="",info
+      let pool=this.$store.state.ourTasksPool,name="",info
       pool.forEach((item)=>{
         if(item.gid===gid) {
           name=item.name
@@ -245,17 +311,17 @@ name: "DownloadManager",
     //查询是否需要拷贝
     needCopy(gid){
       let need=true
-      this.store.state.copyRunningPool.forEach((item)=>{
+      this.$store.state.copyRunningPool.forEach((item)=>{
         if(item.gid===gid) need=false
       })
-      this.store.state.copyEndedPool.forEach((item)=>{
+      this.$store.state.copyEndedPool.forEach((item)=>{
         if(item.gid===gid) need=false
       })
       return need
     },
     stillCopying(name){
       let still=false
-      this.store.state.copyRunningPool.forEach((item)=>{
+      this.$store.state.copyRunningPool.forEach((item)=>{
         if(item.name===name) still=true
       })
       return still
@@ -268,7 +334,7 @@ name: "DownloadManager",
       //return date.getDay().toString()+date.getHours().toString()+date.getMinutes().toString()+date.getSeconds().toString()+date.getMilliseconds().toString()+(Math.random()*1000).toFixed(0).toString()
     },
     aria2cHelper_noParams(method,callback){
-      this.axios.post(this.path,{
+      this.$axios.post(this.path,{
         'id':this.generateID(),
         'jsonrpc':"2.0",
         'method':method
@@ -281,7 +347,7 @@ name: "DownloadManager",
           })
     },
     aria2cHelper(method,params,callback){
-      this.axios.post(this.path,{
+      this.$axios.post(this.path,{
         'id':this.generateID(),
         'jsonrpc':"2.0",
         'method':method,
@@ -304,7 +370,7 @@ name: "DownloadManager",
       })
     },
     aria2cDownloader(address,overwrite,callback){
-      this.axios.post(this.path,{
+      this.$axios.post(this.path,{
         'id':this.generateID(),
         'jsonrpc':"2.0",
         'method':'aria2.addUri',
@@ -322,13 +388,13 @@ name: "DownloadManager",
     },
 
     //初始化
-    init(axios,store){
-      this.axios=axios
-      this.store=store
+    init(axios,store,root){
+      this.$axios=axios
       this.$store=store
+      this.$root=root
 
-      this.path=this.store.state.aria2cUri
-      this.downloadDir=this.store.state.downloadDir
+      this.path=this.$store.state.aria2cUri
+      this.downloadDir=this.$store.state.downloadDir
     }
   }
 
