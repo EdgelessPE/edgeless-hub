@@ -66,7 +66,17 @@ name: "DownloadManager",
       })
     },
 
-
+    //读写配置文件相关
+    writeConfig(){
+      let data={
+        downloadDir:'D:\\'
+      }
+      fs.writeFileSync('./elstore_config.json',JSON.stringify(data))
+    },
+    readConfig(){
+      let json=fs.readFileSync('./elstore_config').toJSON()
+      console.log(json)
+    },
 
     //更新状态相关
     updateMaster(){
@@ -100,31 +110,41 @@ name: "DownloadManager",
             if(item.info.uriName!==item.info.trueName) fs.renameSync(path.join(this.downloadDir,item.info.uriName),path.join(this.downloadDir,item.info.trueName))
             //检查是否需要执行拷贝
             if(this.needCopy(item.gid)){
-              //向任务池注册任务
-              this.$store.commit('addCopyingTask',{
+              //加入拷贝等候队列
+              this.$store.commit('addWaitingTask',{
                 name:item.name,
                 totalLength:item.totalLength,
-                gid:item.gid
-              })
-              //执行异步拷贝
-              fs.copyFile(path.join(this.downloadDir,item.info.trueName),path.join(this.$store.state.pluginPath,item.info.trueName),()=>{
-                //通知任务完成
-                this.$root.eventHub.$emit('copy-file-finish',{
-                  'name':item.name,
-                  'version':item.info.trueName.split('_')[1],
-                  'gid':item.gid
-                })
-                //移动此任务在Vuex中的位置
-                this.$store.commit('delCopyingTask',item.gid)
+                gid:item.gid,
+                version:item.info.trueName.split('_')[1],
+                trueName:item.info.trueName
               })
             }
           }
         })
-
         //更新到Vuex中
         this.$store.commit('updateTask',{data:succeed,index:2})
         this.$store.commit('updateTask',{data:fail,index:3})
       })
+    },
+    //将指定插件包从下载目录拷贝至U盘中（传入任务信息对象）
+    copyFile(task){
+      //console.log('run copy:'+task.name)
+      //检查启动盘是否插入、文件是否存在
+      if(fs.existsSync(this.$store.state.pluginPath)&&fs.existsSync(path.join(this.$store.state.downloadDir,task.trueName))){
+        //向任务池注册任务
+        this.$store.commit('addCopyingTask',task)
+        //执行异步拷贝
+        fs.copyFile(path.join(this.downloadDir,task.trueName),path.join(this.$store.state.pluginPath,task.trueName),()=>{
+          //通知任务完成
+          this.$root.eventHub.$emit('copy-file-finish',task)
+          //console.log('finish copy:'+task.name)
+          //移动此任务在Vuex中的位置（从running和waiting列表中移出，并加入ended列表）
+          this.$store.commit('delCopyingTask',task.gid)
+        })
+      }else{
+        return false
+      }
+      return true
     },
     //从启动盘目录删除指定文件
     delPlugin(name){
@@ -314,9 +334,16 @@ name: "DownloadManager",
       this.$store.state.copyRunningPool.forEach((item)=>{
         if(item.gid===gid) need=false
       })
-      this.$store.state.copyEndedPool.forEach((item)=>{
-        if(item.gid===gid) need=false
-      })
+      if(need){
+        this.$store.state.copyEndedPool.forEach((item)=>{
+          if(item.gid===gid) need=false
+        })
+      }
+      if(need){
+        this.$store.state.copyWaitingPool.forEach((item)=>{
+          if(item.gid===gid) need=false
+        })
+      }
       return need
     },
     stillCopying(name){
@@ -363,10 +390,9 @@ name: "DownloadManager",
         }else{
           notification.open({
             message:'Aria2cHelper：'+err.message,
-            description:err.response.data.error.message
+            //description:err.response.data.error.message
           })
         }
-
       })
     },
     aria2cDownloader(address,overwrite,callback){

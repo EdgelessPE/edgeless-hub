@@ -61,7 +61,8 @@ export default {
         'trueName':'',
         'name':''
       },
-      downloadingTasks:0
+      downloadingTasks:0,
+      copyBusy:false //保存现在是否正在进行拷贝任务
       };
   },
   methods:{
@@ -195,6 +196,9 @@ export default {
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
+    //读取配置文件
+    //DownloadManager.methods.writeConfig()
+
     //初始化
     this.init()
 
@@ -207,7 +211,7 @@ export default {
       DownloadManager.methods.updateMaster()
 
       //更新本地的任务数
-      this.downloadingTasks=this.$store.state.tasks[0].length+this.$store.state.copyRunningPool.length
+      this.downloadingTasks=this.$store.state.tasks[0].length+this.$store.state.copyWaitingPool.length
 
       //为每个元素发送同步事件
       for(let index=0;index<4;index++){
@@ -220,7 +224,7 @@ export default {
           })
         })
       }
-      this.$store.state.copyRunningPool.forEach((item)=>{
+      this.$store.state.copyWaitingPool.forEach((item)=>{
         this.$root.eventHub.$emit('state-update-node',{
           'name':item.name,
           'state':10
@@ -245,6 +249,17 @@ export default {
 
       //更新Edgeless启动盘的相关
       this.updateEdgelessDiskList(this.reScanEdgeless)
+
+      //检查是否需要启动拷贝操作
+      if(this.$store.state.copyWaitingPool.length>0&&!this.copyBusy){
+        if(!DownloadManager.methods.copyFile(this.$store.state.copyWaitingPool[0])){
+          notification.open({
+            message:'有一个进程在安装时出现了错误，所有安装操作暂停',
+            description:'DownloadManager.copyFile:false'
+          })
+        }
+        this.copyBusy=true
+      }
     },1000)
 
     //监听事件
@@ -286,6 +301,8 @@ export default {
     this.$root.eventHub.$on('copy-file-finish',(data)=>{
       //从ourTask中移除
       this.$store.commit('removeTask',data.gid)
+      //修改copyBusy状态
+      this.copyBusy=false
       //发送通知
       notification.open({
         message:data.name+'安装成功',

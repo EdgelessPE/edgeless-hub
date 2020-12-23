@@ -24,13 +24,14 @@ export default new Vuex.Store({
     stationUrl:'https://pineapple.edgeless.top/api/list/1',
     theme:'light',
     downloadDir:'D:',
-    pluginPath:"D:\\Edgeless\\Resource",
-    aria2cPath:"D:\\CnoRPS\\aria2c懒人包_1.35.0\\core",
+    pluginPath:'',
+    aria2cPath:"./core",
     aria2cUri:'http://localhost:6800/jsonrpc',
 
     //复制队列相关
     copyRunningPool:[],
-    copyEndedPool:[]
+    copyEndedPool:[],
+    copyWaitingPool:[] //等待启动盘插入后进行复制的任务清单
   },
   mutations: {
     setCateData(state,d){
@@ -79,21 +80,39 @@ export default new Vuex.Store({
       state.copyRunningPool.push(payload)
     },
     delCopyingTask(state,gid){
-      let index=-1
+      let index1=-1,index2=-1
       for(let i=0;i<state.copyRunningPool.length;i++){
         if(state.copyRunningPool[i].gid===gid){
-          index=i
+          index1=i
           break
         }
       }
-      if(index!==-1){
-        state.copyEndedPool.push(state.copyRunningPool[index])
-        state.copyRunningPool.splice(index,1)
+      for(let i=0;i<state.copyWaitingPool.length;i++){
+        if(state.copyWaitingPool[i].gid===gid){
+          index2=i
+          break
+        }
+      }
+      let pushed=false
+      if(index1!==-1){
+        state.copyEndedPool.push(state.copyRunningPool[index1])
+        state.copyRunningPool.splice(index1,1)
+        pushed=true
+      }
+      if(index2!==-1) {
+        if(!pushed) state.copyEndedPool.push(state.copyWaitingPool[index2])
+        state.copyWaitingPool.splice(index2, 1)
       }else{
         console.log('gid not found:'+gid)
       }
     },
     appendVersionCache(state,data){
       state.versionCache.push(data)
+    },
+    addWaitingTask(state,data){
+      state.copyWaitingPool.push(data)
+    },
+    clearWaitingTask(state){
+      state.copyWaitingPool=[]
     }
 }})

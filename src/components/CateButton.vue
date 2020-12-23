@@ -85,24 +85,24 @@ name: "CateButton",
   },
   watch:{
     state:function (){
-      if(this.state===2||this.state===10){
+      if(this.state===10){
         //安装中状态
         if(this.interval===''){
           //启动定时检查
           this.interval=setInterval(()=>{
-            if(!(this.state===2||this.state===10)){
+            if(!(this.state===10)){
               clearInterval(this.interval)
               this.interval=''
             }
             //console.log('running...')
             let inside=false
-            for(let i=0;i<this.$store.state.copyRunningPool.length;i++){
-              if(this.$store.state.copyRunningPool[i].name===this.name){
+            for(let i=0;i<this.$store.state.copyWaitingPool.length;i++){
+              if(this.$store.state.copyWaitingPool[i].name===this.name){
                 inside=true
                 break
               }
             }
-            if(!inside&&(this.state===2||this.state===10)) {
+            if(!inside&&(this.state===10)) {
               //console.log('checked')
               this.state = -1
               clearInterval(this.interval)
@@ -137,6 +137,7 @@ name: "CateButton",
           //console.log('update form broadcast')
           //console.log(data)
           this.state = Number(data.state)
+          if(this.state===2) this.state=-1
         }
       }
     })
