@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow,ipcMain,dialog } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -63,6 +63,15 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+})
+
+//监听、回复渲染进程发送的事件
+ipcMain.on('openDirectoryDialog-request',(event,arg)=>{
+  let data=dialog.showOpenDialogSync({
+    title:"请选择下载缓存目录",
+    properties: ['openDirectory']
+  })
+  event.reply('openDirectoryDialog-reply',data)
 })
 
 // Exit cleanly on request from parent process in development mode.

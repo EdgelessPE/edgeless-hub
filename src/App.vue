@@ -22,8 +22,13 @@
           </a-sub-menu>
           <a-menu-item key="/down">
             <a-icon type="appstore" />
-            <span>任务管理{{(downloadingTasks===0)?'':('（'+downloadingTasks+'）')}}</span>
+            <span>任务{{(downloadingTasks===0)?'':('（'+downloadingTasks+'）')}}</span>
             <router-link to="/down"/>
+          </a-menu-item>
+          <a-menu-item key="/setting">
+            <a-icon type="setting" />
+            <span>设置</span>
+            <router-link to="/setting"/>
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
@@ -41,6 +46,40 @@
     <a-modal v-model="visible" title="删除插件包" @ok="handleConfirmDelete" okText="确定" cancelText="取消">
       {{'您确认要将'+delConfirmData.name+'从启动盘中删除吗？'}}
     </a-modal>
+    <a-drawer
+        title="欢迎来到Edgeless Store"
+        placement="top"
+        :visible="showWelcome"
+        :closable="false"
+        @close="finishWelcome"
+    >
+      <br/>
+      <p>看起来这是您首次使用Edgeless Store，您可以在此更改一些默认配置</p>
+      <br/><br/>
+      <a-row>
+        <a-col span="2">
+          Edgeless盘符
+        </a-col>
+        <a-col span="4">
+          <a-select default-value="自动" @change="changeDisk" size="small">
+            <a-select-option v-for="item in edgelessDisks" :value="item">
+              {{item}}
+            </a-select-option>
+          </a-select>
+        </a-col>
+        <a-col span="2" class="align-text">
+          下载缓存目录
+        </a-col>
+        <a-col span="8">
+          <a-input v-model="userInputDownloadDir" size="small" style="width: 98%"/>
+        </a-col>
+        <a-col span="1">
+          <a-button v-on:click="chooseDir" size="small">
+            选择
+          </a-button>
+        </a-col>
+      </a-row>
+    </a-drawer>
   </div>
 </template>
 
@@ -48,7 +87,9 @@
 import TopBar from "@/components/TopBar"
 import {notification} from 'ant-design-vue'
 import DownloadManager from "@/components/DownloadManager"
+//const electron =__non_webpack_require__("electron")
 const cp=window.require('child_process')
+const reg=window.require('regedit')
 
 export default {
   data() {
@@ -63,10 +104,51 @@ export default {
       },
       downloadingTasks:0,
       copyBusy:false, //保存现在是否正在进行拷贝任务
-      notificationSent:false //是否发送过“请插入启动盘”通知
+      notificationSent:false, //是否发送过“请插入启动盘”通知
+      showWelcome:false,
+      edgelessDisks:[],
+      userInputDownloadDir:'',
+      ignoreFirstPlugOut:true, //忽略欢迎时设置自动检测Edgeless启动盘导致的“启动盘被弹出”提示
+      fileList:[]
       };
   },
   methods:{
+    finishWelcome(){
+      //检查输入目录是否存在
+      if(DownloadManager.methods.exist(this.userInputDownloadDir)){
+        this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
+        this.showWelcome=false
+      }else{
+        //尝试创建下载目录
+        if(DownloadManager.methods.mkdir(this.userInputDownloadDir)){
+          notification.open({
+            message:'已创建下载缓存目录',
+            description:this.userInputDownloadDir
+          })
+          this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
+          this.showWelcome=false
+        }else{
+          //提示重新选择
+          this.userInputDownloadDir=this.$store.state.downloadDir
+          notification.open({
+            message:'创建下载缓存目录失败',
+            description:"请重新选择可用的目录或保持默认"
+          })
+        }
+      }
+    },
+    changeDisk(val){
+      if(val!=='自动'){
+        this.$store.commit('setPluginPath',val)
+        //console.log('set disk:'+val)
+      }else{
+        this.$store.commit('setPluginPath','A')
+      }
+    },
+    chooseDir(){
+      //向主进程发送打开目录选择对话框事件
+      this.$electron.ipcRenderer.send('openDirectoryDialog-request','')
+    },
     refreshData(){
       let url=this.$store.state.stationUrl
       //获取分类数据
@@ -116,22 +198,6 @@ export default {
         console.log('gid not find')
       }
     },
-
-    init(){
-      //启动aria2c进程
-      this.aria2cProcess=cp.exec('aria2c.exe  --conf-path=elstore.conf',{
-        cwd:this.$store.state.aria2cPath
-      },(err)=>{
-        notification.open({
-          message:'Child_Process',
-          description:"Aria2c进程提前退出："+err.message
-        })
-      })
-      //console.log(this.aria2cProcess)
-
-      //更新Edgeless启动盘插件列表
-      this.updateEdgelessDiskList(true)
-    },
     updateEdgelessDiskList(reScan){
       if(reScan){
         if(DownloadManager.methods.setPluginPath()){
@@ -156,10 +222,14 @@ export default {
         if(!DownloadManager.methods.getPluginList()){
           this.reScanEdgeless=true
           this.$store.commit('setFileList',[])
-          notification.open({
-            message:'Edgeless启动盘被拔出',
-            description:'请插入Edgeless启动盘以使用安装功能'
-          })
+          if(this.ignoreFirstPlugOut){
+            this.ignoreFirstPlugOut=false
+          }else{
+            notification.open({
+              message:'Edgeless启动盘被拔出',
+              description:'请插入Edgeless启动盘以使用安装功能'
+            })
+          }
         }
       }
     },
@@ -176,6 +246,31 @@ export default {
           description:this.delConfirmData.trueName
         })
       }
+    },
+    init(){
+      //用于处理首次运行
+
+      //配置下载目录
+      reg.list('HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders',(err,result)=>{
+        if(err){
+          notification.open({
+            message:'注册表读取失败',
+            description:err.message
+          })
+        }else{
+          //根据注册表设置默认下载路径
+          let path
+          path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{374DE290-123F-4565-9164-39C4925E467B}'].value
+          if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
+          path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}'].value
+          if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
+
+          //更新本组件上的userInputDownloadDir
+          this.userInputDownloadDir=this.$store.state.downloadDir
+        }
+      })
+      //展示欢迎界面
+      this.showWelcome=true
     }
   },
   components:{
@@ -199,16 +294,41 @@ export default {
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
     //读取配置文件
-    //DownloadManager.methods.writeConfig()
+    let config=DownloadManager.methods.readConfig()
 
-    //初始化
-    this.init()
+    //写入配置到Vuex或执行首次运行配置
+    if(config.exist){
+      this.$store.commit('updateByConfig',config)
+    }else{
+      this.init()
+    }
 
-    //获取列表数据
+    //启动aria2c进程
+    this.aria2cProcess=cp.exec('aria2c.exe  --conf-path=elstore.conf',{
+      cwd:this.$store.state.aria2cPath
+    },(err)=>{
+      notification.open({
+        message:'Child_Process：错误',
+        description:"Aria2c进程提前退出："+err.message
+      })
+    })
+    //console.log(this.aria2cProcess)
+
+    //更新Edgeless启动盘插件列表
+    if(!this.showWelcome) this.updateEdgelessDiskList(true)
+
+    //获取在线列表数据
     this.refreshData()
 
     //配置定时任务
     setInterval(()=>{
+      //等待欢迎界面结束
+      if(this.showWelcome) {
+        this.edgelessDisks=DownloadManager.methods.getUSBList()
+        //console.log(this.edgelessDisks)
+        return
+      }
+
       //与aria2c同步状态
       DownloadManager.methods.updateMaster()
 
@@ -322,6 +442,9 @@ export default {
         description:'当前版本：'+data.version
       })
     })
+    this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
+      this.userInputDownloadDir=arg[0]
+    })
   },
   destroyed() {
     this.aria2cProcess.exit(0)
@@ -342,7 +465,6 @@ export default {
 }
 
 #main .logo {
-
   margin: 0 auto;
   font-size: 1.2vw;
   display: flex;

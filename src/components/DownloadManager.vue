@@ -21,8 +21,8 @@ name: "DownloadManager",
       let trueName=splitResult[splitResult.length-1]
       let uriName=urlencode(trueName)
       //使用缓存
-      if(fs.existsSync(path.join(this.downloadDir,trueName))&&!fs.existsSync(path.join(this.downloadDir,uriName)+'.aria2')) {
-        fs.renameSync(path.join(this.downloadDir, trueName), path.join(this.downloadDir, uriName))
+      if(fs.existsSync(path.join(this.$store.state.downloadDir,trueName))&&!fs.existsSync(path.join(this.$store.state.downloadDir,uriName)+'.aria2')) {
+        fs.renameSync(path.join(this.$store.state.downloadDir, trueName), path.join(this.$store.state.downloadDir, uriName))
         console.log('use cache')
       }
       this.aria2cDownloader(add,false,(res)=>{
@@ -47,7 +47,7 @@ name: "DownloadManager",
     //重新开始
     taskRestart(info){
       //删除临时文件
-      let curPath=path.join(this.downloadDir,info.uriName)
+      let curPath=path.join(this.$store.state.downloadDir,info.uriName)
       //console.log(curPath)
       if(fs.existsSync(curPath)){
         fs.unlinkSync(curPath)
@@ -69,13 +69,23 @@ name: "DownloadManager",
     //读写配置文件相关
     writeConfig(){
       let data={
-        downloadDir:'D:\\'
+        stationUrl:this.$store.state.stationUrl,
+        theme:this.$store.state.theme,
+        downloadDir:this.$store.state.downloadDir,
       }
       fs.writeFileSync('./elstore_config.json',JSON.stringify(data))
     },
     readConfig(){
-      let json=fs.readFileSync('./elstore_config').toJSON()
-      console.log(json)
+      let json={}
+      if(fs.existsSync('./elstore_config')){
+        json=fs.readFileSync('./elstore_config').toJSON()
+        if(fs.existsSync(json.downloadDir)) json['exist']=true
+        else json['exist']=false
+        console.log(json)
+      }else{
+        json['exist']=false
+      }
+      return json
     },
 
     //更新状态相关
@@ -105,9 +115,9 @@ name: "DownloadManager",
 
         //将Urlencode的文件名重命名为正常文件名，然后将其加入复制队列
         succeed.forEach((item)=>{
-          if(fs.existsSync(path.join(this.downloadDir,item.info.uriName))){
+          if(fs.existsSync(path.join(this.$store.state.downloadDir,item.info.uriName))){
             //重命名
-            if(item.info.uriName!==item.info.trueName) fs.renameSync(path.join(this.downloadDir,item.info.uriName),path.join(this.downloadDir,item.info.trueName))
+            if(item.info.uriName!==item.info.trueName) fs.renameSync(path.join(this.$store.state.downloadDir,item.info.uriName),path.join(this.$store.state.downloadDir,item.info.trueName))
             //检查是否需要执行拷贝
             if(this.needCopy(item.gid)){
               //加入拷贝等候队列
@@ -130,6 +140,28 @@ name: "DownloadManager",
     usbIn(){
       return fs.existsSync(this.$store.state.pluginPath)
     },
+    exist(path){
+      return fs.existsSync(path)
+    },
+    mkdir(path){
+      try{
+        fs.mkdirSync(path)
+      }catch (err){
+        return false
+      }
+      return fs.existsSync(path)
+    },
+    //返回合法的Edgeless启动盘数组，第一项的值为“自动”
+    getUSBList(){
+      let path,disks=['自动']
+      for(let i=25;i>=0;i--){
+        path=String.fromCharCode(65+i)+':\\Edgeless\\Resource'
+        if(fs.existsSync(path)) {
+          disks.push(String.fromCharCode(65 + i))
+        }
+      }
+      return disks
+    },
     //将指定插件包从下载目录拷贝至U盘中（传入任务信息对象）
     copyFile(task){
       //console.log('run copy:'+task.name)
@@ -138,7 +170,7 @@ name: "DownloadManager",
         //向任务池注册任务
         this.$store.commit('addCopyingTask',task)
         //执行异步拷贝
-        fs.copyFile(path.join(this.downloadDir,task.trueName),path.join(this.$store.state.pluginPath,task.trueName),()=>{
+        fs.copyFile(path.join(this.$store.state.downloadDir,task.trueName),path.join(this.$store.state.pluginPath,task.trueName),()=>{
           //通知任务完成
           this.$root.eventHub.$emit('copy-file-finish',task)
           //console.log('finish copy:'+task.name)
@@ -161,9 +193,12 @@ name: "DownloadManager",
     //配置Edgeless插件包目录
     setPluginPath(){
       let path,disk="-1"
-      for(let i=0;i<26;i++){
+      for(let i=25;i>=0;i--){
         path=String.fromCharCode(65+i)+':\\Edgeless\\Resource'
-        if(fs.existsSync(path)) disk=String.fromCharCode(65+i)
+        if(fs.existsSync(path)) {
+          disk = String.fromCharCode(65 + i)
+          break
+        }
       }
       if(disk!=="-1"){
         this.$store.commit('setPluginPath',disk)
@@ -405,7 +440,7 @@ name: "DownloadManager",
         'jsonrpc':"2.0",
         'method':'aria2.addUri',
         'params':[[address],{
-          'dir':this.downloadDir,
+          'dir':this.$store.state.downloadDir,
           'allow-overwrite': overwrite?"true":"false"
         }]
       }).then(callback)
@@ -424,7 +459,6 @@ name: "DownloadManager",
       this.$root=root
 
       this.path=this.$store.state.aria2cUri
-      this.downloadDir=this.$store.state.downloadDir
     }
   }
 

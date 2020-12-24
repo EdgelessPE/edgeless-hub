@@ -6,9 +6,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    //需要写入config的配置
+    stationUrl:'https://pineapple.edgeless.top/api/list/1',
+    theme:'light',
+    downloadDir:'D:\\ELStore',
+
+    //无需保存到config的数据
     cateData:[],
     allData:[],
-    versionCache:[],
+    versionCache:[], //缓存在线版本的查询结果
     tasks:[[],[],[],[]], //保存aria2c返回的任务状态
     fileList:[], //保存由U盘获取的文件列表
     updateList:[], //保存需要更新的插件列表
@@ -21,9 +27,6 @@ export default new Vuex.Store({
       numWaiting: "1",
       uploadSpeed: "0"
     },
-    stationUrl:'https://pineapple.edgeless.top/api/list/1',
-    theme:'light',
-    downloadDir:'D:',
     pluginPath:'',
     aria2cPath:"./core",
     aria2cUri:'http://localhost:6800/jsonrpc',
@@ -114,5 +117,13 @@ export default new Vuex.Store({
     },
     clearWaitingTask(state){
       state.copyWaitingPool=[]
+    },
+    changeDownloadDir(state,path){
+      state.downloadDir = path
+    },
+    updateByConfig(state,config){
+      state.downloadDir=config.downloadDir
+      state.theme=config.theme
+      state.stationUrl=config.stationUrl
     }
 }})

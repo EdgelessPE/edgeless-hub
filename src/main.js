@@ -9,6 +9,7 @@ import axios from 'axios'
 Vue.config.productionTip = false
 Vue.use(Antd)
 Vue.prototype.$axios=axios
+Vue.prototype.$electron = window.require('electron')
 
 new Vue({
   router,

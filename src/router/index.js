@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Cate from "@/views/Cate"
 import Down from "../views/Down.vue"
 import Search from "@/views/Search"
+import Setting from "@/views/Setting";
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path:'/search',
     name:'Search',
     component: Search
+  },
+  {
+    path:'/setting',
+    name:'Setting',
+    component: Setting
   }
 ]
 
