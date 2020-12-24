@@ -125,5 +125,11 @@ export default new Vuex.Store({
       state.downloadDir=config.downloadDir
       state.theme=config.theme
       state.stationUrl=config.stationUrl
+    },
+    changeTheme(state,theme){
+      state.theme=theme
+    },
+    changeMirror(state,val){
+      state.stationUrl=val
     }
 }})

@@ -63,7 +63,7 @@
         <a-col span="4">
           <a-select default-value="自动" @change="changeDisk" size="small">
             <a-select-option v-for="item in edgelessDisks" :value="item">
-              {{item}}
+              {{item+(item==='自动'?'':'：')}}
             </a-select-option>
           </a-select>
         </a-col>
@@ -117,6 +117,7 @@ export default {
       //检查输入目录是否存在
       if(DownloadManager.methods.exist(this.userInputDownloadDir)){
         this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
+        DownloadManager.methods.writeConfig()
         this.showWelcome=false
       }else{
         //尝试创建下载目录
@@ -126,6 +127,7 @@ export default {
             description:this.userInputDownloadDir
           })
           this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
+          DownloadManager.methods.writeConfig()
           this.showWelcome=false
         }else{
           //提示重新选择
@@ -444,6 +446,9 @@ export default {
     })
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
       this.userInputDownloadDir=arg[0]
+    })
+    this.$root.eventHub.$on('update-mirror',()=>{
+      this.refreshData()
     })
   },
   destroyed() {

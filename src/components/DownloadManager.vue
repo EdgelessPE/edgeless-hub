@@ -77,11 +77,12 @@ name: "DownloadManager",
     },
     readConfig(){
       let json={}
-      if(fs.existsSync('./elstore_config')){
-        json=fs.readFileSync('./elstore_config').toJSON()
+      if(fs.existsSync('./elstore_config.json')){
+        json=fs.readFileSync('./elstore_config.json').toString()
+        json=JSON.parse(json)
         if(fs.existsSync(json.downloadDir)) json['exist']=true
         else json['exist']=false
-        console.log(json)
+        //console.log(json)
       }else{
         json['exist']=false
       }
