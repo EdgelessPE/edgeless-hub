@@ -8,7 +8,7 @@
 
    <a-col span="3" v-if="searchBarCollapsed"/>
    <a-col span="1" v-if="searchBarCollapsed" @click="()=>{this.searchBarCollapsed=!this.searchBarCollapsed}">
-     <a-avatar icon="search"/>
+     <a-avatar icon="search" style="color: #108ee9; backgroundColor: #ffffff"/>
    </a-col>
 
    <a-col span="1"/>
@@ -24,7 +24,7 @@
       }"
        v-on:click="gotoDown"
        >
-         <a-avatar icon="download"/>
+         <a-avatar icon="download" style="color: #108ee9; backgroundColor: #ffffff"/>
        </a-badge>
      </a-popover>
    </a-col>

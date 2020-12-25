@@ -62,7 +62,7 @@
         </a-col>
         <a-col span="4">
           <a-select default-value="自动" @change="changeDisk" size="small">
-            <a-select-option v-for="item in edgelessDisks" :value="item">
+            <a-select-option v-for="item in edgelessDisks" :value="item" :key="item">
               {{item+(item==='自动'?'':'：')}}
             </a-select-option>
           </a-select>
@@ -108,7 +108,7 @@ export default {
       showWelcome:false,
       edgelessDisks:[],
       userInputDownloadDir:'',
-      ignoreFirstPlugOut:true, //忽略欢迎时设置自动检测Edgeless启动盘导致的“启动盘被弹出”提示
+      ignoreFirstPlugOut:false, //忽略欢迎时设置自动检测Edgeless启动盘导致的“启动盘被弹出”提示
       fileList:[]
       };
   },
@@ -227,6 +227,7 @@ export default {
           if(this.ignoreFirstPlugOut){
             this.ignoreFirstPlugOut=false
           }else{
+            this.$store.commit('setPluginPath','A')
             notification.open({
               message:'Edgeless启动盘被拔出',
               description:'请插入Edgeless启动盘以使用安装功能'
@@ -251,6 +252,9 @@ export default {
     },
     init(){
       //用于处理首次运行
+
+      //忽略首次拔出提示
+      this.ignoreFirstPlugOut=true
 
       //配置下载目录
       reg.list('HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders',(err,result)=>{
@@ -445,7 +449,7 @@ export default {
       })
     })
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
-      this.userInputDownloadDir=arg[0]
+      if(arg) this.userInputDownloadDir=arg[0]
     })
     this.$root.eventHub.$on('update-mirror',()=>{
       this.refreshData()

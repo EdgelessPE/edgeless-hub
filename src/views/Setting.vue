@@ -9,8 +9,8 @@
   </a-card>
   <br/>
   <a-card title="Edgeless启动盘盘符" style="width: 100%">
-    <a-select :default-value="$store.state.pluginPath.split(':')[0]" @change="changeDisk">
-      <a-select-option v-for="item in edgelessDisks" :value="item">
+    <a-select v-model="currentEdgelessDisk" @change="changeDisk">
+      <a-select-option v-for="(item,index) in edgelessDisks" :value="(index===0)?'A':item" :key="index">
         {{item+(item==='自动'?'':'：')}}
       </a-select-option>
     </a-select>
@@ -22,9 +22,9 @@
     <a-button @click="chooseDir">选择</a-button>
   </a-card>
   <br/>
-  <a-card title="切换镜像站" style="width: 100%">
+  <a-card title="镜像源" style="width: 100%">
     <a-select :default-value="mirrors[0].url" @change="changeMirror">
-      <a-select-option v-for="item in mirrors" :value="item.url">
+      <a-select-option v-for="item in mirrors" :value="item.url" :key="item.name">
         {{item.name}}
       </a-select-option>
     </a-select>
@@ -46,7 +46,8 @@ name: "Setting",
         name:'菠萝云',
         url:'https://pineapple.edgeless.top/api/list/1'
       }
-    ]
+    ],
+    currentEdgelessDisk:'A'
   }
   },
   methods:{
@@ -79,13 +80,14 @@ name: "Setting",
   created() {
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
-    //定时更新启动盘列表数据
     this.interval=setInterval(()=>{
+      //定时更新启动盘列表数据
       this.edgelessDisks=DownloadManager.methods.getUSBList()
+      this.currentEdgelessDisk=this.$store.state.pluginPath.split(':')[0]
     },1000)
     //设置事件监听
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
-      this.$store.commit('changeDownloadDir',arg[0])
+      if(arg) this.$store.commit('changeDownloadDir',arg[0])
     })
   },
   destroyed() {

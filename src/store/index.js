@@ -27,7 +27,7 @@ export default new Vuex.Store({
       numWaiting: "1",
       uploadSpeed: "0"
     },
-    pluginPath:'',
+    pluginPath:'A:\\Edgeless\\Resource',
     aria2cPath:"./core",
     aria2cUri:'http://localhost:6800/jsonrpc',
 

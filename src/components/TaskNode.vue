@@ -136,7 +136,7 @@ name: "TaskNode",
     deleteFile(item){
       //发送删除文件事件
       this.$root.eventHub.$emit('delete-file',{
-        'trueName':item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z',
+        'trueName':(item.softVer==='unknown')?item.softName+'.7z':item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z',
         'name':item.softName
       })
     },
