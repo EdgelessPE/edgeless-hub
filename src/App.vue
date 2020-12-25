@@ -184,6 +184,10 @@ export default {
                 'cateName':queryName,
                 'files':tmp_ret
               })
+              //如果所有数据已加载完毕，则发送数据加载完毕事件
+              if(this.$store.state.allData.length===this.$store.state.cateData.length){
+                this.$root.eventHub.$emit('all-data-loaded',{})
+              }
             })
       }
     },
@@ -296,6 +300,9 @@ export default {
     }
   },
   created() {
+    //设置标题
+    document.title='Edgeless Store'
+
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
