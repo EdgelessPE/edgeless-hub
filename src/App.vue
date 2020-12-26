@@ -30,6 +30,9 @@
             <span>设置</span>
             <router-link to="/setting"/>
           </a-menu-item>
+<!--          <a-menu-item key="/test">-->
+<!--            <a-button @click="test">测试</a-button>-->
+<!--          </a-menu-item>-->
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -184,6 +187,10 @@ export default {
                 'cateName':queryName,
                 'files':tmp_ret
               })
+              //如果所有数据已加载完毕，则发送数据加载完毕事件
+              if(this.$store.state.allData.length===this.$store.state.cateData.length){
+                this.$root.eventHub.$emit('all-data-loaded',{})
+              }
             })
       }
     },
@@ -250,6 +257,45 @@ export default {
         })
       }
     },
+    reg(){
+      cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {374DE290-123F-4565-9164-39C4925E467B}',(err,stdout,stderr)=>{
+        if(err||stderr){
+          notification.open({
+            message:'注册表读取失败',
+            description:(err)?err.message:stderr
+          })
+        }else{
+          //根据注册表设置默认下载路径
+          let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
+          if(DownloadManager.methods.exist(path)) {
+            this.$store.commit('changeDownloadDir', path + '\\ELStore')
+            //更新本组件上的userInputDownloadDir
+            this.userInputDownloadDir=this.$store.state.downloadDir
+          }
+        }
+      })
+      cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {7D83EE9B-2244-4E70-B1F5-5393042AF1E4}',(err,stdout,stderr)=>{
+        if(err||stderr){
+          notification.open({
+            message:'注册表读取失败',
+            description:(err)?err.message:stderr
+          })
+        }else{
+          //根据注册表设置默认下载路径
+          let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
+          if(DownloadManager.methods.exist(path)) {
+            this.$store.commit('changeDownloadDir', path + '\\ELStore')
+            //更新本组件上的userInputDownloadDir
+            this.userInputDownloadDir=this.$store.state.downloadDir
+          }
+        }
+      })
+    },
+    killAria2c(){
+      cp.exec('TASKKILL /F /IM aria2c.exe /T',(err,stdout,stderr)=>{
+        //console.log(stdout)
+      })
+    },
     init(){
       //用于处理首次运行
 
@@ -257,26 +303,30 @@ export default {
       this.ignoreFirstPlugOut=true
 
       //配置下载目录
-      reg.list('HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders',(err,result)=>{
-        if(err){
-          notification.open({
-            message:'注册表读取失败',
-            description:err.message
-          })
-        }else{
-          //根据注册表设置默认下载路径
-          let path
-          path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{374DE290-123F-4565-9164-39C4925E467B}'].value
-          if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
-          path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}'].value
-          if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
-
-          //更新本组件上的userInputDownloadDir
-          this.userInputDownloadDir=this.$store.state.downloadDir
-        }
-      })
+      this.reg()
+      // reg.list('HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders',(err,result)=>{
+      //   if(err){
+      //     notification.open({
+      //       message:'注册表读取失败',
+      //       description:err.message
+      //     })
+      //   }else{
+      //     //根据注册表设置默认下载路径
+      //     let path
+      //     path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{374DE290-123F-4565-9164-39C4925E467B}'].value
+      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
+      //     path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}'].value
+      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
+      //
+      //     //更新本组件上的userInputDownloadDir
+      //     this.userInputDownloadDir=this.$store.state.downloadDir
+      //   }
+      // })
       //展示欢迎界面
       this.showWelcome=true
+    },
+    test(){
+      this.$electron.ipcRenderer.send('test-event',{})
     }
   },
   components:{
@@ -296,6 +346,9 @@ export default {
     }
   },
   created() {
+    //设置标题
+    document.title='Edgeless Store'
+
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
@@ -456,7 +509,7 @@ export default {
     })
   },
   destroyed() {
-    this.aria2cProcess.exit(0)
+    this.killAria2c()
   }
 };
 </script>

@@ -32,7 +32,6 @@
 </template>
 
 <script>
-// v-if="downloadingTasks!==0"
 import TaskNodeNaive from "@/components/TaskNodeNaive";
 export default {
 name: "TopBar",
