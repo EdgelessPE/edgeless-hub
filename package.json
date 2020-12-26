@@ -1,11 +1,13 @@
 {
   "name": "edgeless-store",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "author":"Cno",
+  "description": "Edgeless 插件商店",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "electron:build": "vue-cli-service electron:build",
+    "electron:build": "vue-cli-service electron:build -c build-config.json",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"

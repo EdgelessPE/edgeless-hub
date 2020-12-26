@@ -1,0 +1,9 @@
+{
+  "appId": "top.edgeless.store",
+  "win": {
+    "icon": "./favicon.ico"
+  },
+  "directories": {
+    "app": "./dist_electron/bundled"
+  }
+}
