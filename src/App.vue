@@ -90,9 +90,7 @@
 import TopBar from "@/components/TopBar"
 import {notification} from 'ant-design-vue'
 import DownloadManager from "@/components/DownloadManager"
-//const electron =__non_webpack_require__("electron")
 const cp=window.require('child_process')
-const reg=window.require('regedit')
 
 export default {
   data() {

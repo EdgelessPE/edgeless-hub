@@ -42,7 +42,10 @@ name: "TopBar",
     onSearch(){
       this.searchBarCollapsed=true
       //console.log(this.$store.state.allData)
-      if(this.input!=='') window.location='/#/search?keyword='+this.input
+      if(this.input!=='') {
+        //window.location = '/#/search?keyword=' + this.input
+        this.$router.push('/search?keyword=' + this.input)
+      }
     },
     getPercent(ready,total){
       return Number(((ready/total)*100).toFixed(1))
@@ -64,7 +67,8 @@ name: "TopBar",
       else return name
     },
     gotoDown(){
-      window.location.href='/#/down'
+      this.$router.push('down')
+      //window.location.href='/#/down'
     }
   },
   data(){

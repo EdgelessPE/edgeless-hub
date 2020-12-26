@@ -16,7 +16,6 @@
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "json-rpc2": "^2.0.0",
-    "regedit": "^3.0.3",
     "urlencode": "^1.1.0",
     "vue": "^2.6.11",
     "vue-resource": "^1.5.1",
