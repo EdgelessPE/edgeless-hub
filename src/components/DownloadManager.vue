@@ -152,6 +152,17 @@ name: "DownloadManager",
       }
       return fs.existsSync(path)
     },
+    copy(src,dst,callback){
+      if(!this.exist(dst)) this.mkdir(dst)
+      fs.copyFile(src,dst,callback)
+    },
+    del(filePath){
+      console.log('delete'+filePath)
+      if(fs.existsSync(filePath)){
+        fs.unlinkSync(filePath)
+        return true
+      }else return false
+    },
     //返回合法的Edgeless启动盘数组，第一项的值为“自动”
     getUSBList(){
       let path,disks=['自动']
@@ -345,8 +356,26 @@ name: "DownloadManager",
               //将ventoy的下载信息放置到store内
               let info=this.$store.state.ventoyInfo
               info.task=item
-              if(method==="aria2.tellStopped") info.needTrace=false
+              if(method==="aria2.tellStopped") {
+                  info.needTrace = false
+              }
               this.$store.commit('changeVentoyInfo',info)
+            }else if(item.gid===this.$store.state.ventoyPluginInfo.gid){
+              //将ventoy插件的下载信息放置到store内
+              let info=this.$store.state.ventoyPluginInfo
+              info.task=item
+              if(method==="aria2.tellStopped") {
+                info.needTrace = false
+              }
+              this.$store.commit('changeVentoyPluginInfo',info)
+            }else if(item.gid===this.$store.state.isoInfo.gid){
+              //将iso的下载信息放置到store内
+              let info=this.$store.state.isoInfo
+              info.task=item
+              if(method==="aria2.tellStopped") {
+                info.needTrace = false
+              }
+              this.$store.commit('changeIsoInfo',info)
             }
           })
         }

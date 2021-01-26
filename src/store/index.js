@@ -36,7 +36,8 @@ export default new Vuex.Store({
     copyEndedPool:[],
     copyWaitingPool:[], //等待启动盘插入后进行复制的任务清单
 
-    //Ventoy相关信息
+    //下载制作相关文件信息
+    fileNames:['','',''],
     ventoyInfo:{
       needTrace:false,
       gid:"",
@@ -45,6 +46,30 @@ export default new Vuex.Store({
         "completedLength":0,
         "downloadSpeed":1
       }
+    },
+    ventoyPluginInfo:{
+      needTrace:false,
+      gid:"",
+      task:{
+        "totalLength":1,
+        "completedLength":0,
+        "downloadSpeed":1
+      }
+    },
+    isoInfo:{
+      needTrace:false,
+      gid:"",
+      task:{
+        "totalLength":1,
+        "completedLength":0,
+        "downloadSpeed":1
+      }
+    },
+    BurnStateStorage:{
+      startedTasks:[false,false,false],
+      finishedTasks:[false,false,false],
+      whenReadyUnzip:false,
+      showExecVentoyButton:false,
     }
   },
   mutations: {
@@ -145,5 +170,17 @@ export default new Vuex.Store({
     },
     changeVentoyInfo(state,payload){
       state.ventoyInfo=payload
+    },
+    changeVentoyPluginInfo(state,payload){
+      state.ventoyPluginInfo=payload
+    },
+    changeIsoInfo(state,payload){
+      state.isoInfo=payload
+    },
+    changeFileName(state,payload){
+      state.fileNames[payload.index]=payload.data
+    },
+    saveBurnState(state,payload){
+      state.BurnStateStorage=payload
     }
 }})

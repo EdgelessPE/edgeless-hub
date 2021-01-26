@@ -4,35 +4,64 @@
     <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
   </a-steps>
   <div class="steps-content" key="0" v-if="stepsInfo.step===0">
-    <a-result title="在开始之前，我们需要下载Ventoy的制作程序" subTitle="Ventoy是一个制作可启动U盘的开源工具，我们推荐使用Ventoy作为Edgeless启动盘引导解决方案">
+    <a-result title="在开始之前，我们需要下载一些必要组件" subTitle="请保证您的网络连接稳定可靠">
       <template #icon>
-        <img src="https://www.ventoy.net/favicon.ico"/>
+        <a-icon type="cloud-download" />
       </template>
       <template #extra>
-        <a-row v-if="$store.state.ventoyInfo.needTrace">
-          <a-col :span="6">
-            Ventoy {{ventoyInfo.version}}
-          </a-col>
-          <a-col :span="12">
-            <a-progress :percent="Number((($store.state.ventoyInfo.task.completedLength*100)/$store.state.ventoyInfo.task.totalLength).toFixed(1))" status="active" />
-          </a-col>
-          <a-col :span="6">
-            {{ getSizeString($store.state.ventoyInfo.task.downloadSpeed) + "/s" }}
-          </a-col>
-        </a-row>
-        <a-button v-else type="primary" v-on:click="startVentoyDownload" :loading="stepsInfo.stepText!=='开始'">
-          {{stepsInfo.stepText}}
-        </a-button>
+        <a-space direction="vertical" style="width: 100%">
+          <div v-if="startedTasks[0]||startedTasks[1]||startedTasks[2]">
+            <a-row>
+              <a-col :span="6">
+                Ventoy {{ventoyInfo.version}}
+              </a-col>
+              <a-col :span="12">
+                <a-progress :percent="Number((($store.state.ventoyInfo.task.completedLength*100)/$store.state.ventoyInfo.task.totalLength).toFixed(1))" status="active" />
+              </a-col>
+              <a-col :span="6">
+                {{ getSizeString($store.state.ventoyInfo.task.downloadSpeed) + "/s" }}
+              </a-col>
+            </a-row>
+
+            <a-row>
+              <a-col :span="6">
+                {{ventoyInfo.pluginName}}
+              </a-col>
+              <a-col :span="12">
+                <a-progress :percent="Number((($store.state.ventoyPluginInfo.task.completedLength*100)/$store.state.ventoyPluginInfo.task.totalLength).toFixed(1))" status="active" />
+              </a-col>
+              <a-col :span="6">
+                {{ getSizeString($store.state.ventoyPluginInfo.task.downloadSpeed) + "/s" }}
+              </a-col>
+            </a-row>
+
+          <a-row>
+            <a-col :span="6">
+              {{edgelessInfo.isoName}}
+            </a-col>
+            <a-col :span="12">
+              <a-progress :percent="Number((($store.state.isoInfo.task.completedLength*100)/$store.state.isoInfo.task.totalLength).toFixed(1))" status="active" />
+            </a-col>
+            <a-col :span="6">
+              {{ getSizeString($store.state.isoInfo.task.downloadSpeed) + "/s" }}
+            </a-col>
+          </a-row>
+        </div>
+
+          <a-button v-else type="primary" v-on:click="startNesDownload" :loading="stepsInfo.stepText!=='开始'">
+            {{stepsInfo.stepText}}
+          </a-button>
+        </a-space>
       </template>
     </a-result>
   </div>
   <div class="steps-content" key="1" v-else-if="stepsInfo.step===1">
-    <a-result title="请手动操作Ventoy安装程序，将Ventoy安装至您的U盘" subTitle="完成安装后关闭Ventoy安装程序并点击检查">
+    <a-result title="请手动操作Ventoy安装程序，将Ventoy安装至您的U盘" subTitle="完成安装后关闭Ventoy安装程序或点击检查">
       <template #icon>
         <a-icon type="bulb"/>
       </template>
       <template #extra v-if="!showExecVentoyButton">
-        <a-button type="primary" v-on:click="checkVentoyUDisk">
+        <a-button type="primary" v-on:click="checkVentoyUDisk" :loading="checkingVentoy">
           检查
         </a-button>
       </template>
@@ -40,7 +69,7 @@
         <a-space direction="vertical">
           <a-alert message="如果您将Ventoy安装到了移动硬盘，请点击再次检查按钮" type="info"/>
           <a-space>
-            <a-button type="primary" v-on:click="checkVentoyUDisk">
+            <a-button type="primary" v-on:click="checkVentoyUDisk" :loading="checkingVentoy">
               再次检查
             </a-button>
             <a-button v-on:click="execVentoy">
@@ -74,6 +103,7 @@
 <script>
 import {notification} from "ant-design-vue";
 import DownloadManager from "@/components/DownloadManager"
+
 const cp=window.require('child_process')
 
 export default {
@@ -81,6 +111,9 @@ name: "Burn",
   data(){
   return{
     interval:'',
+    checkingVentoy:false,
+    startedTasks:[false,false,false],
+    finishedTasks:[false,false,false],
     driveInfo:{
       'names':[],
       'labels':[],
@@ -92,18 +125,24 @@ name: "Burn",
       'gid':"",
       'url':"",
       'fileName':"",
-      'ventoyPath':""
+      'ventoyPath':"",
+      'pluginName':"ventoy_wimboot.img",
+      'finishUnzip':false
+    },
+    edgelessInfo:{
+      isoName:"Edgeless_Beta_3.1.0.iso",
+      url:""
     },
     whenReadyUnzip:false, //当检测到下载完成时发送unzip事件
     showExecVentoyButton:false,
     stepsInfo:{
       hasVentoy:false,
-      step:1,
+      step:0,
       stepText:"开始",
       step3percent:10,
       data:[
         {
-          title:"获取Ventoy",
+          title:"下载必要组件",
           content:"Edgeless Hub将自动获取最新版Ventoy启动盘制作程序"
         },
         {
@@ -119,9 +158,14 @@ name: "Burn",
   }
   },
   methods:{
+  startNesDownload(){
+    this.startButtonPressed=true
+    this.startVentoyDownload()
+    this.startPluginDownload()
+    this.startIsoDownload()
+  },
   startVentoyDownload(){
-    this.stepsInfo.stepText="请求中..."
-    //向码云api发送请求
+    //下载Ventoy，向码云api发送请求
     this.$axios.get('https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest')
     .then((res)=>{
       let urls=res.data.assets
@@ -150,9 +194,13 @@ name: "Burn",
               "downloadSpeed":1
           }
           })
+          this.$store.commit('changeFileName',{
+            index:0,
+            data:this.ventoyInfo.fileName
+          })
           //启动下载完成时unzip监测
           this.whenReadyUnzip=true
-          this.stepsInfo.stepText="下载中..."
+          this.startedTasks[0]=true
         })
       }
     })
@@ -163,6 +211,90 @@ name: "Burn",
       })
     })
   },
+    startPluginDownload(){
+      //下载插件，向下载站发送请求
+      this.$axios.get('https://pineapple.edgeless.top/api/list/1?path=Socket')
+          .then((res)=>{
+            let url=""
+            res.data.data.fileList.forEach((item)=>{
+              if(item.name===this.ventoyInfo.pluginName){
+                url=item.url
+              }
+            })
+            if(url===""){
+              notification.open({
+                message:'获取插件下载路径出错',
+                description:"服务器端不存在此文件"
+              })
+            }else{
+              DownloadManager.methods.aria2cDownloader(url,false,(res)=>{
+                this.$store.commit('changeVentoyPluginInfo',{
+                  needTrace:true,
+                  gid:res.data.result,
+                  task:{
+                    "totalLength":1,
+                    "completedLength":0,
+                    "downloadSpeed":1
+                  }
+                })
+                this.$store.commit('changeFileName',{
+                  index:1,
+                  data:this.ventoyInfo.pluginName
+                })
+                this.startedTasks[1]=true
+              })
+            }
+          })
+          .catch((err)=>{
+            notification.open({
+              message:'获取Ventoy插件信息失败',
+              description:err.message
+            })
+          })
+    },
+    startIsoDownload(){
+      //下载ISO，向下载站发送请求
+      this.$axios.get('https://pineapple.edgeless.top/api/list/1?path=Socket')
+      .then((res)=>{
+        let url=""
+        res.data.data.fileList.forEach((item)=>{
+          if(item.name.indexOf('Edgeless')===0){
+            url=item.url
+            this.edgelessInfo.url=item.url
+            this.edgelessInfo.isoName=item.name
+          }
+        })
+        if(url===""){
+          notification.open({
+            message:'获取ISO镜像下载路径出错',
+            description:"服务器端不存在此文件"
+          })
+        }else{
+          DownloadManager.methods.aria2cDownloader(url,false,(res)=>{
+            this.$store.commit('changeIsoInfo',{
+              needTrace:true,
+              gid:res.data.result,
+              task:{
+                "totalLength":1,
+                "completedLength":0,
+                "downloadSpeed":1
+              }
+            })
+            this.$store.commit('changeFileName',{
+              index:2,
+              data:this.edgelessInfo.isoName
+            })
+            this.startedTasks[2]=true
+          })
+        }
+      })
+          .catch((err)=>{
+            notification.open({
+              message:'获取ISO镜像信息失败',
+              description:err.message
+            })
+          })
+    },
     getSizeString(size){
       if(size<1024) return Number(size).toFixed(2)+"B"
       else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
@@ -174,17 +306,32 @@ name: "Burn",
         'cwd':this.ventoyInfo.ventoyPath
       },(res)=>{
         //Ventoy安装程序运行结束
-        console.log('finish ventoy')
+        this.checkVentoyUDisk()
       })
     },
     checkVentoyUDisk(){
+      this.checkingVentoy=true
       //用户点击了下一步，开始检查Ventoy启动盘是否就绪
       this.$electron.ipcRenderer.send('scanDisks-request','')
+    },
+    edgelessOperator(){
+      //解包ISO（678MB）
+      //复制boot.wim（612MB）
+      //复制Edgeless文件夹（74MB）
+      //复制ventoy_wimboot插件（3MB）
     }
   },
   created() {
+    //从store中恢复状态
+    let state=this.$store.state.BurnStateStorage
+    this.startedTasks=state.startedTasks
+    this.finishedTasks=state.finishedTasks
+    this.showExecVentoyButton=state.showExecVentoyButton
+    this.whenReadyUnzip=state.whenReadyUnzip
+
+    //配置定时任务
     this.interval=setInterval(()=> {
-      //当下载完成时unzip
+      //当下载Ventoy完成时unzip
       if(this.whenReadyUnzip){
         if(!this.$store.state.ventoyInfo.needTrace){
           //此时下载已经完成
@@ -196,7 +343,43 @@ name: "Burn",
           })
         }
       }
+      //更新下载完成状态，检查是确实完成了还是出错
+      if(this.startedTasks[0]){
+        this.finishedTasks[0]=!this.$store.state.ventoyInfo.needTrace
+        if(this.startedTasks[0]&&this.finishedTasks[0]&&this.$store.state.ventoyInfo.task.totalLength!==this.$store.state.ventoyInfo.task.completedLength){
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.fileName)
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.fileName+'.aria2')
+          this.startVentoyDownload()
+          this.finishedTasks[0]=false
         }
+      }
+      if(this.startedTasks[1]){
+        this.finishedTasks[1]=!this.$store.state.ventoyPluginInfo.needTrace
+        if(this.startedTasks[1]&&this.finishedTasks[1]&&this.$store.state.ventoyPluginInfo.task.totalLength!==this.$store.state.ventoyPluginInfo.task.completedLength){
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName)
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName+'.aria2')
+          this.startPluginDownload()
+          this.finishedTasks[1]=false
+        }
+      }
+      if(this.startedTasks[2]){
+        this.finishedTasks[2]=!this.$store.state.isoInfo.needTrace
+        if(this.startedTasks[2]&&this.finishedTasks[2]&&this.$store.state.isoInfo.task.completedLength!==this.$store.state.isoInfo.task.totalLength){
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.edgelessInfo.isoName)
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.edgelessInfo.isoName+'.aria2')
+          this.startIsoDownload()
+          this.finishedTasks[2]=false
+        }
+      }
+
+      //在step=0时判断是否需要翻页翻到step=1
+      if(this.stepsInfo.step===0&&this.finishedTasks[0]&&this.finishedTasks[1]&&this.finishedTasks[2]&&this.ventoyInfo.finishUnzip){
+        this.stepsInfo.step=1
+
+        //运行Ventoy安装程序
+        this.execVentoy()
+      }
+    }
     ,1000)
 
     this.$electron.ipcRenderer.on('scanDisks-reply',(event,res)=>{
@@ -222,23 +405,25 @@ name: "Burn",
       }else{
         this.stepsInfo.step=2
       }
+      this.checkingVentoy=false
     })
     this.$electron.ipcRenderer.on('unzip-reply',(event,res)=>{
       //获取文件夹名
       let tmp=this.ventoyInfo.fileName.split('-')
-      let ventoyPath=this.$store.state.downloadDir+'\\'+tmp[0]+'-'+tmp[1]
-
-      //切换步骤条
-      this.stepsInfo.step=1
-
-      //运行Ventoy安装程序
-      this.ventoyInfo.ventoyPath=ventoyPath
-      this.execVentoy()
+      this.ventoyInfo.ventoyPath=this.$store.state.downloadDir + '\\' + tmp[0] + '-' + tmp[1]
+      this.ventoyInfo.finishUnzip=true
     })
 
   },
   destroyed() {
     clearInterval(this.interval)
+    //保存当前状态到store
+    this.$store.commit('saveBurnState',{
+      startedTasks:this.startedTasks,
+      finishedTasks:this.finishedTasks,
+      whenReadyUnzip:this.whenReadyUnzip,
+      showExecVentoyButton:this.showExecVentoyButton,
+    })
   }
 }
 </script>
