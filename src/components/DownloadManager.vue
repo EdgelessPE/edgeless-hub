@@ -2,6 +2,7 @@
 import {notification} from 'ant-design-vue'
 const urlencode = require('urlencode')
 const fs=window.require('fs')
+const cp=window.require('child_process')
 const path = require('path')
 export default {
 name: "DownloadManager",
@@ -153,8 +154,10 @@ name: "DownloadManager",
       return fs.existsSync(path)
     },
     copy(src,dst,callback){
-      if(!this.exist(dst)) this.mkdir(dst)
       fs.copyFile(src,dst,callback)
+    },
+    copyDic(src,dst,callback){
+      cp.exec('xcopy /s /r /y '+src+' '+dst,callback)
     },
     del(filePath){
       console.log('delete'+filePath)

@@ -1,5 +1,7 @@
 <template>
 <div>
+  <a-button v-on:click="checkVentoyUDisk">检查</a-button>
+  <a-button v-on:click="edgelessOperator">操作</a-button>
   <a-steps :current="stepsInfo.step">
     <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
   </a-steps>
@@ -130,7 +132,8 @@ name: "Burn",
       'fileName':"",
       'ventoyPath':"",
       'pluginName':"ventoy_wimboot.img",
-      'finishUnzip':false
+      'finishUnzip':false,
+      'queryUrl':'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
     },
     edgelessInfo:{
       isoName:"Edgeless_Beta_3.1.0.iso",
@@ -162,14 +165,14 @@ name: "Burn",
   },
   methods:{
   startNesDownload(){
-    this.startButtonPressed=true
+    this.stepsInfo.stepText='请求中...'
     this.startVentoyDownload()
     this.startPluginDownload()
     this.startIsoDownload()
   },
   startVentoyDownload(){
     //下载Ventoy，向码云api发送请求
-    this.$axios.get('https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest')
+    this.$axios.get(this.queryUrl)
     .then((res)=>{
       let urls=res.data.assets
       //查找关键词windows，解析对应的url和version
@@ -319,35 +322,36 @@ name: "Burn",
     },
     edgelessOperator(){
       //复制ventoy_wimboot插件（3MB）
-      let startTime=Date.now()
-      DownloadManager.methods.copy(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName,this.selectedVentoyPart+':\\ventoy',()=>{
-        this.speed=(2780/(Date.now()-startTime))*0.8 //MB/s，估算的写入速度
-        this.stepsInfo.step3percent=0.2
-        console.log('speed='+this.speed.toFixed(1))
+      DownloadManager.methods.mkdir(this.selectedVentoyPart+':\\ventoy\\')
+      DownloadManager.methods.copy(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName,this.selectedVentoyPart+':\\ventoy\\'+this.ventoyInfo.pluginName,()=>{
+        this.speed=0.78 //MB/s，预设的UltraISO释放进度步长
+        this.stepsInfo.step3percent=3.4
 
         //启动动态进度条计时器
         this.progressInterval=setInterval(()=>{
           if(this.stepsInfo.step3percent<this.stageLimit){
-            this.stepsInfo.step3percent+=this.speed/1367
+            this.stepsInfo.step3percent+=this.speed
             this.stepsInfo.step3percent=Number(this.stepsInfo.step3percent.toFixed(1))
           }
         },1000)
 
         //解包ISO（678MB）
-        this.stageLimit=49.8
+        this.stageLimit=10
         this.unpackISO(()=>{
           this.stepsInfo.step3percent=this.stageLimit
-          startTime=Date.now()
-          //复制boot.wim（612MB）
-          this.stageLimit=94.6
-          DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\',()=>{
+          let startTime=Date.now()
+          //复制Edgeless文件夹（74MB） xcopy /s /r /y .\Edgeless %FI_Part%:\Edgeless\
+          this.stageLimit=15.4
+          DownloadManager.methods.copyDic(this.$store.state.downloadDir+'\\release\\Edgeless',this.selectedVentoyPart+':\\Edgeless\\',()=>{
             this.stepsInfo.step3percent=this.stageLimit
-            //重命名为Edgeless_xx_xx.wim
-            DownloadManager.methods.ren(this.selectedVentoyPart+':\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.')[0]+'.wim')
+            this.speed=(75776/(Date.now()-startTime))*0.8 //MB/s，估算的写入速度
+            console.log('speed='+this.speed.toFixed(1))
 
-            //复制Edgeless文件夹（74MB）
+            //复制boot.wim（612MB）
             this.stageLimit=99.9
-            DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\Edgeless',this.selectedVentoyPart+':\\',()=>{
+            DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\boot.wim',()=>{
+              //重命名为Edgeless_xx_xx.wim
+              DownloadManager.methods.ren(this.selectedVentoyPart+':\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.iso')[0]+'.wim')
               this.stepsInfo.step3percent=100
               console.log('finish step 3')
             })

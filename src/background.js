@@ -134,12 +134,13 @@ ipcMain.on('unzip-request',(event,payload)=>{
 })
 
 ipcMain.on('unpackISO-request',(event,payload)=>{
-  let node7z=require('node-7zip')
-  //console.log(payload)
-  node7z.unzip(payload.src,payload.dst)
-      .then((res)=>{
-        event.reply('unpackISO-reply',res)
-      })
+  if(fs.existsSync(payload.dst+'\\sources\\boot.wim')){
+    event.reply('unpackISO-reply','')
+  }else{
+    cp.exec('.\\core\\UltraISO\\UltraISO.exe -input '+payload.src+' -extract '+payload.dst+'',(res)=>{
+      event.reply('unpackISO-reply',res)
+    })
+  }
 })
 
 // Exit cleanly on request from parent process in development mode.
