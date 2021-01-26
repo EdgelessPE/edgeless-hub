@@ -126,10 +126,19 @@ ipcMain.on('scanDisks-request',(event,arg)=>{
 })
 ipcMain.on('unzip-request',(event,payload)=>{
   let node7z=require('node-7zip')
-  console.log(payload)
+  //console.log(payload)
   node7z.unzip(payload.zip,payload.path)
       .then((res)=>{
         event.reply('unzip-reply',res)
+      })
+})
+
+ipcMain.on('unpackISO-request',(event,payload)=>{
+  let node7z=require('node-7zip')
+  //console.log(payload)
+  node7z.unzip(payload.src,payload.dst)
+      .then((res)=>{
+        event.reply('unpackISO-reply',res)
       })
 })
 

@@ -111,6 +111,9 @@ name: "Burn",
   data(){
   return{
     interval:'',
+    progressInterval:"",
+    speed:0.1,
+    stageLimit:0.3,
     checkingVentoy:false,
     startedTasks:[false,false,false],
     finishedTasks:[false,false,false],
@@ -139,7 +142,7 @@ name: "Burn",
       hasVentoy:false,
       step:0,
       stepText:"开始",
-      step3percent:10,
+      step3percent:0,
       data:[
         {
           title:"下载必要组件",
@@ -315,10 +318,51 @@ name: "Burn",
       this.$electron.ipcRenderer.send('scanDisks-request','')
     },
     edgelessOperator(){
-      //解包ISO（678MB）
-      //复制boot.wim（612MB）
-      //复制Edgeless文件夹（74MB）
       //复制ventoy_wimboot插件（3MB）
+      let startTime=Date.now()
+      DownloadManager.methods.copy(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName,this.selectedVentoyPart+':\\ventoy',()=>{
+        this.speed=(2780/(Date.now()-startTime))*0.8 //MB/s，估算的写入速度
+        this.stepsInfo.step3percent=0.2
+        console.log('speed='+this.speed.toFixed(1))
+
+        //启动动态进度条计时器
+        this.progressInterval=setInterval(()=>{
+          if(this.stepsInfo.step3percent<this.stageLimit){
+            this.stepsInfo.step3percent+=this.speed/1367
+            this.stepsInfo.step3percent=Number(this.stepsInfo.step3percent.toFixed(1))
+          }
+        },1000)
+
+        //解包ISO（678MB）
+        this.stageLimit=49.8
+        this.unpackISO(()=>{
+          this.stepsInfo.step3percent=this.stageLimit
+          startTime=Date.now()
+          //复制boot.wim（612MB）
+          this.stageLimit=94.6
+          DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\',()=>{
+            this.stepsInfo.step3percent=this.stageLimit
+            //重命名为Edgeless_xx_xx.wim
+            DownloadManager.methods.ren(this.selectedVentoyPart+':\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.')[0]+'.wim')
+
+            //复制Edgeless文件夹（74MB）
+            this.stageLimit=99.9
+            DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\Edgeless',this.selectedVentoyPart+':\\',()=>{
+              this.stepsInfo.step3percent=100
+              console.log('finish step 3')
+            })
+          })
+        })
+      })
+    },
+    unpackISO(callback){
+      //注册完成事件监听
+      this.$electron.ipcRenderer.on('unpackISO-reply',callback)
+      //发送解包事件
+      this.$electron.ipcRenderer.send('unpackISO-request',{
+        src:this.$store.state.downloadDir+'\\'+this.edgelessInfo.isoName,
+        dst:this.$store.state.downloadDir+'\\release'
+      })
     }
   },
   created() {

@@ -163,6 +163,9 @@ name: "DownloadManager",
         return true
       }else return false
     },
+    ren(src,dst){
+      fs.renameSync(src,dst)
+    },
     //返回合法的Edgeless启动盘数组，第一项的值为“自动”
     getUSBList(){
       let path,disks=['自动']
