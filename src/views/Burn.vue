@@ -14,13 +14,13 @@
         <a-space direction="vertical" style="width: 100%">
           <div v-if="startedTasks[0]||startedTasks[1]||startedTasks[2]">
             <a-row>
-              <a-col :span="6">
+              <a-col :span="8">
                 Ventoy {{ventoyInfo.version}}
               </a-col>
               <a-col :span="12">
                 <a-progress :percent="Number((($store.state.ventoyInfo.task.completedLength*100)/$store.state.ventoyInfo.task.totalLength).toFixed(1))" status="active" />
               </a-col>
-              <a-col :span="6">
+              <a-col :span="4">
                 {{ getSizeString($store.state.ventoyInfo.task.downloadSpeed) + "/s" }}
               </a-col>
             </a-row>
@@ -322,38 +322,49 @@ name: "Burn",
     },
     edgelessOperator(){
       //复制ventoy_wimboot插件（3MB）
+      this.stepsInfo.stepText="复制ventoy_wimboot插件"
       DownloadManager.methods.mkdir(this.selectedVentoyPart+':\\ventoy\\')
       DownloadManager.methods.copy(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName,this.selectedVentoyPart+':\\ventoy\\'+this.ventoyInfo.pluginName,()=>{
-        this.speed=0.78 //MB/s，预设的UltraISO释放进度步长
+        this.speed=0.23 //MB/s，预设的UltraISO释放进度步长
         this.stepsInfo.step3percent=3.4
 
         //启动动态进度条计时器
         this.progressInterval=setInterval(()=>{
-          if(this.stepsInfo.step3percent<this.stageLimit){
+          if(this.stepsInfo.step3percent+this.speed<this.stageLimit){
             this.stepsInfo.step3percent+=this.speed
             this.stepsInfo.step3percent=Number(this.stepsInfo.step3percent.toFixed(1))
+          }else{
+            this.speed/=10
           }
         },1000)
 
         //解包ISO（678MB）
+        this.stepsInfo.stepText="解包镜像文件"
         this.stageLimit=10
         this.unpackISO(()=>{
           this.stepsInfo.step3percent=this.stageLimit
           let startTime=Date.now()
           //复制Edgeless文件夹（74MB） xcopy /s /r /y .\Edgeless %FI_Part%:\Edgeless\
+          this.stepsInfo.stepText="复制Edgeless文件夹"
           this.stageLimit=15.4
           DownloadManager.methods.copyDic(this.$store.state.downloadDir+'\\release\\Edgeless',this.selectedVentoyPart+':\\Edgeless\\',()=>{
             this.stepsInfo.step3percent=this.stageLimit
             this.speed=(75776/(Date.now()-startTime))*0.8 //MB/s，估算的写入速度
-            console.log('speed='+this.speed.toFixed(1))
+            console.log('speed1='+this.speed.toFixed(1))
+            this.speed=84.6*(this.speed/678)
+            console.log('speed2='+this.speed.toFixed(1))
 
             //复制boot.wim（612MB）
+            this.stepsInfo.stepText="复制boot.wim"
             this.stageLimit=99.9
             DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\boot.wim',()=>{
               //重命名为Edgeless_xx_xx.wim
+              this.stepsInfo.stepText="重命名wim文件"
               DownloadManager.methods.ren(this.selectedVentoyPart+':\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.iso')[0]+'.wim')
               this.stepsInfo.step3percent=100
+
               console.log('finish step 3')
+              this.stepsInfo.stepText="完成"
             })
           })
         })
