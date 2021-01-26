@@ -34,7 +34,18 @@ export default new Vuex.Store({
     //复制队列相关
     copyRunningPool:[],
     copyEndedPool:[],
-    copyWaitingPool:[] //等待启动盘插入后进行复制的任务清单
+    copyWaitingPool:[], //等待启动盘插入后进行复制的任务清单
+
+    //Ventoy相关信息
+    ventoyInfo:{
+      needTrace:false,
+      gid:"",
+      task:{
+        "totalLength":1,
+        "completedLength":0,
+        "downloadSpeed":1
+      }
+    }
   },
   mutations: {
     setCateData(state,d){
@@ -131,5 +142,8 @@ export default new Vuex.Store({
     },
     changeMirror(state,val){
       state.stationUrl=val
+    },
+    changeVentoyInfo(state,payload){
+      state.ventoyInfo=payload
     }
 }})

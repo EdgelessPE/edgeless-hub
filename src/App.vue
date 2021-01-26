@@ -30,6 +30,11 @@
             <span>设置</span>
             <router-link to="/setting"/>
           </a-menu-item>
+          <a-menu-item key="/burning">
+            <a-icon type="thunderbolt" />
+            <span>写入</span>
+            <router-link to="/burning"/>
+          </a-menu-item>
 <!--          <a-menu-item key="/test">-->
 <!--            <a-button @click="test">测试</a-button>-->
 <!--          </a-menu-item>-->

@@ -33,6 +33,11 @@ const routes = [
     path:'/setting',
     name:'Setting',
     component: Setting
+  },
+  {
+    path:'/burning',
+    name:'Burning',
+    component: ()=>import("@/views/Burn")
   }
 ]
 

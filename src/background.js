@@ -5,6 +5,8 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import cp from 'child_process'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const fs=require('fs')
+const edge=require("electron-edge-js")
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -89,8 +91,46 @@ ipcMain.on('openDirectoryDialog-request',(event,arg)=>{
   })
   event.reply('openDirectoryDialog-reply',data)
 })
-ipcMain.on('test-event',(event,arg)=>{
-  //killAria2c()
+ipcMain.on('scanDisks-request',(event,arg)=>{
+  const findUSB=edge.func(function () {/*
+  using System.IO;
+  async (input) => {
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            string[] results = new string[drives.Length];
+            int pointer = 0;
+            foreach (DriveInfo i in drives)
+            {
+                results[pointer] = i.Name + (i.DriveType == DriveType.Removable ? 1 : 0) + i.VolumeLabel;
+                //Console.WriteLine(results[pointer]);
+                pointer++;
+            }
+            return results;
+    }
+　　　　*/});
+  findUSB('0',function (error, result) {
+    if (error) throw error;
+    //解析为Json对象
+    let json={
+      'names':[],
+      'labels':[],
+      'removable':[]
+    }
+    result.forEach((i)=>{
+      json['names'].push(i.slice(0,1))
+      json['removable'].push(i.slice(3,4))
+      json['labels'].push(i.slice(4))
+    })
+    //console.log(json)
+    event.reply('scanDisks-reply',json)
+  });
+})
+ipcMain.on('unzip-request',(event,payload)=>{
+  let node7z=require('node-7zip')
+  console.log(payload)
+  node7z.unzip(payload.zip,payload.path)
+      .then((res)=>{
+        event.reply('unzip-reply',res)
+      })
 })
 
 // Exit cleanly on request from parent process in development mode.

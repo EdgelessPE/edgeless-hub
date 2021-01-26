@@ -341,6 +341,12 @@ name: "DownloadManager",
               tmp['name']=info.name
               tmp['info']=info.info
               selected.push(tmp)
+            }else if(item.gid===this.$store.state.ventoyInfo.gid){
+              //将ventoy的下载信息放置到store内
+              let info=this.$store.state.ventoyInfo
+              info.task=item
+              if(method==="aria2.tellStopped") info.needTrace=false
+              this.$store.commit('changeVentoyInfo',info)
             }
           })
         }
