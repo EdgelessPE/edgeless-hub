@@ -74,6 +74,16 @@ export default new Vuex.Store({
       speed:0.1,
       stageLimit:0.3,
       selectedVentoyPart:"",
+      ventoyInfo:{
+        'version':"",
+        'gid':"",
+        'url':"",
+        'fileName':"",
+        'ventoyPath':"",
+        'pluginName':"ventoy_wimboot.img",
+        'finishUnzip':false,
+        'queryUrl':'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
+      },
       stepsInfo:{
         hasVentoy:false,
         step:0,

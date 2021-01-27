@@ -405,6 +405,7 @@ name: "Burn",
     this.stageLimit=state.stageLimit
     this.stepsInfo=state.stepsInfo
     this.selectedVentoyPart=state.selectedVentoyPart
+    this.ventoyInfo=state.ventoyInfo
 
     //配置定时任务
     this.interval=setInterval(()=> {
@@ -509,7 +510,8 @@ name: "Burn",
       speed:this.speed,
       stageLimit:this.stageLimit,
       stepsInfo:this.stepsInfo,
-      selectedVentoyPart:this.selectedVentoyPart
+      selectedVentoyPart:this.selectedVentoyPart,
+      ventoyInfo:this.ventoyInfo
     })
   }
 }

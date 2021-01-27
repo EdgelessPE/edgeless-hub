@@ -167,7 +167,14 @@ name: "DownloadManager",
     del(filePath){
       console.log('delete'+filePath)
       if(fs.existsSync(filePath)){
-        fs.unlinkSync(filePath)
+        try{
+          fs.unlinkSync(filePath)
+        }catch (err){
+          notification.open({
+            message:'删除'+filePath+'失败',
+            description:err.message
+          })
+        }
         return true
       }else return false
     },
