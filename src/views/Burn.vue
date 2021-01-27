@@ -113,7 +113,6 @@
 <script>
 import {notification} from "ant-design-vue";
 import DownloadManager from "@/components/DownloadManager"
-
 const cp=window.require('child_process')
 
 export default {
@@ -463,6 +462,7 @@ name: "Burn",
     }
     ,1000)
 
+    //监听回复
     this.$electron.ipcRenderer.on('scanDisks-reply',(event,res)=>{
       //获取主进程发送的磁盘信息，开始检查Ventoy是否就绪
       this.driveInfo=res
@@ -496,7 +496,6 @@ name: "Burn",
       this.ventoyInfo.ventoyPath=this.$store.state.downloadDir + '\\Burn\\' + tmp[0] + '-' + tmp[1]
       this.ventoyInfo.finishUnzip=true
     })
-
   },
   destroyed() {
     clearInterval(this.interval)
@@ -513,6 +512,17 @@ name: "Burn",
       selectedVentoyPart:this.selectedVentoyPart,
       ventoyInfo:this.ventoyInfo
     })
+  },
+  beforeRouteLeave (to, from, next){
+    //当step=2时阻止用户切换页面
+    if(this.stepsInfo.step===2){
+      notification.open({
+        message:'现在不能离开当前页面！',
+        description:"请耐心等待部署任务完成"
+      })
+    }else{
+      next()
+    }
   }
 }
 </script>
