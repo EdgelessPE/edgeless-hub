@@ -81,7 +81,7 @@ export default new Vuex.Store({
         step3percent:0,
         data:[
           {
-            title:"下载必要组件",
+            title:"下载依赖文件",
             content:"Edgeless Hub将自动获取最新版Ventoy启动盘制作程序"
           },
           {

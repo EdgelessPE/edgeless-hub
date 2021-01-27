@@ -1,6 +1,6 @@
 {
-  "name": "Edgeless Hub",
-  "version": "1.0.0",
+  "name": "edgeless-hub",
+  "version": "1.1.0",
   "private": true,
   "author": "Cno",
   "description": "Edgeless 官方客户端",
