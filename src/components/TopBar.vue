@@ -3,7 +3,7 @@
    <a-col span="19"/>
 
    <a-col span="4" v-if="!searchBarCollapsed">
-     <a-input-search v-model="input" placeholder="搜索" class="search-bar" @search="onSearch" />
+     <a-input-search v-model="input" placeholder="搜索插件" class="search-bar" @search="onSearch" />
    </a-col>
 
    <a-col span="3" v-if="searchBarCollapsed"/>

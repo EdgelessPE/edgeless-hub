@@ -4,7 +4,7 @@
     <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
   </a-steps>
   <div class="steps-content" key="0" v-if="stepsInfo.step===0">
-    <a-result title="在开始之前，我们需要下载一些必要组件" subTitle="请保证您的网络连接稳定可靠">
+    <a-result title="在开始之前，我们需要下载一些必要的依赖文件" subTitle="请保证您的网络连接稳定可靠">
       <template #icon>
         <a-icon type="cloud-download" />
       </template>
@@ -157,7 +157,7 @@ name: "Burn",
       step3percent:0,
       data:[
         {
-          title:"下载必要组件",
+          title:"下载依赖文件",
           content:"Edgeless Hub将自动获取最新版Ventoy启动盘制作程序"
         },
         {
@@ -404,6 +404,7 @@ name: "Burn",
     this.speed=state.speed
     this.stageLimit=state.stageLimit
     this.stepsInfo=state.stepsInfo
+    this.selectedVentoyPart=state.selectedVentoyPart
 
     //配置定时任务
     this.interval=setInterval(()=> {
@@ -507,7 +508,8 @@ name: "Burn",
       showProgress:this.showProgress,
       speed:this.speed,
       stageLimit:this.stageLimit,
-      stepsInfo:this.stepsInfo
+      stepsInfo:this.stepsInfo,
+      selectedVentoyPart:this.selectedVentoyPart
     })
   }
 }

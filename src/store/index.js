@@ -73,6 +73,7 @@ export default new Vuex.Store({
       showProgress:false,
       speed:0.1,
       stageLimit:0.3,
+      selectedVentoyPart:"",
       stepsInfo:{
         hasVentoy:false,
         step:0,
