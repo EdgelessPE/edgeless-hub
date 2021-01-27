@@ -70,6 +70,29 @@ export default new Vuex.Store({
       finishedTasks:[false,false,false],
       whenReadyUnzip:false,
       showExecVentoyButton:false,
+      showProgress:false,
+      speed:0.1,
+      stageLimit:0.3,
+      stepsInfo:{
+        hasVentoy:false,
+        step:0,
+        stepText:"开始",
+        step3percent:0,
+        data:[
+          {
+            title:"下载必要组件",
+            content:"Edgeless Hub将自动获取最新版Ventoy启动盘制作程序"
+          },
+          {
+            title: "安装Ventoy",
+            content:"手动点击，将Ventoy安装至您的U盘"
+          },
+          {
+            title: "部署Edgeless",
+            content: "Edgeless Hub会自动处理启动盘以完成Edgeless的安装"
+          }
+        ]
+      },
     }
   },
   mutations: {

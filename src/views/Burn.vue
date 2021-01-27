@@ -1,7 +1,5 @@
 <template>
 <div>
-  <a-button v-on:click="checkVentoyUDisk">检查</a-button>
-  <a-button v-on:click="edgelessOperator">操作</a-button>
   <a-steps :current="stepsInfo.step">
     <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
   </a-steps>
@@ -12,7 +10,7 @@
       </template>
       <template #extra>
         <a-space direction="vertical" style="width: 100%">
-          <div v-if="startedTasks[0]||startedTasks[1]||startedTasks[2]">
+          <div v-if="showProgress">
             <a-row>
               <a-col :span="8">
                 Ventoy {{ventoyInfo.version}}
@@ -26,25 +24,25 @@
             </a-row>
 
             <a-row>
-              <a-col :span="6">
+              <a-col :span="8">
                 {{ventoyInfo.pluginName}}
               </a-col>
               <a-col :span="12">
                 <a-progress :percent="Number((($store.state.ventoyPluginInfo.task.completedLength*100)/$store.state.ventoyPluginInfo.task.totalLength).toFixed(1))" status="active" />
               </a-col>
-              <a-col :span="6">
+              <a-col :span="4">
                 {{ getSizeString($store.state.ventoyPluginInfo.task.downloadSpeed) + "/s" }}
               </a-col>
             </a-row>
 
           <a-row>
-            <a-col :span="6">
+            <a-col :span="8">
               {{edgelessInfo.isoName}}
             </a-col>
             <a-col :span="12">
               <a-progress :percent="Number((($store.state.isoInfo.task.completedLength*100)/$store.state.isoInfo.task.totalLength).toFixed(1))" status="active" />
             </a-col>
-            <a-col :span="6">
+            <a-col :span="4">
               {{ getSizeString($store.state.isoInfo.task.downloadSpeed) + "/s" }}
             </a-col>
           </a-row>
@@ -119,6 +117,7 @@ name: "Burn",
     checkingVentoy:false,
     startedTasks:[false,false,false],
     finishedTasks:[false,false,false],
+    showProgress:false,
     driveInfo:{
       'names':[],
       'labels':[],
@@ -172,7 +171,7 @@ name: "Burn",
   },
   startVentoyDownload(){
     //下载Ventoy，向码云api发送请求
-    this.$axios.get(this.queryUrl)
+    this.$axios.get(this.ventoyInfo.queryUrl)
     .then((res)=>{
       let urls=res.data.assets
       //查找关键词windows，解析对应的url和version
@@ -190,7 +189,7 @@ name: "Burn",
         })
       }else{
         //发送下载请求
-        DownloadManager.methods.aria2cDownloader(this.ventoyInfo.url,false,(res)=>{
+        DownloadManager.methods.aria2cDownloaderDir(this.ventoyInfo.url,false,this.$store.state.downloadDir+'\\Burn',(res)=>{
           this.$store.commit('changeVentoyInfo',{
             needTrace:true,
             gid:res.data.result,
@@ -233,7 +232,7 @@ name: "Burn",
                 description:"服务器端不存在此文件"
               })
             }else{
-              DownloadManager.methods.aria2cDownloader(url,false,(res)=>{
+              DownloadManager.methods.aria2cDownloaderDir(url,false,this.$store.state.downloadDir+'\\Burn',(res)=>{
                 this.$store.commit('changeVentoyPluginInfo',{
                   needTrace:true,
                   gid:res.data.result,
@@ -276,7 +275,7 @@ name: "Burn",
             description:"服务器端不存在此文件"
           })
         }else{
-          DownloadManager.methods.aria2cDownloader(url,false,(res)=>{
+          DownloadManager.methods.aria2cDownloaderDir(url,false,this.$store.state.downloadDir+'\\Burn',(res)=>{
             this.$store.commit('changeIsoInfo',{
               needTrace:true,
               gid:res.data.result,
@@ -324,7 +323,7 @@ name: "Burn",
       //复制ventoy_wimboot插件（3MB）
       this.stepsInfo.stepText="复制ventoy_wimboot插件"
       DownloadManager.methods.mkdir(this.selectedVentoyPart+':\\ventoy\\')
-      DownloadManager.methods.copy(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName,this.selectedVentoyPart+':\\ventoy\\'+this.ventoyInfo.pluginName,()=>{
+      DownloadManager.methods.copy(this.$store.state.downloadDir+'\\Burn\\'+this.ventoyInfo.pluginName,this.selectedVentoyPart+':\\ventoy\\'+this.ventoyInfo.pluginName,true,()=>{
         this.speed=0.23 //MB/s，预设的UltraISO释放进度步长
         this.stepsInfo.step3percent=3.4
 
@@ -347,7 +346,7 @@ name: "Burn",
           //复制Edgeless文件夹（74MB） xcopy /s /r /y .\Edgeless %FI_Part%:\Edgeless\
           this.stepsInfo.stepText="复制Edgeless文件夹"
           this.stageLimit=15.4
-          DownloadManager.methods.copyDic(this.$store.state.downloadDir+'\\release\\Edgeless',this.selectedVentoyPart+':\\Edgeless\\',()=>{
+          DownloadManager.methods.copyDic(this.$store.state.downloadDir+'\\Burn\\release\\Edgeless',this.selectedVentoyPart+':\\Edgeless\\',true,()=>{
             this.stepsInfo.step3percent=this.stageLimit
             this.speed=(75776/(Date.now()-startTime))*0.8 //MB/s，估算的写入速度
             console.log('speed1='+this.speed.toFixed(1))
@@ -357,14 +356,12 @@ name: "Burn",
             //复制boot.wim（612MB）
             this.stepsInfo.stepText="复制boot.wim"
             this.stageLimit=99.9
-            DownloadManager.methods.copy(this.$store.state.downloadDir+'\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\boot.wim',()=>{
-              //重命名为Edgeless_xx_xx.wim
-              this.stepsInfo.stepText="重命名wim文件"
-              DownloadManager.methods.ren(this.selectedVentoyPart+':\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.iso')[0]+'.wim')
-              this.stepsInfo.step3percent=100
+            DownloadManager.methods.copy(this.$store.state.downloadDir+'\\Burn\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.iso')[0]+'.wim',true,()=>{
+            this.stepsInfo.step3percent=100
 
               console.log('finish step 3')
               this.stepsInfo.stepText="完成"
+              clearInterval(this.progressInterval)
             })
           })
         })
@@ -375,30 +372,37 @@ name: "Burn",
       this.$electron.ipcRenderer.on('unpackISO-reply',callback)
       //发送解包事件
       this.$electron.ipcRenderer.send('unpackISO-request',{
-        src:this.$store.state.downloadDir+'\\'+this.edgelessInfo.isoName,
-        dst:this.$store.state.downloadDir+'\\release'
+        src:this.$store.state.downloadDir+'\\Burn\\'+this.edgelessInfo.isoName,
+        dst:this.$store.state.downloadDir+'\\Burn\\release'
       })
     }
   },
   created() {
+    //在下载目录创建Burn文件夹
+    DownloadManager.methods.mkdir(this.$store.state.downloadDir+'\\Burn')
+
     //从store中恢复状态
     let state=this.$store.state.BurnStateStorage
     this.startedTasks=state.startedTasks
     this.finishedTasks=state.finishedTasks
     this.showExecVentoyButton=state.showExecVentoyButton
     this.whenReadyUnzip=state.whenReadyUnzip
+    this.showProgress=state.showProgress
+    this.speed=state.speed
+    this.stageLimit=state.stageLimit
+    this.stepsInfo=state.stepsInfo
 
     //配置定时任务
     this.interval=setInterval(()=> {
       //当下载Ventoy完成时unzip
       if(this.whenReadyUnzip){
-        if(!this.$store.state.ventoyInfo.needTrace){
+        if(!this.$store.state.ventoyInfo.needTrace&&this.$store.state.ventoyInfo.task.completedLength===this.$store.state.ventoyInfo.task.totalLength){
           //此时下载已经完成
           this.whenReadyUnzip=false
           this.stepsInfo.stepText="解压中..."
           this.$electron.ipcRenderer.send('unzip-request',{
-            'zip':this.$store.state.downloadDir+'\\'+this.ventoyInfo.fileName,
-            'path':this.$store.state.downloadDir
+            'zip':this.$store.state.downloadDir+'\\Burn\\*.zip',
+            'path':this.$store.state.downloadDir+'\\Burn'
           })
         }
       }
@@ -406,8 +410,8 @@ name: "Burn",
       if(this.startedTasks[0]){
         this.finishedTasks[0]=!this.$store.state.ventoyInfo.needTrace
         if(this.startedTasks[0]&&this.finishedTasks[0]&&this.$store.state.ventoyInfo.task.totalLength!==this.$store.state.ventoyInfo.task.completedLength){
-          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.fileName)
-          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.fileName+'.aria2')
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\Burn\\'+this.ventoyInfo.fileName)
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\Burn\\'+this.ventoyInfo.fileName+'.aria2')
           this.startVentoyDownload()
           this.finishedTasks[0]=false
         }
@@ -415,8 +419,8 @@ name: "Burn",
       if(this.startedTasks[1]){
         this.finishedTasks[1]=!this.$store.state.ventoyPluginInfo.needTrace
         if(this.startedTasks[1]&&this.finishedTasks[1]&&this.$store.state.ventoyPluginInfo.task.totalLength!==this.$store.state.ventoyPluginInfo.task.completedLength){
-          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName)
-          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.ventoyInfo.pluginName+'.aria2')
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\Burn\\'+this.ventoyInfo.pluginName)
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\Burn\\'+this.ventoyInfo.pluginName+'.aria2')
           this.startPluginDownload()
           this.finishedTasks[1]=false
         }
@@ -424,12 +428,15 @@ name: "Burn",
       if(this.startedTasks[2]){
         this.finishedTasks[2]=!this.$store.state.isoInfo.needTrace
         if(this.startedTasks[2]&&this.finishedTasks[2]&&this.$store.state.isoInfo.task.completedLength!==this.$store.state.isoInfo.task.totalLength){
-          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.edgelessInfo.isoName)
-          DownloadManager.methods.del(this.$store.state.downloadDir+'\\'+this.edgelessInfo.isoName+'.aria2')
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\Burn\\'+this.edgelessInfo.isoName)
+          DownloadManager.methods.del(this.$store.state.downloadDir+'\\Burn\\'+this.edgelessInfo.isoName+'.aria2')
           this.startIsoDownload()
           this.finishedTasks[2]=false
         }
       }
+
+      //计算是否需要显示下载进度条
+      this.showProgress=this.startedTasks[0]||this.startedTasks[1]||this.startedTasks[2]
 
       //在step=0时判断是否需要翻页翻到step=1
       if(this.stepsInfo.step===0&&this.finishedTasks[0]&&this.finishedTasks[1]&&this.finishedTasks[2]&&this.ventoyInfo.finishUnzip){
@@ -462,14 +469,16 @@ name: "Burn",
           description:"请确保已经完成Ventoy的安装，再点击检查按钮！"
         })
       }else{
+        //翻页并执行step3
         this.stepsInfo.step=2
+        this.edgelessOperator()
       }
       this.checkingVentoy=false
     })
     this.$electron.ipcRenderer.on('unzip-reply',(event,res)=>{
       //获取文件夹名
       let tmp=this.ventoyInfo.fileName.split('-')
-      this.ventoyInfo.ventoyPath=this.$store.state.downloadDir + '\\' + tmp[0] + '-' + tmp[1]
+      this.ventoyInfo.ventoyPath=this.$store.state.downloadDir + '\\Burn\\' + tmp[0] + '-' + tmp[1]
       this.ventoyInfo.finishUnzip=true
     })
 
@@ -482,6 +491,10 @@ name: "Burn",
       finishedTasks:this.finishedTasks,
       whenReadyUnzip:this.whenReadyUnzip,
       showExecVentoyButton:this.showExecVentoyButton,
+      showProgress:this.showProgress,
+      speed:this.speed,
+      stageLimit:this.stageLimit,
+      stepsInfo:this.stepsInfo
     })
   }
 }

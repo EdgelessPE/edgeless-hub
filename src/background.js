@@ -137,7 +137,9 @@ ipcMain.on('unpackISO-request',(event,payload)=>{
   if(fs.existsSync(payload.dst+'\\sources\\boot.wim')){
     event.reply('unpackISO-reply','')
   }else{
-    cp.exec('.\\core\\UltraISO\\UltraISO.exe -input '+payload.src+' -extract '+payload.dst+'',(res)=>{
+    cp.exec('.\\core\\UltraISO\\UltraISO.exe -input '+payload.src+' -extract '+payload.dst+'',{
+      windowsHide:true
+    },(res)=>{
       event.reply('unpackISO-reply',res)
     })
   }

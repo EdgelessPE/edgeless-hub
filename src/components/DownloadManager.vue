@@ -153,10 +153,15 @@ name: "DownloadManager",
       }
       return fs.existsSync(path)
     },
-    copy(src,dst,callback){
+    copy(src,dst,overwrite,callback){
+      if(overwrite&&this.exist(dst)) this.del(dst)
       fs.copyFile(src,dst,callback)
     },
-    copyDic(src,dst,callback){
+    copyDic(src,dst,overwrite,callback){
+      if(overwrite&&this.exist(dst)){
+        cp.execSync('del /f /s /q '+dst)
+        cp.execSync('rd /s /q '+dst)
+      }
       cp.exec('xcopy /s /r /y '+src+' '+dst,callback)
     },
     del(filePath){
@@ -483,6 +488,23 @@ name: "DownloadManager",
         'method':'aria2.addUri',
         'params':[[address],{
           'dir':this.$store.state.downloadDir,
+          'allow-overwrite': overwrite?"true":"false"
+        }]
+      }).then(callback)
+          .catch((err)=>{
+            notification.open({
+              message:'Aria2cDownloader',
+              description:"aria2c通讯错误："+err.message
+            })
+          })
+    },
+    aria2cDownloaderDir(address,overwrite,dir,callback){
+      this.$axios.post(this.path,{
+        'id':this.generateID(),
+        'jsonrpc':"2.0",
+        'method':'aria2.addUri',
+        'params':[[address],{
+          'dir':dir,
           'allow-overwrite': overwrite?"true":"false"
         }]
       }).then(callback)
