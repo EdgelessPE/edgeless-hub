@@ -27,16 +27,16 @@ export default {
         }else{
           //从store获取历史页面
           document.getElementById("webview").loadURL(this.$store.state.wikiUrl)
+          //配置定时器，周期性保存历史记录
+          this.interval=setInterval(()=>{
+            this.$store.commit('saveWikiUrl',document.getElementById("webview").getURL())
+          },1000)
         }
       }
     })
-    //周期性保存历史记录
-    this.interval=setInterval(()=>{
-      this.$store.commit('saveWikiUrl',document.getElementById("webview").getURL())
-    },1000)
   },
   destroyed() {
-    clearInterval(this.interval)
+    if(this.interval!=="") clearInterval(this.interval)
   }
 }
 </script>

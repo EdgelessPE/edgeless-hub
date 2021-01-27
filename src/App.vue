@@ -11,8 +11,13 @@
             <span>首页</span>
             <router-link to="/"/>
           </a-menu-item>
+          <a-menu-item key="/burning">
+            <a-icon type="thunderbolt" />
+            <span>写入</span>
+            <router-link to="/burning"/>
+          </a-menu-item>
           <a-sub-menu key="/cate">
-            <template slot="title"> <a-icon type="unordered-list" /><span>分类</span> </template>
+            <template slot="title"> <a-icon type="appstore" /><span>插件</span> </template>
             <template v-for="cateItem in cateData">
               <a-menu-item :key="cateItem.name">
                 {{cateItem.name}}
@@ -21,28 +26,20 @@
             </template>
           </a-sub-menu>
           <a-menu-item key="/down">
-            <a-icon type="appstore" />
+            <a-icon type="unordered-list" />
             <span>任务{{(downloadingTasks===0)?'':('（'+downloadingTasks+'）')}}</span>
             <router-link to="/down"/>
-          </a-menu-item>
-          <a-menu-item key="/setting">
-            <a-icon type="setting" />
-            <span>设置</span>
-            <router-link to="/setting"/>
-          </a-menu-item>
-          <a-menu-item key="/burning">
-            <a-icon type="thunderbolt" />
-            <span>写入</span>
-            <router-link to="/burning"/>
           </a-menu-item>
           <a-menu-item key="/wiki">
             <a-icon type="book" />
             <span>文档</span>
             <router-link to="/wiki"/>
           </a-menu-item>
-<!--          <a-menu-item key="/test">-->
-<!--            <a-button @click="test">测试</a-button>-->
-<!--          </a-menu-item>-->
+          <a-menu-item key="/setting">
+            <a-icon type="setting" />
+            <span>设置</span>
+            <router-link to="/setting"/>
+          </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -60,14 +57,14 @@
       {{'您确认要将'+delConfirmData.name+'从启动盘中删除吗？'}}
     </a-modal>
     <a-drawer
-        title="欢迎来到Edgeless Store"
+        title="欢迎来到Edgeless Hub"
         placement="top"
         :visible="showWelcome"
         :closable="false"
         @close="finishWelcome"
     >
       <br/>
-      <p>看起来这是您首次使用Edgeless Store，您可以在此更改一些默认配置</p>
+      <p>看起来这是您首次使用Edgeless Hub，您可以在此更改一些默认配置</p>
       <br/><br/>
       <a-row>
         <a-col span="2">
@@ -355,7 +352,7 @@ export default {
   },
   created() {
     //设置标题
-    document.title='Edgeless Store'
+    document.title='Edgeless Hub'
 
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
