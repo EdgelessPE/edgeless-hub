@@ -1,0 +1,6 @@
+D:\Desktop\edgeless-store\DiskScanner\bin\Debug\DiskScanner.dll
+D:\Desktop\edgeless-store\DiskScanner\bin\Debug\DiskScanner.pdb
+D:\Desktop\edgeless-store\DiskScanner\obj\Debug\DiskScanner.csprojAssemblyReference.cache
+D:\Desktop\edgeless-store\DiskScanner\obj\Debug\DiskScanner.csproj.CoreCompileInputs.cache
+D:\Desktop\edgeless-store\DiskScanner\obj\Debug\DiskScanner.dll
+D:\Desktop\edgeless-store\DiskScanner\obj\Debug\DiskScanner.pdb

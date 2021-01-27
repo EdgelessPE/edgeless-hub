@@ -1,9 +1,9 @@
 {
-  "name": "edgeless-store",
+  "name": "Edgeless Hub",
   "version": "1.0.0",
   "private": true,
   "author": "Cno",
-  "description": "Edgeless 插件商店",
+  "description": "Edgeless 官方客户端",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

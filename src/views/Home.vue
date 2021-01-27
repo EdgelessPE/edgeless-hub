@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import CateButton from "@/components/CateButton";
+import CateButton from "@/components/CateButton"
 export default {
   name: 'Home',
   components:{
@@ -71,7 +71,7 @@ export default {
       else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"
-    }
+    },
   },
   created() {
     //所有插件列表载入完成时生成推荐列表
