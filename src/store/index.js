@@ -93,7 +93,8 @@ export default new Vuex.Store({
           }
         ]
       },
-    }
+    },
+    wikiUrl:"https://wiki.edgeless.top/v2"
   },
   mutations: {
     setCateData(state,d){
@@ -205,5 +206,8 @@ export default new Vuex.Store({
     },
     saveBurnState(state,payload){
       state.BurnStateStorage=payload
+    },
+    saveWikiUrl(state,url){
+      state.wikiUrl=url
     }
 }})

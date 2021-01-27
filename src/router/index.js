@@ -38,6 +38,11 @@ const routes = [
     path:'/burning',
     name:'Burning',
     component: ()=>import("@/views/Burn")
+  },
+  {
+    path:'/wiki',
+    name:'Wiki',
+    component: ()=>import("@/views/Wiki")
   }
 ]
 

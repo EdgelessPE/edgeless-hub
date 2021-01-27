@@ -35,6 +35,11 @@
             <span>写入</span>
             <router-link to="/burning"/>
           </a-menu-item>
+          <a-menu-item key="/wiki">
+            <a-icon type="book" />
+            <span>文档</span>
+            <router-link to="/wiki"/>
+          </a-menu-item>
 <!--          <a-menu-item key="/test">-->
 <!--            <a-button @click="test">测试</a-button>-->
 <!--          </a-menu-item>-->

@@ -97,6 +97,16 @@
       </template>
     </a-result>
   </div>
+  <div class="steps-content" key="3" v-else-if="stepsInfo.step===3">
+    <a-result
+        status="success"
+        title="您的Edgeless启动盘已经就绪！"
+        sub-title="重启后选择从U盘启动即可进入Edgeless"
+    >
+      <a-button slot="extra" v-on:click="gotoWiki">如何启动</a-button>
+    </a-result>
+  </div>
+
 </div>
 </template>
 
@@ -359,9 +369,9 @@ name: "Burn",
             DownloadManager.methods.copy(this.$store.state.downloadDir+'\\Burn\\release\\sources\\boot.wim',this.selectedVentoyPart+':\\'+this.edgelessInfo.isoName.split('.iso')[0]+'.wim',true,()=>{
             this.stepsInfo.step3percent=100
 
-              console.log('finish step 3')
               this.stepsInfo.stepText="完成"
               clearInterval(this.progressInterval)
+              this.stepsInfo.step=3
             })
           })
         })
@@ -375,6 +385,9 @@ name: "Burn",
         src:this.$store.state.downloadDir+'\\Burn\\'+this.edgelessInfo.isoName,
         dst:this.$store.state.downloadDir+'\\Burn\\release'
       })
+    },
+    gotoWiki(){
+      this.$router.push('/wiki?location=https://home.edgeless.top/guide')
     }
   },
   created() {
