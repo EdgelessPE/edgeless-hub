@@ -1,6 +1,6 @@
 import StationInterface from "@/interface/StationInterface"
 //实例化
-const sObject=StationInterface('菠萝云-主线')
+const sObject=StationInterface('菠萝云-备用')
 //内部存储变量
 let cateData=[],fileListPool={},url='https://pineapple.edgeless.top/api/list/1',counter=0,inited=false
 //实现接口
@@ -27,9 +27,10 @@ sObject.init=function (axios,callback) {
                 axios.get(url+'?path=/插件包/'+queryName)
                     .then((response)=>{
                         let tmp_ret=[]
-                        //筛选.7z文件
+                        //筛选.7z文件并修改其下载地址
                         response.data.data.forEach((item)=>{
                             if(item.name.indexOf('.7z')!==-1) {
+                                item.url=item.url.replace('file/1','disk')
                                 tmp_ret.push(item)
                             }
                         })

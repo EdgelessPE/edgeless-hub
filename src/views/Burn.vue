@@ -230,9 +230,9 @@ name: "Burn",
       this.$axios.get('https://pineapple.edgeless.top/api/list/1?path=Socket')
           .then((res)=>{
             let url=""
-            res.data.data.fileList.forEach((item)=>{
+            res.data.data.forEach((item)=>{
               if(item.name===this.ventoyInfo.pluginName){
-                url=item.url
+                url=item.url.replace('file/1','disk')
               }
             })
             if(url===""){
@@ -271,10 +271,10 @@ name: "Burn",
       this.$axios.get('https://pineapple.edgeless.top/api/list/1?path=Socket')
       .then((res)=>{
         let url=""
-        res.data.data.fileList.forEach((item)=>{
-          if(item.name.indexOf('Edgeless')===0){
-            url=item.url
-            this.edgelessInfo.url=item.url
+        res.data.data.forEach((item)=>{
+          if(item.name.indexOf('Edgeless')===0&&item.name.indexOf('.iso')>0){
+            url=item.url.replace('file/1','disk')
+            this.edgelessInfo.url=item.url.replace('file/1','disk')
             this.edgelessInfo.isoName=item.name
           }
         })

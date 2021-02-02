@@ -23,7 +23,7 @@
   </a-card>
   <br/>
   <a-card title="镜像源" style="width: 100%">
-    <a-select :default-value="mirrors[0].name" @change="changeMirror">
+    <a-select :default-value="mirrors[$store.state.stationIndex].name" @change="changeMirror">
       <a-select-option v-for="item in mirrors" :value="item.name" :key="item.name">
         {{item.name}}
       </a-select-option>
@@ -71,8 +71,16 @@ name: "Setting",
       }
     },
     changeMirror(val){
+      //查找版本号
+      let position=0
+      for(let i=0;i<this.mirrors.length;i++){
+        if(this.mirrors[i].name===val) {
+          position = i
+          break
+        }
+      }
       //更新Vuex
-      this.$store.commit('updateStationObject',val)
+      this.$store.commit('updateStationObject',position)
       //发送刷新数据事件
       this.$root.eventHub.$emit('update-mirror',{})
     }
