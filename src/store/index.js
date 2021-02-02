@@ -1,17 +1,24 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import DownloadManager from "@/components/DownloadManager";
+import StationList from '@/stationpool/main'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     //需要写入config的配置
-    stationUrl:'https://pineapple.edgeless.top/api/list/1',
+    //stationUrl:'https://pineapple.edgeless.top/api/list/1',
+    stationIndex:0,
     theme:'light',
     downloadDir:'D:\\ELStore',
 
     //无需保存到config的数据
+    stationObject:{
+      init:function (axios,callback){},
+      getCateData:function (callback) {},
+      getPluginList:function (cateName,callback){},
+      name:''
+    },
     cateData:[],
     allData:[],
     versionCache:[], //缓存在线版本的查询结果
@@ -195,13 +202,10 @@ export default new Vuex.Store({
     updateByConfig(state,config){
       state.downloadDir=config.downloadDir
       state.theme=config.theme
-      state.stationUrl=config.stationUrl
+      state.stationIndex=config.stationIndex
     },
     changeTheme(state,theme){
       state.theme=theme
-    },
-    changeMirror(state,val){
-      state.stationUrl=val
     },
     changeVentoyInfo(state,payload){
       state.ventoyInfo=payload
@@ -220,5 +224,9 @@ export default new Vuex.Store({
     },
     saveWikiUrl(state,url){
       state.wikiUrl=url
+    },
+    updateStationObject(state,index){ //更新镜像源插件对象
+      state.stationIndex=index
+      state.stationObject=StationList[index]
     }
 }})

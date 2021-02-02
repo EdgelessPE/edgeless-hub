@@ -70,7 +70,7 @@ name: "DownloadManager",
     //读写配置文件相关
     writeConfig(){
       let data={
-        stationUrl:this.$store.state.stationUrl,
+        stationIndex:this.$store.state.stationIndex,
         theme:this.$store.state.theme,
         downloadDir:this.$store.state.downloadDir,
       }

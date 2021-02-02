@@ -23,11 +23,15 @@
   </a-card>
   <br/>
   <a-card title="镜像源" style="width: 100%">
-    <a-select :default-value="mirrors[0].url" @change="changeMirror">
-      <a-select-option v-for="item in mirrors" :value="item.url" :key="item.name">
+    <a-select :default-value="mirrors[0].name" @change="changeMirror">
+      <a-select-option v-for="item in mirrors" :value="item.name" :key="item.name">
         {{item.name}}
       </a-select-option>
     </a-select>
+  </a-card>
+  <br/>
+  <a-card title="调试页面" style="width: 100%">
+    <a-button href="/#/test">Debug</a-button>
   </a-card>
 </div>
 </template>
@@ -35,19 +39,15 @@
 <script>
 import DownloadManager from "@/components/DownloadManager";
 import {notification} from "ant-design-vue";
+import StationList from '@/stationpool/main'
 export default {
 name: "Setting",
   data(){
   return{
     interval:'',
     edgelessDisks:[],
-    mirrors:[
-      {
-        name:'菠萝云',
-        url:'https://pineapple.edgeless.top/api/list/1'
-      }
-    ],
-    currentEdgelessDisk:'A'
+    currentEdgelessDisk:'A',
+    mirrors:[]
   }
   },
   methods:{
@@ -72,7 +72,7 @@ name: "Setting",
     },
     changeMirror(val){
       //更新Vuex
-      this.$store.commit('changeMirror',val)
+      this.$store.commit('updateStationObject',val)
       //发送刷新数据事件
       this.$root.eventHub.$emit('update-mirror',{})
     }
@@ -80,6 +80,7 @@ name: "Setting",
   created() {
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
+    this.mirrors=StationList
     this.interval=setInterval(()=>{
       //定时更新启动盘列表数据
       this.edgelessDisks=DownloadManager.methods.getUSBList()

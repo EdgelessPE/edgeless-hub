@@ -159,45 +159,76 @@ export default {
       //向主进程发送打开目录选择对话框事件
       this.$electron.ipcRenderer.send('openDirectoryDialog-request','')
     },
-    refreshData(){
-      let url=this.$store.state.stationUrl
-      //获取分类数据
-      this.$axios.get(url+'?path=插件包')
-          .then((res)=>{
-        //console.log(res.data.data.fileList)
-        this.$store.commit('setCateData',res.data.data.fileList)
-        this.getPluginData()
-      })
-          .catch((err)=>{
-        notification.open({
-          message:'获取分类信息失败',
-          description:"服务器错误："+err.message
+    refreshData(){ //将分类数据推至store，然后调用getPluginData()
+      try{
+        //初始化镜像站插件
+        this.$store.state.stationObject.init(this.$axios,()=>{
+          //初始化完成，推送分类数据
+          this.$store.state.stationObject.getCateData((cData)=>{
+            this.$store.commit('setCateData',cData)
+            this.getPluginData()
+          })
         })
-      })
+      }catch(err){
+        notification.open({
+          message:'与镜像站通讯失效',
+          description:"插件"+this.$store.state.stationObject.name+"错误："+err.message
+        })
+      }
+
+      // let url=this.$store.state.stationUrl
+      // //获取分类数据
+      // this.$axios.get(url+'?path=插件包')
+      //     .then((res)=>{
+      //   //console.log(res.data.data.fileList)
+      //   this.$store.commit('setCateData',res.data.data.fileList)
+      //   this.getPluginData()
+      // })
+      //     .catch((err)=>{
+      //   notification.open({
+      //     message:'获取分类信息失败',
+      //     description:"服务器错误："+err.message
+      //   })
+      // })
     },
     getPluginData(){
-      let url=this.$store.state.stationUrl
-      //获取插件列表
+      //对于每个分类获取其插件列表
       for(let i=0;i<this.cateData.length;i++){
         let queryName=this.cateData[i].name
-        this.$axios.get(url+'?path=/插件包/'+queryName)
-            .then((res)=>{
-              let tmp_ret=[]
-              res.data.data.fileList.forEach((item)=>{
-                if(item.name.indexOf('.7z')!==-1) {
-                  tmp_ret.push(item)
-                }
-              })
-              this.$store.commit('appendAllData',{
-                'cateName':queryName,
-                'files':tmp_ret
-              })
-              //如果所有数据已加载完毕，则发送数据加载完毕事件
-              if(this.$store.state.allData.length===this.$store.state.cateData.length){
-                this.$root.eventHub.$emit('all-data-loaded',{})
-              }
-            })
+        this.$store.state.stationObject.getPluginList(queryName,(pData)=>{
+          this.$store.commit('appendAllData',{
+            'cateName':queryName,
+            'files':pData
+          })
+          //如果所有数据已加载完毕，则发送数据加载完毕事件
+          if(this.$store.state.allData.length===this.$store.state.cateData.length){
+            this.$root.eventHub.$emit('all-data-loaded',{})
+          }
+        })
       }
+
+      // let url=this.$store.state.stationUrl
+      // //获取插件列表
+      // for(let i=0;i<this.cateData.length;i++){
+      //   let queryName=this.cateData[i].name
+      //   this.$axios.get(url+'?path=/插件包/'+queryName)
+      //       .then((res)=>{
+      //         let tmp_ret=[]
+      //         res.data.data.fileList.forEach((item)=>{
+      //           if(item.name.indexOf('.7z')!==-1) {
+      //             tmp_ret.push(item)
+      //           }
+      //         })
+      //         this.$store.commit('appendAllData',{
+      //           'cateName':queryName,
+      //           'files':tmp_ret
+      //         })
+      //         //如果所有数据已加载完毕，则发送数据加载完毕事件
+      //         if(this.$store.state.allData.length===this.$store.state.cateData.length){
+      //           this.$root.eventHub.$emit('all-data-loaded',{})
+      //         }
+      //       })
+      // }
     },
     getTaskInfo(gid){
       //查找原任务位置
@@ -361,11 +392,14 @@ export default {
     let config=DownloadManager.methods.readConfig()
 
     //写入配置到Vuex或执行首次运行配置
-    if(config.exist){
+    if(config.exist&&config.stationIndex!==undefined){
       this.$store.commit('updateByConfig',config)
     }else{
       this.init()
     }
+
+    //更新镜像站对象
+    this.$store.commit('updateStationObject',this.$store.state.stationIndex)
 
     //启动aria2c进程
     this.aria2cProcess=cp.exec('aria2c.exe  --conf-path=elstore.conf',{

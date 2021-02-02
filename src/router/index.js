@@ -43,6 +43,11 @@ const routes = [
     path:'/wiki',
     name:'Wiki',
     component: ()=>import("@/views/Wiki")
+  },
+  {
+    path:'/test',
+    name:'Test',
+    component: ()=>import("@/views/Test")
   }
 ]
 
