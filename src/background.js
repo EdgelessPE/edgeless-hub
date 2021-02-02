@@ -114,23 +114,31 @@ ipcMain.on('scanDisks-request', (event, arg) => {
         typeName: 'DiskScanner.Scanner',
         methodName: 'getDiskInfo'
     })
-    getDiskInfo('0', function (error, result) {
-        if (error) throw error;
-        console.log(result)
-        //解析为Json对象
-        let json = {
-            'names': [],
-            'labels': [],
-            'removable': []
-        }
-        result.forEach((i) => {
-            json['names'].push(i.slice(0, 1))
-            json['removable'].push(i.slice(3, 4))
-            json['labels'].push(i.slice(4))
+    try{
+        //throw 'error'
+        getDiskInfo('0', function (error, result) {
+            if (error) throw error;
+            //console.log(result)
+            //解析为Json对象
+            let json = {
+                'names': [],
+                'labels': [],
+                'removable': []
+            }
+            result.forEach((i) => {
+                json['names'].push(i.slice(0, 1))
+                json['removable'].push(i.slice(3, 4))
+                json['labels'].push(i.slice(4))
+            })
+            //console.log(json)
+            event.reply('scanDisks-reply', json)
         })
-        //console.log(json)
-        event.reply('scanDisks-reply', json)
-    });
+    }catch (e) {
+        console.log('c#运行失败')
+        event.reply('scanDisks-reply', undefined)
+    }
+
+
 })
 ipcMain.on('unzip-request', (event, payload) => {
     let node7z = require('node-7zip')

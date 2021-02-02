@@ -388,6 +388,14 @@ export default {
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
+    //检查依赖文件完整性
+    if(!DownloadManager.methods.exist(this.$store.state.aria2cPath+'aria2c.exe')){
+      notification.open({
+        message:'启动校验：错误',
+        description:"Aria2c主程序丢失"
+      })
+    }
+
     //读取配置文件
     let config=DownloadManager.methods.readConfig()
 
