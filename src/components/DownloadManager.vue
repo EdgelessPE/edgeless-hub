@@ -117,9 +117,10 @@ name: "DownloadManager",
 
         //将Urlencode的文件名重命名为正常文件名，然后将其加入复制队列
         succeed.forEach((item)=>{
-          if(fs.existsSync(path.join(this.$store.state.downloadDir,item.info.uriName))){
+          //console.log(item)
+          if(fs.existsSync(path.join(this.$store.state.downloadDir,item.info.uriName))||fs.existsSync(path.join(this.$store.state.downloadDir,item.info.trueName))){
             //重命名
-            if(item.info.uriName!==item.info.trueName) fs.renameSync(path.join(this.$store.state.downloadDir,item.info.uriName),path.join(this.$store.state.downloadDir,item.info.trueName))
+            if(fs.existsSync(path.join(this.$store.state.downloadDir,item.info.uriName))&&item.info.uriName!==item.info.trueName) fs.renameSync(path.join(this.$store.state.downloadDir,item.info.uriName),path.join(this.$store.state.downloadDir,item.info.trueName))
             //检查是否需要执行拷贝
             if(this.needCopy(item.gid)){
               //加入拷贝等候队列
@@ -130,7 +131,12 @@ name: "DownloadManager",
                 version:item.info.trueName.split('_')[1],
                 trueName:item.info.trueName
               })
+              //console.log("copy"+item.name)
+            }else{
+              //console.log("won't copy"+item.name)
             }
+          }else {
+            //console.log("uriName not exist:"+path.join(this.$store.state.downloadDir,item.info.uriName))
           }
         })
         //更新到Vuex中

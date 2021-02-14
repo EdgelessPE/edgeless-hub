@@ -118,7 +118,7 @@ ipcMain.on('scanDisks-request', (event, arg) => {
         //throw 'error'
         getDiskInfo('0', function (error, result) {
             if (error) throw error;
-            //console.log(result)
+            console.log(result)
             //解析为Json对象
             let json = {
                 'names': [],

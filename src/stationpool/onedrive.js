@@ -26,6 +26,7 @@ sObject.init=function (axios,callback) {
                 let queryName=cateData[i].name
                 axios.get(url+'?path=/插件包/'+queryName)
                     .then((response)=>{
+                        //console.log(response.data.data)
                         let tmp_ret=[]
                         //筛选.7z文件
                         response.data.data.forEach((item)=>{
