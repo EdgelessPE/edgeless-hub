@@ -125,6 +125,18 @@ export default new Vuex.Store({
       taskStopped:false //任务是否已经暂停
     },
 
+    //Alpha相关信息
+    AlphaInfo:{
+      state:0,//0等待用户开始下载或其他，1正在下载中，2正在复制，3完成
+      gid:"",
+      task:{
+        "totalLength":1,
+        "completedLength":0,
+        "downloadSpeed":1
+      },
+      taskStopped:false //任务是否已经暂停
+    },
+
     wikiUrl:"https://wiki.edgeless.top/v2"
   },
   mutations: {
@@ -253,5 +265,17 @@ export default new Vuex.Store({
     },
     setUpdateStopped(state,payload){
       state.UpdateInfo.taskStopped=payload
+    },
+    setAlphaGid(state,gid){
+      state.AlphaInfo.gid=gid
+    },
+    setAlphaTask(state,task){
+      state.AlphaInfo.task=task
+    },
+    setAlphaState(state,code){
+      state.AlphaInfo.state=code
+    },
+    setAlphaStopped(state,payload){
+      state.AlphaInfo.taskStopped=payload
     }
 }})

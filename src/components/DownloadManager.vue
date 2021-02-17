@@ -421,6 +421,10 @@ name: "DownloadManager",
               //将Update的下载任务放置到store内
               this.$store.commit('setUpdateTask',item)
               if(method==="aria2.tellStopped") this.$store.commit('setUpdateStopped',true)
+            }else if(item.gid===this.$store.state.AlphaInfo.gid){
+              //将Alpha的下载任务放置到store内
+              this.$store.commit('setAlphaTask',item)
+              if(method==="aria2.tellStopped") this.$store.commit('setAlphaStopped',true)
             }
           })
         }
