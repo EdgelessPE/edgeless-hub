@@ -152,7 +152,7 @@ name: "Update",
       this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
       .then((res)=>{
         //console.log(res.data)
-        this.onlineVersion=res.data.url
+        this.onlineVersion=res.data.version
         this.isoName=res.data.name
         if (this.onlineVersion>this.localVersion) {
           //检查通过，可以执行升级

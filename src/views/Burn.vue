@@ -123,7 +123,7 @@
         <template #extra>
           <a-row>
             <a-col :span="4">
-              {{ stepsInfo.stepText }}
+              正在{{ stepsInfo.stepText }}...
             </a-col>
             <a-col :span="20">
               <a-progress :percent="stepsInfo.step3percent" status="active"/>
@@ -212,7 +212,7 @@ export default {
   },
   methods: {
     startNesDownload() {
-      this.stepsInfo.stepText = '请求中...'
+      this.stepsInfo.stepText = '请求'
       this.startVentoyDownload()
       this.startPluginDownload()
       this.startIsoDownload()
@@ -431,13 +431,13 @@ export default {
         }, 1000)
 
         //解包ISO（678MB）
-        this.stepsInfo.stepText = "解包镜像文件"
+        this.stepsInfo.stepText = "解包ISO文件"
         this.stageLimit = 10
         this.unpackISO(() => {
           this.stepsInfo.step3percent = this.stageLimit
           let startTime = Date.now()
           //复制Edgeless文件夹（74MB） xcopy /s /r /y .\Edgeless %FI_Part%:\Edgeless\
-          this.stepsInfo.stepText = "复制Edgeless文件夹"
+          this.stepsInfo.stepText = "解决Edgeless依赖"
           this.stageLimit = 15.4
           DownloadManager.methods.copyDir(this.$store.state.downloadDir + '\\Burn\\release\\Edgeless', this.selectedVentoyPart + ':\\Edgeless\\', true, () => {
             this.stepsInfo.step3percent = this.stageLimit
@@ -447,7 +447,7 @@ export default {
             console.log('speed2=' + this.speed.toFixed(1))
 
             //复制boot.wim（612MB）
-            this.stepsInfo.stepText = "复制boot.wim"
+            this.stepsInfo.stepText = "拷贝Edgeless启动文件"
             this.stageLimit = 99.9
             DownloadManager.methods.copy(this.$store.state.downloadDir + '\\Burn\\release\\sources\\boot.wim', this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim', true, () => {
               this.stepsInfo.step3percent = 100
@@ -502,7 +502,7 @@ export default {
             if (!this.$store.state.ventoyInfo.needTrace && this.$store.state.ventoyInfo.task.completedLength === this.$store.state.ventoyInfo.task.totalLength) {
               //此时下载已经完成
               this.whenReadyUnzip = false
-              this.stepsInfo.stepText = "解压中..."
+              this.stepsInfo.stepText = "解压Ventoy"
               this.$electron.ipcRenderer.send('unzip-request', {
                 'zip': this.$store.state.downloadDir + '\\Burn\\*.zip',
                 'path': this.$store.state.downloadDir + '\\Burn'
