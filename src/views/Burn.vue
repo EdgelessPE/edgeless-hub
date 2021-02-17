@@ -349,32 +349,34 @@ export default {
           })
     },
     startIsoDownload(){
-      let url="https://pineapple.edgeless.top/api/v2/info/iso_addr"
-      DownloadManager.methods.aria2cDownloaderDir(url, false, this.$store.state.downloadDir + '\\Burn', (res) => {
-        this.$store.commit('changeIsoInfo', {
-          needTrace: true,
-          gid: res.data.result,
-          task: {
-            "totalLength": 1,
-            "completedLength": 0,
-            "downloadSpeed": 1
-          }
+      let url="https://pineapple.edgeless.top/api/v2/info/iso"
+      this.$axios.get(url)
+      .then((res)=>{
+        //更新文件名
+        this.$store.commit('changeFileName', {
+          index: 2,
+          data: res.data.name
         })
-        this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso_version")
-        .then((res)=>{
-          this.$store.commit('changeFileName', {
-            index: 2,
-            data: "Edgeless_Beta_"+res.data+".iso"
+        //开始下载任务
+        DownloadManager.methods.aria2cDownloaderDir(res.data.url,false, this.$store.state.downloadDir + '\\Burn',(response)=>{
+          this.$store.commit('changeIsoInfo', {
+            needTrace: true,
+            gid: response.data.result,
+            task: {
+              "totalLength": 1,
+              "completedLength": 0,
+              "downloadSpeed": 1
+            }
           })
           this.startedTasks[2] = true
         })
-            .catch((err) => {
-              notification.open({
-                message: '获取ISO镜像信息失败',
-                description: err.message
-              })
-            })
       })
+          .catch((err) => {
+            notification.open({
+              message: '获取ISO镜像信息失败',
+              description: err.message
+            })
+          })
     },
     selectVentoyPart(val) {
       this.selectedVentoyPart = val

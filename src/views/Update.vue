@@ -15,7 +15,7 @@
           <div v-if="$store.state.UpdateInfo.state===1">
             <a-row>
               <a-col :span="8">
-                Edgeless_Beta_{{ onlineVersion }}.iso
+                {{ isoName }}
               </a-col>
               <a-col :span="12">
                 <a-progress
@@ -74,6 +74,7 @@ name: "Update",
     updateMethod:0, //更新方式，0表示Ventoy更新
     localVersion:"",
     onlineVersion:"",
+    isoName:"",
     interval:"",
     stepBarNumber:0,
     loading:false, //按钮的加载状态
@@ -123,7 +124,7 @@ name: "Update",
         DownloadManager.methods.copyDir(this.$store.state.downloadDir + '\\Burn\\release\\Edgeless',this.$store.state.pluginPath[0]+":\\Edgeless\\",false,()=>{
           //复制boot.wim
           this.waitingTip='正在更新Edgeless启动文件'
-          DownloadManager.methods.copy(this.$store.state.downloadDir + '\\Burn\\release\\sources\\boot.wim', this.$store.state.pluginPath[0] + ':\\Edgeless_Beta_' + this.onlineVersion + '.wim', true, () => {
+          DownloadManager.methods.copy(this.$store.state.downloadDir + '\\Burn\\release\\sources\\boot.wim', this.$store.state.pluginPath[0] + ':\\' + this.isoName.split('.iso')[0] + '.wim', true, () => {
             //step2完成，翻面
             this.$store.commit('setUpdateState',3)
           })
@@ -137,7 +138,7 @@ name: "Update",
       this.$electron.ipcRenderer.on('unpackISO-reply', callback)
       //发送解包事件
       this.$electron.ipcRenderer.send('unpackISO-request', {
-        src: this.$store.state.downloadDir + '\\Burn\\Edgeless_Beta_' + this.onlineVersion+'.iso',
+        src: this.$store.state.downloadDir + '\\Burn\\'+this.isoName,
         dst: this.$store.state.downloadDir + '\\Burn\\release'
       })
     },
@@ -148,10 +149,11 @@ name: "Update",
       //检查盘内版本号
       this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
       //console.log(localVersion)
-      this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso_version")
+      this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
       .then((res)=>{
         //console.log(res.data)
-        this.onlineVersion=res.data
+        this.onlineVersion=res.data.url
+        this.isoName=res.data.name
         if (this.onlineVersion>this.localVersion) {
           //检查通过，可以执行升级
           this.$store.commit('setUpdateState',0)
@@ -193,8 +195,8 @@ name: "Update",
           this.startCopy()
         }else {
           //任务出错，重新开始
-          DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\Edgeless_Beta_' +this.onlineVersion+'.iso')
-          DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\Edgeless_Beta_' +this.onlineVersion+'.iso.aria2')
+          DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' +this.isoName)
+          DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' +this.isoName+'.aria2')
           this.startDownload()
         }
       }
