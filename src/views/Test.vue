@@ -1,11 +1,13 @@
 <template>
 <div>
-  <a-button v-on:click="test">Test</a-button>
+  <a-space>
+    <a-button v-on:click="openDevTool">Devtool</a-button>
+    <a-button v-on:click="test">Test</a-button>
+  </a-space>
 </div>
 </template>
 
 <script>
-import DownloadManager from "@/components/DownloadManager";
 export default {
 name: "Test",
   data(){
@@ -13,8 +15,11 @@ name: "Test",
   }
   },
   methods:{
+    openDevTool(){
+      this.$electron.ipcRenderer.send('devtool-request','')
+    },
     test(){
-      DownloadManager.methods.matchFiles("D:\\Download\\ELStore\\Burn","^Edgeless.*iso$")
+
     }
   }
 }

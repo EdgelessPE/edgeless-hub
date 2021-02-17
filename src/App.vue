@@ -11,18 +11,31 @@
             <span>首页</span>
             <router-link to="/"/>
           </a-menu-item>
-          <a-menu-item key="/burning">
-            <a-icon type="thunderbolt" />
-            <span>写入</span>
-            <router-link to="/burning"/>
-          </a-menu-item>
-          <a-menu-item key="/update">
-            <a-icon type="arrow-up" />
-            <span>升级</span>
-            <router-link to="/update"/>
-          </a-menu-item>
+          <a-sub-menu key="/boot">
+            <template slot="title"> <a-icon type="usb" /><span>制作</span> </template>
+            <a-menu-item key="/burning">
+              <a-icon type="thunderbolt" />
+              <span>写入</span>
+              <router-link to="/burning"/>
+            </a-menu-item>
+            <a-menu-item key="/update">
+              <a-icon type="arrow-up" />
+              <span>升级</span>
+              <router-link to="/update"/>
+            </a-menu-item>
+            <a-menu-item key="/alpha">
+              <a-icon type="experiment" />
+              <span>内测</span>
+              <router-link to="/alpha"/>
+            </a-menu-item>
+          </a-sub-menu>
           <a-sub-menu key="/cate">
             <template slot="title"> <a-icon type="appstore" /><span>插件</span> </template>
+            <a-menu-item key="/reco">
+              <a-icon type="trophy" />
+              <span>精选</span>
+              <router-link to="/reco"/>
+            </a-menu-item>
             <template v-for="cateItem in cateData">
               <a-menu-item :key="cateItem.name">
                 {{cateItem.name}}
@@ -559,6 +572,7 @@ export default {
       if(arg) this.userInputDownloadDir=arg[0]
     })
     this.$root.eventHub.$on('update-mirror',()=>{
+      this.$store.commit('clearData',"")
       this.refreshData()
     })
   },

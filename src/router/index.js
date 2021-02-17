@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Reco from '../views/Recommend.vue'
 import Cate from "@/views/Cate"
 import Down from "../views/Down.vue"
 import Search from "@/views/Search"
@@ -13,6 +13,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: ()=>import('@/views/Index')
+  },
+  {
+    path:'/reco',
+    name:'Reco',
+    component: Reco
   },
   {
     path:'/cate',

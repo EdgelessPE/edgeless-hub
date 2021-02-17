@@ -161,6 +161,10 @@ ipcMain.on('unpackISO-request', (event, payload) => {
     }
 })
 
+ipcMain.on('devtool-request',(event,payload)=>{
+    BrowserWindow.getAllWindows()[0].webContents.openDevTools()
+})
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
     if (process.platform === 'win32') {

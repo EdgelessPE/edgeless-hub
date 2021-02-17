@@ -30,10 +30,6 @@
     </a-select>
   </a-card>
   <br/>
-  <a-card title="Edgeless内测计划" style="width: 100%">
-    <a-button href="/#/alpha">获取内测版</a-button>
-  </a-card>
-  <br/>
   <a-card title="调试页面" style="width: 100%">
     <a-button href="/#/test">Debug</a-button>
   </a-card>
