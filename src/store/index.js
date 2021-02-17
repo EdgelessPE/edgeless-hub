@@ -44,7 +44,7 @@ export default new Vuex.Store({
     copyWaitingPool:[], //等待启动盘插入后进行复制的任务清单
 
     //下载制作相关文件信息
-    fileNames:['','',''],
+    fileNames:['','',''], //ventoy,ventoy_plugin,iso
     ventoyInfo:{
       needTrace:false,
       gid:"",
@@ -112,6 +112,18 @@ export default new Vuex.Store({
         ]
       },
     },
+
+    //Update相关信息
+    UpdateInfo:{
+      state:0,//0等待用户开始下载或其他，1正在下载中，2正在解压和复制，3完成
+      gid:"",
+      task:{
+        "totalLength":1,
+        "completedLength":0,
+        "downloadSpeed":1
+      }
+    },
+
     wikiUrl:"https://wiki.edgeless.top/v2"
   },
   mutations: {
@@ -228,5 +240,14 @@ export default new Vuex.Store({
     updateStationObject(state,index){ //更新镜像源插件对象
       state.stationIndex=index
       state.stationObject=StationList[index]
+    },
+    setUpdateGid(state,gid){
+      state.UpdateInfo.gid=gid
+    },
+    setUpdateTask(state,task){
+      state.UpdateInfo.task=task
+    },
+    setUpdateState(state,code){
+      state.UpdateInfo.state=code
     }
 }})

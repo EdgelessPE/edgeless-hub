@@ -22,12 +22,16 @@
     <a-button @click="chooseDir">选择</a-button>
   </a-card>
   <br/>
-  <a-card title="镜像源" style="width: 100%">
+  <a-card title="插件镜像源" style="width: 100%">
     <a-select :default-value="mirrors[$store.state.stationIndex].name" @change="changeMirror">
       <a-select-option v-for="item in mirrors" :value="item.name" :key="item.name">
         {{item.name}}
       </a-select-option>
     </a-select>
+  </a-card>
+  <br/>
+  <a-card title="Edgeless内测计划" style="width: 100%">
+    <a-button href="/#/alpha">获取内测版</a-button>
   </a-card>
   <br/>
   <a-card title="调试页面" style="width: 100%">

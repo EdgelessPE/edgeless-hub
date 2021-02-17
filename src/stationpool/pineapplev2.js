@@ -1,6 +1,6 @@
 import StationInterface from "@/interface/StationInterface"
 //实例化
-const sObject=StationInterface('菠萝云v2')
+const sObject=StationInterface('菠萝云V2')
 //内部存储变量
 let cateData=[],fileListPool={},url='https://pineapple.edgeless.top/api/v2/plugin',counter=0,inited=false,formatCateData=[]
 //实现接口

@@ -393,6 +393,8 @@ name: "DownloadManager",
                 info.needTrace = false
               }
               this.$store.commit('changeIsoInfo',info)
+            }else if(item.gid===this.$store.state.UpdateInfo.gid){
+              this.$store.commit('setUpdateTask',item)
             }
           })
         }

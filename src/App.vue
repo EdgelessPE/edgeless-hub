@@ -16,6 +16,11 @@
             <span>写入</span>
             <router-link to="/burning"/>
           </a-menu-item>
+          <a-menu-item key="/update">
+            <a-icon type="arrow-up" />
+            <span>升级</span>
+            <router-link to="/update"/>
+          </a-menu-item>
           <a-sub-menu key="/cate">
             <template slot="title"> <a-icon type="appstore" /><span>插件</span> </template>
             <template v-for="cateItem in cateData">
