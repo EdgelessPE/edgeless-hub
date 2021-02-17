@@ -163,22 +163,46 @@ name: "DownloadManager",
       if(overwrite&&this.exist(dst)) this.del(dst)
       fs.copyFile(src,dst,callback)
     },
-    copyDic(src,dst,overwrite,callback){
+    copyDir(src,dst,overwrite,callback){
       if(overwrite&&this.exist(dst)){
-        cp.execSync('del /f /s /q '+dst)
-        cp.execSync('rd /s /q '+dst)
+        this.delDir(dst)
       }
       cp.exec('xcopy /s /r /y '+src+' '+dst,callback)
     },
     del(filePath){
-      console.log('delete'+filePath)
+      //console.log('delete'+filePath)
       if(fs.existsSync(filePath)){
           fs.unlinkSync(filePath)
         return true
       }else return false
     },
+    delDir(dst){
+      if(this.exist(dst)) {
+        cp.execSync('del /f /s /q '+dst)
+        cp.execSync('rd /s /q '+dst)
+      }
+    },
     ren(src,dst){
       fs.renameSync(src,dst)
+    },
+    //在指定目录使用正则表达式匹配文件
+    matchFiles(path,exp){
+      let result=[]
+      if (fs.existsSync(path)) {
+        let dirInfo = fs.readdirSync(path)
+        //console.log(dirInfo)
+        dirInfo.forEach((item)=>{
+          //console.log('check '+item)
+          if(item.match(exp)!==null) {
+            result.push(item)
+            //console.log('push '+item)
+          }
+        })
+      }else{
+        console.log('matchFiles:path not exist:'+path)
+      }
+      //console.log(result)
+      return result
     },
     //返回合法的Edgeless启动盘数组，第一项的值为“自动”
     getUSBList(){
@@ -394,7 +418,9 @@ name: "DownloadManager",
               }
               this.$store.commit('changeIsoInfo',info)
             }else if(item.gid===this.$store.state.UpdateInfo.gid){
+              //将Update的下载任务放置到store内
               this.$store.commit('setUpdateTask',item)
+              if(method==="aria2.tellStopped") this.$store.commit('setUpdateStopped',true)
             }
           })
         }

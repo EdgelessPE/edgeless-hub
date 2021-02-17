@@ -4,7 +4,7 @@
     <a-icon v-if="!loading" type="cloud-download" />
     获取
   </a-button>
-  <a-progress v-else-if="state===0" :width="20" type="circle" :percent="percent" :show-info="false"/>
+  <a-progress v-else-if="state===0" :width="32" type="circle" :percent="percent" :show-info="false"/>
   <a-button v-else-if="state===1" v-on:click="unPause(info.gid)">
     <a-icon type="play-circle" />
     继续

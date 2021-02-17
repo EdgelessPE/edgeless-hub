@@ -437,7 +437,7 @@ export default {
           //复制Edgeless文件夹（74MB） xcopy /s /r /y .\Edgeless %FI_Part%:\Edgeless\
           this.stepsInfo.stepText = "复制Edgeless文件夹"
           this.stageLimit = 15.4
-          DownloadManager.methods.copyDic(this.$store.state.downloadDir + '\\Burn\\release\\Edgeless', this.selectedVentoyPart + ':\\Edgeless\\', true, () => {
+          DownloadManager.methods.copyDir(this.$store.state.downloadDir + '\\Burn\\release\\Edgeless', this.selectedVentoyPart + ':\\Edgeless\\', true, () => {
             this.stepsInfo.step3percent = this.stageLimit
             this.speed = (75776 / (Date.now() - startTime)) * 0.8 //MB/s，估算的写入速度
             console.log('speed1=' + this.speed.toFixed(1))

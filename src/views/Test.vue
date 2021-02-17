@@ -1,12 +1,11 @@
 <template>
 <div>
-  <a-button v-on:click="init">init</a-button>
+  <a-button v-on:click="test">Test</a-button>
 </div>
 </template>
 
 <script>
-import StationObject from '@/stationpool/pineapplecloud'
-import {notification} from "ant-design-vue";
+import DownloadManager from "@/components/DownloadManager";
 export default {
 name: "Test",
   data(){
@@ -14,17 +13,8 @@ name: "Test",
   }
   },
   methods:{
-    init(){
-      this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso_version")
-          .then((res)=>{
-            console.log("Edgeless_Beta_"+res.data+".iso")
-          })
-          .catch((err) => {
-            notification.open({
-              message: '获取ISO镜像信息失败',
-              description: err.message
-            })
-          })
+    test(){
+      DownloadManager.methods.matchFiles("D:\\Download\\ELStore\\Burn","^Edgeless.*iso$")
     }
   }
 }

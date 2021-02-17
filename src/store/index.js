@@ -121,7 +121,8 @@ export default new Vuex.Store({
         "totalLength":1,
         "completedLength":0,
         "downloadSpeed":1
-      }
+      },
+      taskStopped:false //任务是否已经暂停
     },
 
     wikiUrl:"https://wiki.edgeless.top/v2"
@@ -249,5 +250,8 @@ export default new Vuex.Store({
     },
     setUpdateState(state,code){
       state.UpdateInfo.state=code
+    },
+    setUpdateStopped(state,payload){
+      state.UpdateInfo.taskStopped=payload
     }
 }})
