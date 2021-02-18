@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import {notification} from "ant-design-vue";
+
 export default {
 name: "TaskNode",
   data(){
@@ -134,11 +136,20 @@ name: "TaskNode",
       })
     },
     deleteFile(item){
-      //发送删除文件事件
-      this.$root.eventHub.$emit('delete-file',{
-        'trueName':(item.softVer==='unknown')?item.softName+'.7z':item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z',
-        'name':item.softName
-      })
+      //移动文件至回收站
+      let ret = this.$electron.shell.moveItemToTrash(this.$store.state.pluginPath+"\\"+item.trueName)
+      if(ret){
+        notification.open({
+          message:'删除插件成功',
+          description:item.trueName+'已移至回收站'
+        })
+      }else{
+        //发送删除文件事件
+        this.$root.eventHub.$emit('delete-file',{
+          'trueName':item.trueName,
+          'name':item.softName
+        })
+      }
     },
     update(item){
       this.loading=true

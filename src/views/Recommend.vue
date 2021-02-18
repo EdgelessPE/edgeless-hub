@@ -1,6 +1,10 @@
 <template>
   <div>
-    <a-card title="精选插件">
+    <a-page-header
+        title="精选插件"
+        :sub-title="'共'+recommendList.length+'个插件包'"
+        @back="() => $router.go(-1)"
+    />
       <a-list :grid="{ gutter: 16, column: 4 }" :data-source="recommendData">
         <a-list-item slot="renderItem" slot-scope="item, index">
           <a-card :title="item.softName">
@@ -15,7 +19,7 @@
           </a-card>
         </a-list-item>
       </a-list>
-    </a-card>
+
 
   </div>
 </template>

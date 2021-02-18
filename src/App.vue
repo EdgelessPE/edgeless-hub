@@ -33,12 +33,13 @@
             <template slot="title"> <a-icon type="appstore" /><span>插件</span> </template>
             <a-menu-item key="/reco">
               <a-icon type="trophy" />
-              <span>精选</span>
+              <span>精选插件</span>
               <router-link to="/reco"/>
             </a-menu-item>
             <template v-for="cateItem in cateData">
               <a-menu-item :key="cateItem.name">
-                {{cateItem.name}}
+                <a-icon :type="cateItem.icon" />
+                <span>{{cateItem.name}}</span>
                 <router-link :to="'/cate?name='+cateItem.name"/>
               </a-menu-item>
             </template>
@@ -135,7 +136,89 @@ export default {
       edgelessDisks:[],
       userInputDownloadDir:'',
       ignoreFirstPlugOut:false, //忽略欢迎时设置自动检测Edgeless启动盘导致的“启动盘被弹出”提示
-      fileList:[]
+      fileList:[],
+      iconMatch:[
+        {
+          name:"实用工具",
+          icon:"tool"
+        },
+        {
+          name:"开发辅助",
+          icon:"bug"
+        },
+        {
+          name:"配置检测",
+          icon:"dashboard"
+        },
+        {
+          name:"资源管理",
+          icon:"folder-open"
+        },
+        {
+          name:"办公编辑",
+          icon:"book"
+        },
+        {
+          name:"输入法",
+          icon:"code"
+        },
+        {
+          name:"录屏看图",
+          icon:"camera"
+        },
+        {
+          name:"磁盘数据",
+          icon:"save"
+        },
+        {
+          name:"安全急救",
+          icon:"safety-certificate"
+        },
+        {
+          name:"即时通讯",
+          icon:"wechat"
+        },
+        {
+          name:"安装备份",
+          icon:"hourglass"
+        },
+        {
+          name:"游戏娱乐",
+          icon:"gift"
+        },
+        {
+          name:"运行环境",
+          icon:"build"
+        },
+        {
+          name:"压缩镜像",
+          icon:"file-zip"
+        },
+        {
+          name:"美化增强",
+          icon:"crown"
+        },
+        {
+          name:"驱动管理",
+          icon:"control"
+        },
+        {
+          name:"下载上传",
+          icon:"global"
+        },
+        {
+          name:"浏览器",
+          icon:"chrome"
+        },
+        {
+          name:"影音播放",
+          icon:"customer-service"
+        },
+        {
+          name:"远程连接",
+          icon:"api"
+        },
+      ]
       };
   },
   methods:{
@@ -177,12 +260,27 @@ export default {
       //向主进程发送打开目录选择对话框事件
       this.$electron.ipcRenderer.send('openDirectoryDialog-request','')
     },
+    getMatchedIconName(name){
+      let res="profile"
+      for(let i=0;i<this.iconMatch.length;i++){
+        if(this.iconMatch[i].name===name){
+          res=this.iconMatch[i].icon
+          break
+        }
+      }
+      return res
+    },
     refreshData(){ //将分类数据推至store，然后调用getPluginData()
       try{
         //初始化镜像站插件
         this.$store.state.stationObject.init(this.$axios,()=>{
           //初始化完成，推送分类数据
           this.$store.state.stationObject.getCateData((cData)=>{
+            //匹配icon
+            cData.forEach((item)=>{
+              item["icon"]=this.getMatchedIconName(item.name)
+            })
+            console.log(cData)
             this.$store.commit('setCateData',cData)
             this.getPluginData()
           })

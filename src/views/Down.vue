@@ -4,7 +4,16 @@
         title="任务管理"
         :sub-title="($store.state.tasks[0].length===0)?'':getSizeString($store.state.globalData.downloadSpeed)+'/s'"
         @back="() => $router.go(-1)"
-    />
+    >
+    <template slot="extra">
+      <a-button v-on:click="openCacheDir">
+        缓存目录
+      </a-button>
+      <a-button v-on:click="openPluginDir">
+        浏览插件
+      </a-button>
+    </template>
+    </a-page-header>
     <a-collapse v-model="activeKey" :bordered="false">
       <a-collapse-panel key="1" :header="'下载中（'+($store.state.tasks[0].length+$store.state.tasks[1].length)+'）'" :style="customStyle">
         <TaskNode v-if="$store.state.tasks[0].length!==0" index="0" key="0"/>
@@ -44,8 +53,11 @@ name: "Down",
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"
     },
-    print(){
-      console.log(this.$store.state.tasks)
+    openCacheDir(){
+      this.$electron.shell.openPath(this.$store.state.downloadDir+"\\")
+    },
+    openPluginDir(){
+      this.$electron.shell.openPath(this.$store.state.pluginPath+"\\")
     }
   },
   mounted() {
