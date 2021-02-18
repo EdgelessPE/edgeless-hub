@@ -48,7 +48,7 @@ async function createWindow() {
 
     win.on('close', (event) => {
         killAria2c()
-        console.error('close')
+        //console.error('close')
         app.exit()
     })
 
@@ -92,6 +92,17 @@ ipcMain.on('openDirectoryDialog-request', (event, arg) => {
         properties: ['openDirectory']
     })
     event.reply('openDirectoryDialog-reply', data)
+})
+ipcMain.on('openFileDialog-request', (event, arg) => {
+    let data = dialog.showOpenDialogSync({
+        title: "请选择壁纸文件",
+        filters:[{
+            name:"jpg图像文件",
+            extensions:['jpg']
+        }],
+        properties: ['openFile']
+    })
+    event.reply('openFileDialog-reply', data)
 })
 ipcMain.on('scanDisks-request', (event, arg) => {
     // const findUSB = edge.func(function () {/*

@@ -4,7 +4,13 @@
       title="配置中心"
       @back="() => $router.go(-1)"
   />
-
+  <a-card title="壁纸" style="width: 100%">
+    <a-space>
+      <a-button @click="ViewWP">查看</a-button>
+      <a-button @click="ChangeWP">更换</a-button>
+    </a-space>
+  </a-card>
+  <br/>
   <a-card title="分辨率" style="width: 100%">
     <a-tooltip slot="extra">
       <a-icon type="exclamation-circle"/>
@@ -12,7 +18,7 @@
         在某些使用UEFI引导启动的场合下Edgeless无法改变分辨率，此项配置失效
       </template>
     </a-tooltip>
-    <a-radio-group v-model="ResolutionWay">
+    <a-radio-group v-model="ResolutionWay" @change="onChangeRadio">
       <a-radio-button value="0">
         自动调节（默认）
       </a-radio-button>
@@ -34,7 +40,7 @@
           显示分辨率
         </a-col>
         <a-col :span="4">
-          <a-select style="width: 100%" size="small" :default-value="0">
+          <a-select style="width: 100%" size="small" :default-value="0" @change="onChangeSelect">
             <template v-for="(item,index) in ResolutionList">
               <a-select-option :value="index">
                 {{item.h+' x '+item.w}}
@@ -47,7 +53,7 @@
           色位
         </a-col>
         <a-col :span="3">
-          <a-select style="width: 100%" size="small" :default-value="32">
+          <a-select style="width: 100%" size="small" v-model="ResolutionConfig.bit">
             <a-select-option :value="32">
               32bit (推荐)
             </a-select-option>
@@ -61,7 +67,7 @@
           刷新率
         </a-col>
         <a-col :span="2">
-          <a-select style="width: 100%" size="small" :default-value="60">
+          <a-select style="width: 100%" size="small" v-model="ResolutionConfig.fps">
             <a-select-option :value="60">
               60 FPS
             </a-select-option>
@@ -73,7 +79,7 @@
 
         <a-col :span="6"/>
         <a-col :span="2">
-          <a-button size="small" type="primary">应用</a-button>
+          <a-button size="small" type="primary" v-on:click="writeResolutionConfig">应用</a-button>
         </a-col>
       </a-row>
     </template>
@@ -85,7 +91,7 @@
         :data-source="Options"
     >
       <a-list-item slot="renderItem" slot-scope="item, index">
-        <a-switch slot="actions" v-model="item.state" :disabled="!item.available" @change="onChange(item)" />
+        <a-switch slot="actions" v-model="item.state" :disabled="!item.available" @change="onChangeSwitch(item)" />
         <a-list-item-meta
             :description="item.description"
         >
@@ -111,6 +117,7 @@
 import ConfigInterface from "@/interface/ConfigInterface"
 import DownloadManager from "@/components/DownloadManager";
 import {notification} from "ant-design-vue";
+const fs=window.require('fs')
 export default {
 name: "Config",
   data(){
@@ -182,7 +189,13 @@ name: "Config",
         w:600
       }
     ],
-    ResolutionWay:0,
+    ResolutionWay:"0",
+    ResolutionConfig:{
+      h:1920,
+      w:1080,
+      bit:32,
+      fps:60
+    }
   }
   },
   methods:{
@@ -211,7 +224,8 @@ name: "Config",
     currentState(folderName){
       return DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\"+folderName)
     },
-    onChange(item){
+
+    onChangeSwitch(item){
       DownloadManager.methods.mkdir(this.$store.state.pluginPath[0]+":\\Edgeless\\Config")
       if(this.currentState(item.folderName)){
         if(!DownloadManager.methods.delDir(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\"+item.folderName)){
@@ -234,10 +248,74 @@ name: "Config",
           item.state=true
         }
       }
-    }
+    },
+    onChangeRadio(){
+      switch (this.ResolutionWay) {
+        case "1":
+          DownloadManager.methods.mkdir(this.$store.state.pluginPath[0]+":\\Edgeless\\Config")
+          fs.writeFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\分辨率.txt","DisableAutoSuit")
+          break
+        default:
+          DownloadManager.methods.del(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\分辨率.txt")
+          break
+      }
+    },
+    onChangeSelect(val){
+      this.ResolutionConfig.h=val.h
+      this.ResolutionConfig.w=val.w
+    },
+    writeResolutionConfig(){
+      //w1024 h768 b32 f60
+      DownloadManager.methods.mkdir(this.$store.state.pluginPath[0]+":\\Edgeless\\Config")
+      fs.writeFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\分辨率.txt","w"+this.ResolutionConfig.w+" h"+this.ResolutionConfig.h+" b"+this.ResolutionConfig.bit+" f"+this.ResolutionConfig.fps)
+    },
+    ViewWP(){
+      this.$electron.shell.openPath(this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg")
+    },
+    ChangeWP(){
+      //注册响应监听
+      this.$electron.ipcRenderer.on('openFileDialog-reply',(event,arg)=>{
+        if(arg){
+          //判断套娃更换
+          if(arg[0]===(this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg")){
+            notification.open({
+              message:'壁纸更换失败',
+              description:"搁这套娃呢？"
+            })
+            return
+          }
+          //备份原壁纸
+          //DownloadManager.methods.del(this.$store.state.pluginPath[0]+":\\Edgeless\\wp_bak.jpg")
+          DownloadManager.methods.ren(this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg",this.$store.state.pluginPath[0]+":\\Edgeless\\wp_bak.jpg")
+          DownloadManager.methods.copy(arg[0],this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg",false,()=>{
+            notification.open({
+              message:'壁纸更换完毕'
+            })
+          })
+        }else{
+          notification.open({
+            message:'壁纸更换失败',
+            description:"没有选中文件"
+          })
+        }
+      })
+      //发送打开对话框事件
+      this.$electron.ipcRenderer.send('openFileDialog-request',"")
+    },
   },
   created() {
+    //准备偏好调整的数据
     this.prepareData()
+    //判断当前分辨率的模式
+    if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\分辨率.txt")){
+      if(fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\分辨率.txt").toString()==="DisableAutoSuit"){
+        this.ResolutionWay="1"
+      }else{
+        this.ResolutionWay="2"
+      }
+    }else{
+      this.ResolutionWay="0"
+    }
   }
 }
 </script>
