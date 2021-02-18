@@ -181,6 +181,7 @@ name: "DownloadManager",
         cp.execSync('del /f /s /q '+dst)
         cp.execSync('rd /s /q '+dst)
       }
+      return !this.exist(dst)
     },
     ren(src,dst){
       fs.renameSync(src,dst)

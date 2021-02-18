@@ -63,6 +63,11 @@ const routes = [
     path:'/update',
     name:'Update',
     component: ()=>import("@/views/Update")
+  },
+  {
+    path:'/config',
+    name:'Config',
+    component: ()=>import("@/views/Config")
   }
 ]
 

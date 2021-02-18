@@ -137,6 +137,8 @@ export default new Vuex.Store({
       taskStopped:false //任务是否已经暂停
     },
 
+    //盘内的Edgeless版本号
+    EdgelessVersion:"Edgeless_Beta_Ofial_Undefined_2",
     wikiUrl:"https://wiki.edgeless.top/v2"
   },
   mutations: {
@@ -277,5 +279,8 @@ export default new Vuex.Store({
     },
     setAlphaStopped(state,payload){
       state.AlphaInfo.taskStopped=payload
+    },
+    changeEdgelessVersion(state,payload){
+      state.EdgelessVersion=payload
     }
 }})

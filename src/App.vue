@@ -29,6 +29,11 @@
               <router-link to="/alpha"/>
             </a-menu-item>
           </a-sub-menu>
+          <a-menu-item key="/config">
+            <a-icon type="flag" />
+            <span>配置</span>
+            <router-link to="/config"/>
+          </a-menu-item>
           <a-sub-menu key="/cate">
             <template slot="title"> <a-icon type="appstore" /><span>插件</span> </template>
             <a-menu-item key="/reco">
@@ -117,6 +122,7 @@ import TopBar from "@/components/TopBar"
 import {notification} from 'ant-design-vue'
 import DownloadManager from "@/components/DownloadManager"
 const cp=window.require('child_process')
+const fs=window.require('fs')
 
 export default {
   data() {
@@ -280,7 +286,7 @@ export default {
             cData.forEach((item)=>{
               item["icon"]=this.getMatchedIconName(item.name)
             })
-            console.log(cData)
+            //console.log(cData)
             this.$store.commit('setCateData',cData)
             this.getPluginData()
           })
@@ -369,12 +375,18 @@ export default {
           })
           this.reScanEdgeless=false
           DownloadManager.methods.getPluginList()
+
+          //获取Edgeless完整版本号存入store
+          let ver_el="Edgeless_Beta_Ofial_Undefined_2"
+          ver_el=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString()
+          this.$store.commit('changeEdgelessVersion',ver_el)
         }else{
           if(this.reScanEdgeless===false){
             notification.open({
               message:'未检测到Edgeless启动盘',
               description:'请插入Edgeless启动盘以使用安装功能'
             })
+            this.$store.commit('changeEdgelessVersion',"Edgeless_Beta_Ofial_Undefined_2")
           }
           this.reScanEdgeless=true
         }
