@@ -40,7 +40,7 @@
           显示分辨率
         </a-col>
         <a-col :span="4">
-          <a-select style="width: 100%" size="small" :default-value="0" @change="onChangeSelect">
+          <a-select style="width: 100%" size="small" v-model="resolution_index" @change="onChangeSelect">
             <template v-for="(item,index) in ResolutionList">
               <a-select-option :value="index">
                 {{item.h+' x '+item.w}}
@@ -123,6 +123,7 @@ name: "Config",
   data(){
   return{
     Options:[],
+    //这个列表的h和w写反了，之后会处理一下
     ResolutionList:[
       {
         h:1920,
@@ -195,7 +196,8 @@ name: "Config",
       w:1080,
       bit:32,
       fps:60
-    }
+    },
+    resolution_index:0,
   }
   },
   methods:{
@@ -260,14 +262,19 @@ name: "Config",
           break
       }
     },
-    onChangeSelect(val){
-      this.ResolutionConfig.h=val.h
-      this.ResolutionConfig.w=val.w
+    onChangeSelect(){
+      let val=this.ResolutionList[this.resolution_index]
+      this.ResolutionConfig.h=val.w
+      this.ResolutionConfig.w=val.h
     },
     writeResolutionConfig(){
       //w1024 h768 b32 f60
       DownloadManager.methods.mkdir(this.$store.state.pluginPath[0]+":\\Edgeless\\Config")
       fs.writeFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\分辨率.txt","w"+this.ResolutionConfig.w+" h"+this.ResolutionConfig.h+" b"+this.ResolutionConfig.bit+" f"+this.ResolutionConfig.fps)
+      notification.open({
+        message:'自定义分辨率应用成功',
+        description:"写入配置："+"w"+this.ResolutionConfig.w+" h"+this.ResolutionConfig.h+" b"+this.ResolutionConfig.bit+" f"+this.ResolutionConfig.fps
+      })
     },
     ViewWP(){
       this.$electron.shell.openPath(this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg")

@@ -33,7 +33,8 @@ async function createWindow() {
             nodeIntegrationInWorker: true,
             webSecurity: false,
             webviewTag: true
-        }
+        },
+        icon:"./core/favicon.ico"
     })
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
