@@ -553,6 +553,8 @@ export default {
 
     //监听回复
     this.$electron.ipcRenderer.on('scanDisks-reply', (event, res) => {
+      this.$rp.log("获得scanDisks的事件回复：")
+      this.$rp.log(JSON.stringify(res))
       if (res) {
         //获取主进程发送的磁盘信息，开始检查Ventoy是否就绪
         this.driveInfo = res

@@ -19,7 +19,6 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     test(){
-      this.$rp.log('test msg')
     }
   },
   created() {
