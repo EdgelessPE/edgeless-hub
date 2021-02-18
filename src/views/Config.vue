@@ -4,30 +4,106 @@
       title="配置中心"
       @back="() => $router.go(-1)"
   />
-  <a-list
-      item-layout="horizontal"
-      :data-source="Options"
-  >
-    <a-list-item slot="renderItem" slot-scope="item, index">
-      <a-switch slot="actions" v-model="item.state" :disabled="!item.available" @change="onChange(item)" />
-      <a-list-item-meta
-          :description="item.description"
-      >
-        <a-avatar slot="avatar" style="color: #ffffff; backgroundColor: #ffffff"/>
-        <div slot="title">{{ item.title }}</div>
-      </a-list-item-meta>
-      <a-tooltip v-if="item.showTip">
-        <a-icon type="question-circle" />
-        <template slot="title">
-          <template v-if="!item.available">
-            需要{{item.higherThan}}以上版本
-            <br/>
+
+  <a-card title="分辨率" style="width: 100%">
+    <a-tooltip slot="extra">
+      <a-icon type="exclamation-circle"/>
+      <template slot="title">
+        在某些使用UEFI引导启动的场合下Edgeless无法改变分辨率，此项配置失效
+      </template>
+    </a-tooltip>
+    <a-radio-group v-model="ResolutionWay">
+      <a-radio-button value="0">
+        自动调节（默认）
+      </a-radio-button>
+      <a-radio-button value="1">
+        不调节
+      </a-radio-button>
+      <a-radio-button value="2">
+        自定义调节
+      </a-radio-button>
+    </a-radio-group>
+    <template v-if="ResolutionWay==='1'">
+      <br/><br/>
+      <a-alert message="选择此项可以解决启动过程中因为分辨率过高导致显示器无法显示的问题" type="info" show-icon />
+    </template>
+    <template v-if="ResolutionWay==='2'">
+      <br/><br/>
+      <a-row>
+        <a-col :span="2">
+          显示分辨率
+        </a-col>
+        <a-col :span="4">
+          <a-select style="width: 100%" size="small" :default-value="0">
+            <template v-for="(item,index) in ResolutionList">
+              <a-select-option :value="index">
+                {{item.h+' x '+item.w}}
+              </a-select-option>
+            </template>
+          </a-select>
+        </a-col>
+        <a-col :span="1"/>
+        <a-col :span="1">
+          色位
+        </a-col>
+        <a-col :span="3">
+          <a-select style="width: 100%" size="small" :default-value="32">
+            <a-select-option :value="32">
+              32bit (推荐)
+            </a-select-option>
+            <a-select-option :value="16">
+              16bit
+            </a-select-option>
+          </a-select>
+        </a-col>
+        <a-col :span="1"/>
+        <a-col :span="2">
+          刷新率
+        </a-col>
+        <a-col :span="2">
+          <a-select style="width: 100%" size="small" :default-value="60">
+            <a-select-option :value="60">
+              60 FPS
+            </a-select-option>
+            <a-select-option :value="30">
+              30 FPS
+            </a-select-option>
+          </a-select>
+        </a-col>
+
+        <a-col :span="6"/>
+        <a-col :span="2">
+          <a-button size="small" type="primary">应用</a-button>
+        </a-col>
+      </a-row>
+    </template>
+  </a-card>
+  <br/>
+  <a-card title="偏好调整" style="width: 100%">
+    <a-list
+        item-layout="horizontal"
+        :data-source="Options"
+    >
+      <a-list-item slot="renderItem" slot-scope="item, index">
+        <a-switch slot="actions" v-model="item.state" :disabled="!item.available" @change="onChange(item)" />
+        <a-list-item-meta
+            :description="item.description"
+        >
+          <div slot="title">{{ item.title }}</div>
+        </a-list-item-meta>
+        <a-tooltip v-if="item.showTip||!item.available">
+          <a-icon type="question-circle" />
+          <template slot="title">
+            <template v-if="!item.available">
+              需要高于{{item.higherThan}}版本可用
+              <br/>
+            </template>
+            {{item.information}}
           </template>
-          {{item.information}}
-        </template>
-      </a-tooltip>
-    </a-list-item>
-  </a-list>
+        </a-tooltip>
+      </a-list-item>
+    </a-list>
+  </a-card>
 </div>
 </template>
 
@@ -40,6 +116,73 @@ name: "Config",
   data(){
   return{
     Options:[],
+    ResolutionList:[
+      {
+        h:1920,
+        w:1080
+      },
+      {
+        h:1680,
+        w:1050
+      },
+      {
+        h:1600,
+        w:900
+      },
+      {
+        h:1440,
+        w:900
+      },
+      {
+        h:1400,
+        w:1050
+      },
+      {
+        h:1366,
+        w:768
+      },
+      {
+        h:1360,
+        w:768
+      },
+      {
+        h:1280,
+        w:1024
+      },
+      {
+        h:1280,
+        w:960
+      },
+      {
+        h:1280,
+        w:800
+      },
+      {
+        h:1280,
+        w:768
+      },
+      {
+        h:1280,
+        w:720
+      },
+      {
+        h:1280,
+        w:600
+      },
+      {
+        h:1152,
+        w:864
+      },
+      {
+        h:1024,
+        w:768
+      },
+      {
+        h:800,
+        w:600
+      }
+    ],
+    ResolutionWay:0,
   }
   },
   methods:{

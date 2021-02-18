@@ -68,7 +68,21 @@ export default [
         title:"禁用开机启动画面",
         description:"关闭LoadScreen，您会看到Edgeless的启动过程",
         information:"虽然此选项能够让您尽快看到桌面，但在此期间不建议您执行操作",
-        higherThan:"",
+        higherThan:"3.1.0",
         folderName:"DisableLoadScreen"
+    },
+    {
+        title:"干预盘符整理过程-1",
+        description:"将Edgeless找到的第一块硬盘（通常是SSD）活动分区所在的盘符排在所有盘符之前",
+        information:"如果没有启用此开关，Edgeless不改变硬盘分区盘符顺序，盘符排列的顺序和在磁盘管理软件中看到的一样",
+        higherThan:"3.0.0",
+        folderName:"UpActDrv"
+    },
+    {
+        title:"干预盘符整理过程-2",
+        description:"如果磁盘上没有活动分区，将Edgeless找到的第一块硬盘（通常是SSD）含有Windows系统的分区盘符放在第一位；如果有活动分区，将含有活动分区所在的盘符排在第一位",
+        information:"由于此开关实际上是 干预盘符整理过程-1 的高级版本，因此如果同时打开了这两个开关，程序会使用此开关的方案",
+        higherThan:"3.0.0",
+        folderName:"WinFirst"
     }
 ]
