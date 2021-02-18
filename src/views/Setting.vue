@@ -31,14 +31,15 @@
   </a-card>
   <br/>
   <a-card title="调试页面" style="width: 100%">
-    <a-button href="/#/test">Debug</a-button>
+    <a-button href="/#/test">
+      Debug
+    </a-button>
   </a-card>
 </div>
 </template>
 
 <script>
 import DownloadManager from "@/components/DownloadManager";
-import {notification} from "ant-design-vue";
 import StationList from '@/stationpool/main'
 export default {
 name: "Setting",

@@ -2,6 +2,7 @@
 node_modules
 /dist
 *.xmind
+Log.txt
 
 
 # local env files

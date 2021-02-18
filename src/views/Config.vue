@@ -289,7 +289,8 @@ name: "Config",
           DownloadManager.methods.ren(this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg",this.$store.state.pluginPath[0]+":\\Edgeless\\wp_bak.jpg")
           DownloadManager.methods.copy(arg[0],this.$store.state.pluginPath[0]+":\\Edgeless\\wp.jpg",false,()=>{
             notification.open({
-              message:'壁纸更换完毕'
+              message:'壁纸更换完毕',
+              description:"原壁纸已备份为wp_bak.jpg"
             })
           })
         }else{

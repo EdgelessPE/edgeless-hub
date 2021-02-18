@@ -10,6 +10,7 @@ Vue.config.productionTip = false
 Vue.use(Antd)
 Vue.prototype.$axios=axios
 Vue.prototype.$electron = window.require('electron')
+Vue.prototype.$rp=require('@/interface/Repoter')
 
 new Vue({
   router,

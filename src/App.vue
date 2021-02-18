@@ -516,6 +516,9 @@ export default {
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
+    //初始化Reporter
+    this.$rp.init()
+
     //检查依赖文件完整性
     if(!DownloadManager.methods.exist(this.$store.state.aria2cPath+'/aria2c.exe')){
       notification.open({
@@ -687,6 +690,7 @@ export default {
     })
   },
   destroyed() {
+    this.$rp.destroy()
     this.killAria2c()
   }
 };
