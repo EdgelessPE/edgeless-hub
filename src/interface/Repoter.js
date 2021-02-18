@@ -36,7 +36,7 @@ function appendToBuffer(msg,level) {
     const date=new Date()
     let content_time=date.getHours().toString()+":"+date.getMinutes().toString()+":"+date.getSeconds().toString()
 
-    buffer=buffer.concat('\n',content_time,"-",level,"- ",msg)
+    buffer=buffer.concat('\n',content_time,"-",level," ",msg)
     clearBuffer=false
 }
 

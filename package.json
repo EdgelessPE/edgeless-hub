@@ -19,7 +19,6 @@
     "core-js": "^3.6.5",
     "edge-js": "^15.5.2",
     "electron-edge-js": "^12.18.5",
-    "electron-log": "^4.3.1",
     "json-rpc2": "^2.0.0",
     "node-7zip": "^1.0.1",
     "urlencode": "^1.1.0",
