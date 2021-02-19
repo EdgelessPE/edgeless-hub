@@ -28,9 +28,10 @@
     </a-result>
   </a-col>
   <a-col :span="8">
-    <a-card title="有3个插件可更新" :bordered="false" style="width: 300px">
+    <a-card :title="$store.state.updateList.length===0?('已安装'+$store.state.fileList.length+'个插件'):('有'+$store.state.updateList.length+'个插件可更新')" :bordered="false" style="width: 300px">
       <template slot="extra">
-        <a-button type="primary">更新</a-button>
+        <a-button v-if="$store.state.updateList.length!==0" type="primary" @click="routeTo('/down')">更新</a-button>
+        <a-button v-else @click="routeTo('/down')">管理</a-button>
       </template>
         <p>随便看看</p>
         <a-list>
@@ -89,13 +90,15 @@ name: "Index",
         EventFrom:"Edgeless",
         DisplayTitle:"Loading...",
         DisplayDescription:"",
-        DisplayIcon:"loading",
+        DisplayIcon:"hourglass",
         ButtonText:"Loading...",
         ButtonRoute:"/index",
         ButtonType:"default"
       }
     ],
     localVersion:"",
+    onlineVersion:"",
+
   }
   },
   methods:{
