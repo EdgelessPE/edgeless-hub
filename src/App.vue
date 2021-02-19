@@ -431,7 +431,7 @@ export default {
         }else{
           //根据注册表设置默认下载路径
           let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
-          if(DownloadManager.methods.exist(path)) {
+          if(DownloadManager.methods.exist(path)&&path[0]!=="C"&&path[0]!=="c") {
             this.$store.commit('changeDownloadDir', path + '\\ELStore')
             //更新本组件上的userInputDownloadDir
             this.userInputDownloadDir=this.$store.state.downloadDir

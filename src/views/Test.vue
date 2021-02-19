@@ -8,6 +8,7 @@
 </template>
 
 <script>
+const os=window.require('os')
 export default {
 name: "Test",
   data(){
@@ -19,6 +20,7 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     test(){
+      console.log(os.userInfo())
     }
   },
   created() {
