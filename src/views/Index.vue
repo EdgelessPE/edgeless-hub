@@ -34,38 +34,18 @@
         <a-button v-else @click="routeTo('/down')">管理</a-button>
       </template>
         <p>随便看看</p>
-        <a-list>
-          <a-button slot="loadMore" type="link" icon="reload" @click="openQQLink">
+        <a-list :data-source="pluginRecommendList" :loading="loadingPluginRecommendList">
+          <a-button slot="loadMore" type="link" icon="reload" @click="genePluginRecommendList">
             换一批
           </a-button>
-          <a-list-item>
+          <a-list-item slot="renderItem" slot-scope="item, index">
             <a-list-item-meta
-                title="PotPlayer"
-                description="影音播放"
+                :title="item.pluginName+'-'+item.pluginVer"
+                :description="item.cateName"
             >
             </a-list-item-meta>
             <template slot="extra">
-              <a-button>安装</a-button>
-            </template>
-          </a-list-item>
-          <a-list-item>
-            <a-list-item-meta
-                title="360急救箱"
-                description="安全急救"
-            >
-            </a-list-item-meta>
-            <template slot="extra">
-              <a-button>安装</a-button>
-            </template>
-          </a-list-item>
-          <a-list-item>
-            <a-list-item-meta
-                title="Audition"
-                description="办公编辑"
-            >
-            </a-list-item-meta>
-            <template slot="extra">
-              <a-button>安装</a-button>
+              <a-button size="small" @click="routeTo('/cate?name='+item.cateName)">查看</a-button>
             </template>
           </a-list-item>
         </a-list>
@@ -77,6 +57,7 @@
 
 <script>
 import DownloadManager from "@/components/DownloadManager";
+import CateButton from "@/components/CateButton";
 const fs=window.require('fs')
 export default {
 name: "Index",
@@ -98,12 +79,23 @@ name: "Index",
     ],
     localVersion:"",
     onlineVersion:"",
-
+    pluginRecommendList:[],
+    loadingPluginRecommendList:true
   }
+  },
+  components:{
+    CateButton
   },
   methods:{
     openQQLink(){
       this.$electron.shell.openExternal('https://home.edgeless.top/jump/qqg.html')
+    },
+    routeTo(name){
+      this.$router.push(name)
+    },
+    randomNum(minNum,maxNum){
+      maxNum--
+      return parseInt(Math.random() * ( maxNum - minNum + 1 ) + minNum, 10)
     },
     geneWelcome(){
       //获取系统用户名
@@ -207,13 +199,45 @@ name: "Index",
       //交换数组顺序
       this.events[0]=this.events[1]
     },
-    routeTo(name){
-      this.$router.push(name)
-    },
+    genePluginRecommendList(){
+      this.loadingPluginRecommendList=true
+      this.pluginRecommendList=[]
+      //随机选出三个分类
+      for (let i=0;i<3;i++){
+        //选出一个分类
+        let cateIndex=this.randomNum(0,this.$store.state.allData.length)
+        let cateName=this.$store.state.allData[cateIndex].cateName
+
+        //选出一个插件
+        let pluginIndex=this.randomNum(0,this.$store.state.allData[cateIndex].files.length)
+        let fileInfo=this.$store.state.allData[cateIndex].files[pluginIndex]
+
+        //解析插件数据
+        let spr=fileInfo.name.split("_")
+
+        //推入数组
+        this.pluginRecommendList.push({
+          cateName,
+          fileInfo,
+          pluginName:spr[0],
+          pluginVer:spr[1],
+          pluginAuthor:spr[2].split(".7z")[0]
+        })
+      }
+      this.loadingPluginRecommendList=false
+    }
   },
   created() {
     this.geneWelcome()
     this.geneEdgelessEvents()
+    //当插件准备完成时生成推荐列表
+    if(this.$store.state.allData.length!==0&&this.$store.state.allData.length===this.$store.state.cateData.length) {
+      this.genePluginRecommendList()
+    }else{
+      this.$root.eventHub.$on('all-data-loaded',()=>{
+        this.genePluginRecommendList()
+      })
+    }
   }
 }
 </script>

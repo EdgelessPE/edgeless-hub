@@ -79,7 +79,7 @@ export default {
   },
   created() {
     //所有插件列表载入完成时生成推荐列表
-    if(this.$store.state.allData.length===this.$store.state.cateData.length) {
+    if(this.$store.state.allData.length!==0&&this.$store.state.allData.length===this.$store.state.cateData.length) {
       this.generateRecommends()
     }
     this.$root.eventHub.$on('all-data-loaded',()=>{
