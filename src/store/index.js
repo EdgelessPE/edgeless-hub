@@ -11,6 +11,7 @@ export default new Vuex.Store({
     stationIndex:0,
     theme:'light',
     downloadDir:'D:\\ELStore',
+    userName:"",
 
     //无需保存到config的数据
     stationObject:{
@@ -19,6 +20,7 @@ export default new Vuex.Store({
       getPluginList:function (cateName,callback){},
       name:''
     },
+    inited:false,//是否完成初始化
     cateData:[],
     allData:[],
     versionCache:[], //缓存在线版本的查询结果
@@ -230,6 +232,7 @@ export default new Vuex.Store({
       state.downloadDir=config.downloadDir
       state.theme=config.theme
       state.stationIndex=config.stationIndex
+      state.userName=config.userName
     },
     changeTheme(state,theme){
       state.theme=theme
@@ -282,5 +285,12 @@ export default new Vuex.Store({
     },
     changeEdgelessVersion(state,payload){
       state.EdgelessVersion=payload
+    },
+    updateUserName(state,name){
+      state.userName=name
+    },
+    finishInit(state,eventHub){
+      state.inited=true
+      eventHub.$emit('finish-init',"")
     }
 }})

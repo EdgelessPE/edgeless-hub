@@ -7,7 +7,7 @@
   </a-page-header>
 <a-row style="width: 100%">
   <a-col :span="16">
-    <a-result :title="events[0].DisplayTitle">
+    <a-result :title="event_selected.DisplayTitle">
       <template slot="subTitle">
 <!--        <a-tag color="red">-->
 <!--          Alpha-->
@@ -15,14 +15,14 @@
 <!--        <a-tag color="blue">-->
 <!--          3.1.0-->
 <!--        </a-tag>-->
-        {{events[0].DisplayDescription}}
+        {{event_selected.DisplayDescription}}
       </template>
       <template #icon>
-        <a-icon :type="events[0].DisplayIcon" theme="twoTone" />
+        <a-icon :type="event_selected.DisplayIcon" theme="twoTone" />
       </template>
       <template #extra>
-        <a-button :type="events[0].ButtonType" @click="routeTo(events[0].ButtonRoute)">
-          {{events[0].ButtonText}}
+        <a-button :type="event_selected.ButtonType" @click="routeTo(event_selected.ButtonRoute)">
+          {{event_selected.ButtonText}}
         </a-button>
       </template>
     </a-result>
@@ -77,6 +77,18 @@ name: "Index",
         ButtonType:"default"
       }
     ],
+    event_selected:
+    {
+      EventLevel:1,
+      EventName:"默认",
+      EventFrom:"Edgeless",
+      DisplayTitle:"Loading...",
+      DisplayDescription:"",
+      DisplayIcon:"hourglass",
+      ButtonText:"Loading...",
+      ButtonRoute:"/index",
+      ButtonType:"default"
+    },
     localVersion:"",
     onlineVersion:"",
     pluginRecommendList:[],
@@ -99,8 +111,7 @@ name: "Index",
     },
     geneWelcome(){
       //获取系统用户名
-      const os=window.require('os')
-      let username=os.userInfo().username
+      let username=this.$store.state.userName
       //获取当前时间
       const date=new Date()
       //判断当前小时数，对应凌晨，早上，中午，下午，傍晚，晚上
@@ -113,11 +124,14 @@ name: "Index",
         this.text_welcome="⏰中午啦"+username+"，稍事休息一下吧"
       }else if(14<=hour&&hour<18){
         this.text_welcome="☕嘿"+username+"，又到了愉快的下午茶时光~"
-      }else if(18<=hour&&hour<0){
+      }else if(18<=hour&&hour<24){
         this.text_welcome="😃美妙的夜晚就应该好好放纵自己，是吧"+username+"？"
+      }else{
+        this.text_welcome="哈喽，"+username
       }
     },
     async geneEdgelessEvents(){
+      this.events=[]
       //判断有无启动盘
       if(DownloadManager.methods.exist(this.$store.state.pluginPath)){
         //判断是否为新版规范
@@ -196,8 +210,8 @@ name: "Index",
           ButtonType:"primary"
         })
       }
-      //交换数组顺序
-      this.events[0]=this.events[1]
+      //选中一个状态更新DOM
+      this.event_selected=this.events[0]
     },
     genePluginRecommendList(){
       this.loadingPluginRecommendList=true
@@ -225,17 +239,35 @@ name: "Index",
         })
       }
       this.loadingPluginRecommendList=false
+    },
+    geneMaster(){
+      this.geneWelcome()
+      this.geneEdgelessEvents()
+      //当插件准备完成时生成推荐列表
+      if(this.$store.state.allData.length!==0&&this.$store.state.allData.length===this.$store.state.cateData.length) {
+        this.genePluginRecommendList()
+      }else{
+        this.$root.eventHub.$on('all-data-loaded',()=>{
+          this.genePluginRecommendList()
+        })
+      }
     }
   },
   created() {
-    this.geneWelcome()
-    this.geneEdgelessEvents()
-    //当插件准备完成时生成推荐列表
-    if(this.$store.state.allData.length!==0&&this.$store.state.allData.length===this.$store.state.cateData.length) {
-      this.genePluginRecommendList()
-    }else{
-      this.$root.eventHub.$on('all-data-loaded',()=>{
-        this.genePluginRecommendList()
+    //监听启动盘拔出和插入事件
+    this.$root.eventHub.$on('disk-unplugged',()=>{
+      this.geneMaster()
+    })
+    this.$root.eventHub.$on('disk-plugged',()=>{
+      this.geneMaster()
+    })
+
+    //判断是否完成初始化，否则监听初始化完成事件
+    if(this.$store.state.inited){
+      this.geneMaster()
+    }else {
+      this.$root.eventHub.$on('finish-init',()=>{
+        this.geneMaster()
       })
     }
   }

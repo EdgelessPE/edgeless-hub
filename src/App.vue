@@ -229,11 +229,14 @@ export default {
   },
   methods:{
     finishWelcome(){
+      //初始化用户名
+      this.$store.commit('updateUserName',window.require('os').userInfo().username)
       //检查输入目录是否存在
       if(DownloadManager.methods.exist(this.userInputDownloadDir)){
         this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
         DownloadManager.methods.writeConfig()
         this.showWelcome=false
+        this.$store.commit('finishInit',this.$root.eventHub)
       }else{
         //尝试创建下载目录
         if(DownloadManager.methods.mkdir(this.userInputDownloadDir)){
@@ -244,6 +247,7 @@ export default {
           this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
           DownloadManager.methods.writeConfig()
           this.showWelcome=false
+          this.$store.commit('finishInit',this.$root.eventHub)
         }else{
           //提示重新选择
           this.userInputDownloadDir=this.$store.state.downloadDir
@@ -373,6 +377,7 @@ export default {
             message:'检测到Edgeless启动盘',
             description:'盘符：'+this.$store.state.pluginPath[0]
           })
+          this.$root.eventHub.$emit('disk-plugged',"")
           this.reScanEdgeless=false
           DownloadManager.methods.getPluginList()
 
@@ -387,6 +392,7 @@ export default {
               description:'请插入Edgeless启动盘以使用安装功能'
             })
             this.$store.commit('changeEdgelessVersion',"Edgeless_Beta_Ofial_Undefined_2")
+            this.$root.eventHub.$emit('disk-unplugged',"")
           }
           this.reScanEdgeless=true
         }
@@ -403,6 +409,7 @@ export default {
               message:'Edgeless启动盘被拔出',
               description:'请插入Edgeless启动盘以使用安装功能'
             })
+            this.$root.eventHub.$emit('disk-unplugged',"")
           }
         }
       }
@@ -530,6 +537,11 @@ export default {
     //读取配置文件
     let config=DownloadManager.methods.readConfig()
 
+    //如果config没有定义userName则读取系统用户名
+    if(!config['userName']){
+      config['userName']=window.require('os').userInfo().username
+    }
+
     //写入配置到Vuex或执行首次运行配置
     if(config.exist&&config.stationIndex!==undefined){
       this.$store.commit('updateByConfig',config)
@@ -556,6 +568,9 @@ export default {
 
     //获取在线列表数据
     this.refreshData()
+
+    //完成初始化，发送事件
+    this.$store.commit('finishInit',this.$root.eventHub)
 
     //配置定时任务
     setInterval(()=>{

@@ -73,6 +73,7 @@ name: "DownloadManager",
         stationIndex:this.$store.state.stationIndex,
         theme:this.$store.state.theme,
         downloadDir:this.$store.state.downloadDir,
+        userName:this.$store.state.userName
       }
       fs.writeFileSync('./elstore_config.json',JSON.stringify(data))
     },

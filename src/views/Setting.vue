@@ -4,6 +4,10 @@
       title="设置中心"
       @back="() => $router.go(-1)"
   />
+  <a-card title="用户称呼" style="width: 100%">
+    <a-input v-model="userName"></a-input>
+  </a-card>
+  <br/>
   <a-card title="侧边栏主题" style="width: 100%">
     <a-switch checked-children="亮" un-checked-children="暗" :default-checked="$store.state.theme==='light'" @change="changeTheme"/>
   </a-card>
@@ -48,7 +52,8 @@ name: "Setting",
     interval:'',
     edgelessDisks:[],
     currentEdgelessDisk:'A',
-    mirrors:[]
+    mirrors:[],
+    userName:""
   }
   },
   methods:{
@@ -99,9 +104,14 @@ name: "Setting",
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
       if(arg) this.$store.commit('changeDownloadDir',arg[0])
     })
+
+    //同步userName
+    this.userName=this.$store.state.userName
   },
   destroyed() {
     clearInterval(this.interval)
+    if(this.userName==="") this.userName=window.require('os').userInfo().username
+    this.$store.commit('updateUserName',this.userName)
     DownloadManager.methods.writeConfig()
   }
 }
