@@ -28,7 +28,7 @@
     </a-result>
   </a-col>
   <a-col :span="8">
-    <a-card :title="$store.state.updateList.length===0?('已安装'+$store.state.fileList.length+'个插件'):('有'+$store.state.updateList.length+'个插件可更新')" :bordered="false" style="width: 300px">
+    <a-card :title="$store.state.fileList.length===0?'未安装插件':($store.state.updateList.length===0?('已安装'+$store.state.fileList.length+'个插件'):('有'+$store.state.updateList.length+'个插件可更新'))" :bordered="false" style="width: 300px">
       <template slot="extra">
         <a-button v-if="$store.state.updateList.length!==0" type="primary" @click="routeTo('/down')">更新</a-button>
         <a-button v-else @click="routeTo('/down')">管理</a-button>
@@ -259,6 +259,11 @@ name: "Index",
       this.geneMaster()
     })
     this.$root.eventHub.$on('disk-plugged',()=>{
+      this.geneMaster()
+    })
+
+    //监听配置改变
+    this.$root.eventHub.$on('config-updated',()=>{
       this.geneMaster()
     })
 

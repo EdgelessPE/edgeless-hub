@@ -312,6 +312,14 @@ name: "Config",
     },
   },
   created() {
+    //检查启动盘是否存在
+    if(!DownloadManager.methods.exist(this.$store.state.pluginPath)){
+      notification.open({
+        message:'无法执行配置',
+        description:'未检测到Edgeless启动盘，请先执行写入步骤'
+      })
+      this.$router.push("/burning")
+    }
     //准备偏好调整的数据
     this.prepareData()
     //判断当前分辨率的模式

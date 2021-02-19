@@ -570,7 +570,7 @@ export default {
     this.refreshData()
 
     //完成初始化，发送事件
-    this.$store.commit('finishInit',this.$root.eventHub)
+    if(config.exist&&config.stationIndex!==undefined) this.$store.commit('finishInit',this.$root.eventHub)
 
     //配置定时任务
     setInterval(()=>{

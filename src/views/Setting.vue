@@ -112,6 +112,7 @@ name: "Setting",
     clearInterval(this.interval)
     if(this.userName==="") this.userName=window.require('os').userInfo().username
     this.$store.commit('updateUserName',this.userName)
+    this.$root.eventHub.$emit('config-updated','')
     DownloadManager.methods.writeConfig()
   }
 }

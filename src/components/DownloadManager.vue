@@ -294,7 +294,7 @@ name: "DownloadManager",
           }else if(!this.stillCopying(info[0])){
             //判断是否需要升级
             data_tmp=this.getVersionAndUrl(info[0])
-            if(data_tmp.version==='null'||data_tmp.version===info[1]){
+            if(data_tmp.version==='null'||data_tmp.version<=info[1]){
               result.push({
                 'name':info[0],
                 'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
