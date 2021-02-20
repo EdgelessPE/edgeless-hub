@@ -72,6 +72,7 @@
             <a-button type="primary" v-on:click="checkVentoyUDisk" :loading="checkingVentoy">
               检查
             </a-button>
+            <a-button v-on:click="emergency" v-if="checkingVentoy">紧急出口</a-button>
           </template>
           <template v-if="showExecVentoyButton&&!manual">
             <a-space direction="vertical">
@@ -384,12 +385,12 @@ export default {
           message:'警告：'+val+"盘存在Edgeless文件夹，请检查是否存在误判",
           description:"如果仍旧需要重新制作，请删除Edgeless文件夹"
         })
-        return
       }
       this.selectedVentoyPart = val
     },
     jumpToStep3() {
-      if (!DownloadManager.methods.exist(this.selectedVentoyPart + ':\\')||this.selectedVentoyPart==="") {
+      //console.log(this.selectedVentoyPart)
+      if (this.selectedVentoyPart===""||(!DownloadManager.methods.exist(this.selectedVentoyPart + ':\\'))) {
         notification.open({
           message:'错误：路径不存在',
           description:"请选择一个存在的盘符"
@@ -420,6 +421,8 @@ export default {
       this.$electron.ipcRenderer.send('scanDisks-request', '')
     },
     edgelessOperator() {
+      //console.log(this.selectedVentoyPart)
+      //return
       //校验目标盘符是否存在
       if(this.selectedVentoyPart===""||!DownloadManager.methods.exist(this.selectedVentoyPart+":\\")){
         notification.open({
@@ -494,6 +497,17 @@ export default {
     },
     gotoWiki() {
       this.$router.push('/wiki?location=https://home.edgeless.top/guide')
+    },
+    emergency(){
+      //处理c#无法正常运行时的手动选择
+      //生成本地磁盘数组
+      for (let i = 25; i >= 0; i--) {
+        if (DownloadManager.methods.exist(String.fromCharCode(65 + i) + ':\\')) {
+          this.diskList.push(String.fromCharCode(65 + i))
+        }
+      }
+      //console.log(this.diskList)
+      this.manual = true
     }
   },
   computed: {
@@ -576,6 +590,7 @@ export default {
 
     //监听回复
     this.$electron.ipcRenderer.on('scanDisks-reply', (event, res) => {
+      //return
       this.$rp.log("获得scanDisks的事件回复：")
       this.$rp.log(JSON.stringify(res))
       if (res) {
@@ -603,15 +618,7 @@ export default {
         }
         this.checkingVentoy = false
       } else {
-        //处理c#无法正常运行时的手动选择
-        //生成本地磁盘数组
-        for (let i = 25; i >= 0; i--) {
-          if (DownloadManager.methods.exist(String.fromCharCode(65 + i) + ':\\')) {
-            this.diskList.push(String.fromCharCode(65 + i))
-          }
-        }
-        //console.log(this.diskList)
-        this.manual = true
+        this.emergency()
       }
     })
     this.$electron.ipcRenderer.on('unzip-reply', (event, res) => {

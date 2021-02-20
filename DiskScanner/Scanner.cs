@@ -13,7 +13,7 @@ namespace DiskScanner
             int pointer = 0;
             foreach (DriveInfo i in drives)
             {
-                if (i.DriveType == DriveType.Fixed || i.DriveType == DriveType.Removable)
+                if (i.IsReady && (i.DriveType == DriveType.Fixed || i.DriveType == DriveType.Removable))
                 {
                     results[pointer] = i.Name + (i.DriveType == DriveType.Removable ? 1 : 0) + i.VolumeLabel;
                     //Console.WriteLine(results[pointer]);

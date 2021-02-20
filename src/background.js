@@ -127,7 +127,7 @@ ipcMain.on('scanDisks-request', (event, arg) => {
         methodName: 'getDiskInfo'
     })
     try{
-        //throw 'error'
+        throw 'error'
         getDiskInfo('0', function (error, result) {
             if (error) throw error;
             console.log(result)
