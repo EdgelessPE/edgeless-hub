@@ -4,7 +4,7 @@
       <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
     </a-steps>
     <div class="steps-content" key="0" v-if="stepsInfo.step===0">
-      <a-result title="在开始之前，我们需要下载一些必要的依赖文件" subTitle="请保证您的网络连接稳定可靠">
+      <a-result title="在开始之前，我们需要下载一些必要的依赖文件" subTitle="Edgeless不是维护用PE，对劣质U盘和旧型号电脑兼容性不佳，请选用知名品牌U盘制作">
         <template #icon>
           <a-icon type="cloud-download"/>
         </template>
@@ -382,7 +382,7 @@ export default {
       this.selectedVentoyPart = val
     },
     jumpToStep3() {
-      if (!DownloadManager.methods.exist(this.selectedVentoyPart + ':\\')) {
+      if (!DownloadManager.methods.exist(this.selectedVentoyPart + ':\\')||this.selectedVentoyPart==="") {
         notification.open({
           message:'错误：路径不存在',
           description:"请选择一个存在的盘符"
@@ -413,6 +413,14 @@ export default {
       this.$electron.ipcRenderer.send('scanDisks-request', '')
     },
     edgelessOperator() {
+      //校验目标盘符是否存在
+      if(this.selectedVentoyPart===""||!DownloadManager.methods.exist(this.selectedVentoyPart+":\\")){
+        notification.open({
+          message: '错误：没有发现Ventoy启动盘',
+          description: "步骤3操作失败，请检查后重试"
+        })
+        return
+      }
       //复制ventoy_wimboot插件（3MB）
       this.stepsInfo.stepText = "复制ventoy_wimboot插件"
       DownloadManager.methods.mkdir(this.selectedVentoyPart + ':\\ventoy\\')

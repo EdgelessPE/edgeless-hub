@@ -138,11 +138,14 @@ ipcMain.on('scanDisks-request', (event, arg) => {
                 'removable': []
             }
             result.forEach((i) => {
-                json['names'].push(i.slice(0, 1))
-                json['removable'].push(i.slice(3, 4))
-                json['labels'].push(i.slice(4))
+                if(i){
+                    json['names'].push(i.slice(0, 1))
+                    json['removable'].push(i.slice(3, 4))
+                    json['labels'].push(i.slice(4))
+                }
             })
             //console.log(json)
+            if(json['names'].length===0) throw 'null result'
             event.reply('scanDisks-reply', json)
         })
     }catch (e) {

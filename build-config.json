@@ -1,7 +1,8 @@
 {
   "appId": "top.edgeless.store",
   "win": {
-    "icon": "./favicon.ico"
+    "icon": "./favicon.ico",
+    "requestedExecutionLevel": "highestAvailable"
   },
   "directories": {
     "app": "./dist_electron/bundled"

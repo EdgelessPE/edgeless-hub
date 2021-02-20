@@ -86,6 +86,12 @@
   </a-card>
   <br/>
   <a-card title="偏好调整" style="width: 100%">
+    <a-tooltip slot="extra">
+      <a-icon type="exclamation-circle"/>
+      <template slot="title">
+        仅支持针对Beta版本配置偏好，Alpha版本的特性请自行参考文档配置
+      </template>
+    </a-tooltip>
     <a-list
         item-layout="horizontal"
         :data-source="Options"
