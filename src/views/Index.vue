@@ -9,12 +9,12 @@
   <a-col :span="16">
     <a-result :title="event_selected.DisplayTitle">
       <template slot="subTitle">
-<!--        <a-tag color="red">-->
-<!--          Alpha-->
-<!--        </a-tag>-->
-<!--        <a-tag color="blue">-->
-<!--          3.1.0-->
-<!--        </a-tag>-->
+        <template v-if="showTags" v-for="item in event_selected.Tags">
+          <a-tag :color="item.color">
+            {{item.text}}
+          </a-tag>
+        </template>
+        <br/>
         {{event_selected.DisplayDescription}}
       </template>
       <template #icon>
@@ -92,7 +92,8 @@ name: "Index",
     localVersion:"",
     onlineVersion:"",
     pluginRecommendList:[],
-    loadingPluginRecommendList:true
+    loadingPluginRecommendList:true,
+    showTags:false
   }
   },
   components:{
@@ -142,7 +143,14 @@ name: "Index",
           this.onlineVersion=res.data.version
           if(this.onlineVersion===this.localVersion){
             //检查是否为alpha用户
-            if(DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_Alpha.*wim$").length>0){
+            let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_Alpha.*wim$")
+            if(matchResult.length>0){
+              //解析Alpha版本号（选最高）
+              let ver="1.0.0"
+              matchResult.forEach((item)=>{
+                let thisVer=item.split("_")[2].split(".wim")[0]
+                if(ver<thisVer) ver=thisVer
+              })
               this.events.push({
                 EventLevel:2,
                 EventName:"Alpha用户",
@@ -152,7 +160,17 @@ name: "Index",
                 DisplayIcon:"crown",
                 ButtonText:"追踪Alpha更新",
                 ButtonRoute:"/alpha",
-                ButtonType:"default"
+                ButtonType:"default",
+                Tags:[
+                  {
+                    color:"red",
+                    text:"Alpha"
+                  },
+                  {
+                    color:"blue",
+                    text:ver
+                  }
+                ]
               })
             }else{
               //无事件的Beta用户
@@ -165,7 +183,17 @@ name: "Index",
                 DisplayIcon:"smile",
                 ButtonText:"前往插件市场",
                 ButtonRoute:"/reco",
-                ButtonType:"default"
+                ButtonType:"default",
+                Tags:[
+                  {
+                    color:"green",
+                    text:"Beta"
+                  },
+                  {
+                    color:"blue",
+                    text:this.localVersion
+                  }
+                ]
               })
             }
           }else{
@@ -179,7 +207,17 @@ name: "Index",
               DisplayIcon:"bulb",
               ButtonText:"更新Edgeless",
               ButtonRoute:"/update",
-              ButtonType:"primary"
+              ButtonType:"primary",
+              Tags:[
+                {
+                  color:"green",
+                  text:"Beta"
+                },
+                {
+                  color:"grey",
+                  text:this.localVersion
+                }
+              ]
             })
           }
         }else{
@@ -212,6 +250,10 @@ name: "Index",
       }
       //选中一个状态更新DOM
       this.event_selected=this.events[0]
+      //配置是否显示Tags
+      if(this.event_selected.Tags){
+        this.showTags=true
+      }
     },
     genePluginRecommendList(){
       this.loadingPluginRecommendList=true

@@ -379,6 +379,13 @@ export default {
           })
     },
     selectVentoyPart(val) {
+      if(DownloadManager.methods.exist(val+":\\Edgeless")){
+        notification.open({
+          message:'警告：'+val+"盘存在Edgeless文件夹，请检查是否存在误判",
+          description:"如果仍旧需要重新制作，请删除Edgeless文件夹"
+        })
+        return
+      }
       this.selectedVentoyPart = val
     },
     jumpToStep3() {
@@ -418,6 +425,14 @@ export default {
         notification.open({
           message: '错误：没有发现Ventoy启动盘',
           description: "步骤3操作失败，请检查后重试"
+        })
+        return
+      }
+      //校验是否存在Edgeless文件夹
+      if(DownloadManager.methods.exist(val+":\\Edgeless")){
+        notification.open({
+          message:'警告：'+val+"盘存在Edgeless文件夹，请检查是否存在误判",
+          description:"如果仍旧需要重新制作，请删除Edgeless文件夹"
         })
         return
       }
@@ -570,8 +585,8 @@ export default {
         for (let i = 0; i < this.driveInfo.labels.length; i++) {
           //跳过本地磁盘
           if (!this.showExecVentoyButton && this.driveInfo.removable[i] === 0) continue
-          //检查Ventoy在卷标中是否出现
-          if (this.driveInfo.labels[i] === "Ventoy") {
+          //检查Ventoy在卷标中是否出现，同时排除已经制作完成的启动盘
+          if (this.driveInfo.labels[i] === "Ventoy"&&!DownloadManager.methods.exist(this.driveInfo.names[i]+":\\Edgeless")) {
             this.selectedVentoyPart = this.driveInfo.names[i]
             break
           }
