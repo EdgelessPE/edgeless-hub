@@ -45,4 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /y D:\Desktop\Projects\edgeless-hub\DiskScanner\bin\Debug\DiskScanner.dll D:\Desktop\Projects\edgeless-hub\core\DiskScanner.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>

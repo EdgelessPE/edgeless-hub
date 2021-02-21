@@ -6,7 +6,6 @@ D:\Desktop\edgeless-store\DiskScanner\obj\Debug\DiskScanner.dll
 D:\Desktop\edgeless-store\DiskScanner\obj\Debug\DiskScanner.pdb
 D:\Desktop\Projects\edgeless-hub\DiskScanner\bin\Debug\DiskScanner.dll
 D:\Desktop\Projects\edgeless-hub\DiskScanner\bin\Debug\DiskScanner.pdb
-D:\Desktop\Projects\edgeless-hub\DiskScanner\obj\Debug\DiskScanner.csprojAssemblyReference.cache
 D:\Desktop\Projects\edgeless-hub\DiskScanner\obj\Debug\DiskScanner.csproj.CoreCompileInputs.cache
 D:\Desktop\Projects\edgeless-hub\DiskScanner\obj\Debug\DiskScanner.dll
 D:\Desktop\Projects\edgeless-hub\DiskScanner\obj\Debug\DiskScanner.pdb

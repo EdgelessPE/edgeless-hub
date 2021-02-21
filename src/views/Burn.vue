@@ -432,7 +432,7 @@ export default {
         return
       }
       //校验是否存在Edgeless文件夹
-      if(DownloadManager.methods.exist(val+":\\Edgeless")){
+      if(DownloadManager.methods.exist(this.selectedVentoyPart+":\\Edgeless")){
         notification.open({
           message:'警告：'+val+"盘存在Edgeless文件夹，请检查是否存在误判",
           description:"如果仍旧需要重新制作，请删除Edgeless文件夹"
@@ -480,7 +480,14 @@ export default {
 
               this.stepsInfo.stepText = "完成"
               clearInterval(this.progressInterval)
-              this.stepsInfo.step = 3
+              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim')&&DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\')&&DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)){
+                this.stepsInfo.step = 3
+              }else{
+                notification.open({
+                  message: '错误：启动盘的文件不完全',
+                  description: "步骤3操作失败，请关闭程序后尝试重新制作"
+                })
+              }
             })
           })
         })
