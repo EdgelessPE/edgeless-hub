@@ -543,10 +543,16 @@ export default {
 
     //检查依赖文件完整性
     if(!DownloadManager.methods.exist(this.$store.state.aria2cPath+'/aria2c.exe')){
-      notification.open({
-        message:'启动校验：错误',
-        description:"Aria2c主程序丢失"
-      })
+      this.$error({
+        title: '启动依赖校验：错误',
+        content: "Aria2c主程序丢失"
+      });
+    }
+    if(!DownloadManager.methods.exist(".\\core\\UltraISO\\UltraISO.exe")){
+      this.$error({
+        title: '启动依赖校验：错误',
+        content: "UltraISO主程序丢失"
+      });
     }
 
     //读取配置文件
