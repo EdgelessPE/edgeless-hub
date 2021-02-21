@@ -4,6 +4,8 @@ node_modules
 *.xmind
 Log.txt
 hub_config.json
+elstore_config.json
+*.lock
 
 
 # local env files

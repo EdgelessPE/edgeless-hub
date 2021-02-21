@@ -18,6 +18,7 @@
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "edge-js": "^15.5.2",
+    "electron": "^11.3.0",
     "electron-edge-js": "^12.18.5",
     "json-rpc2": "^2.0.0",
     "node-7zip": "^1.0.1",
@@ -33,7 +34,6 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "electron": "9.0.0",
     "electron-devtools-installer": "^3.1.0",
     "vue-cli-plugin-electron-builder": "^2.0.0-rc.5",
     "vue-template-compiler": "^2.6.11"
