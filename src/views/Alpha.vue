@@ -162,6 +162,15 @@ name: "Alpha",
       this.$router.push("/burning")
     }
 
+    //拒绝旧版规范的启动盘
+    if (!DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\ventoy\\ventoy_wimboot.img")) {
+      notification.open({
+        message:'无法启动Edgeless Alpha计划',
+        description:'不支持旧版启动盘制作工具制作的启动盘，请先重新写入'
+      })
+      this.$router.push("/burning")
+    }
+
     //配置定时器
     this.interval=setInterval(()=>{
       //计算当前步骤条指向

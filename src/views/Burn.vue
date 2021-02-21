@@ -1,5 +1,16 @@
 <template>
   <div>
+    <a-modal
+        :title="firstMovableInfo.label+'('+firstMovableInfo.name+':)'"
+        v-if="firstMovableInfo"
+        :visible="showConfirm"
+        @ok="handleConfirm"
+        @cancel="emergency"
+        cancelText="不是"
+        okText="是的"
+    >
+      <p>您刚刚制作的Ventoy启动盘是这个吗？</p>
+    </a-modal>
     <a-steps :current="stepsInfo.step">
       <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
     </a-steps>
@@ -62,7 +73,12 @@
       </a-result>
     </div>
     <div class="steps-content" key="1" v-else-if="stepsInfo.step===1">
-      <a-result title="请手动操作Ventoy安装程序，将Ventoy安装至您的U盘" subTitle="完成安装后关闭Ventoy安装程序或点击检查">
+      <a-result title="请手动操作Ventoy安装程序，将Ventoy安装至您的U盘">
+        <template slot="subTitle">
+          如果您正在使用官方版Ventoy，点击升级即可
+          <br/>
+          完成安装后关闭Ventoy安装程序或点击检查
+        </template>
         <template #icon>
           <a-icon type="bulb"/>
         </template>
@@ -84,13 +100,14 @@
                 <a-button v-on:click="execVentoy">
                   重启Ventoy
                 </a-button>
+                <a-button v-on:click="emergency">紧急出口</a-button>
               </a-space>
             </a-space>
           </template>
           <template v-if="manual">
             <a-space direction="vertical">
               <a-alert
-                  message=".net运行库缺失，无法自动检测Ventoy"
+                  message="无法自动检测Ventoy启动盘"
                   description="请确保您已经写入了Ventoy到启动盘，然后手动选择您的盘符"
                   type="warning"
                   show-icon
@@ -208,10 +225,20 @@ export default {
       },
       //手动选盘符相关
       manual: false,
-      diskList: []
+      diskList: [],
+
+      //确认扫描结果相关
+      firstMovableInfo:undefined,
+      showConfirm:false,
     }
   },
   methods: {
+    handleConfirm(){
+      this.showConfirm=false
+      this.selectedVentoyPart=this.firstMovableInfo.name
+      this.stepsInfo.step = 2
+      this.edgelessOperator()
+    },
     startNesDownload() {
       this.stepsInfo.stepText = '请求'
       this.startVentoyDownload()
@@ -434,10 +461,9 @@ export default {
       //校验是否存在Edgeless文件夹
       if(DownloadManager.methods.exist(this.selectedVentoyPart+":\\Edgeless")){
         notification.open({
-          message:'警告：'+val+"盘存在Edgeless文件夹，请检查是否存在误判",
-          description:"如果仍旧需要重新制作，请删除Edgeless文件夹"
+          message:'警告：'+this.selectedVentoyPart+"盘存在Edgeless文件夹，即将覆盖Edgeless文件夹",
+          description:"您可能会因此失去先前保存的插件等自定义内容"
         })
-        return
       }
       //复制ventoy_wimboot插件（3MB）
       this.stepsInfo.stepText = "复制ventoy_wimboot插件"
@@ -480,13 +506,23 @@ export default {
 
               this.stepsInfo.stepText = "完成"
               clearInterval(this.progressInterval)
-              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim')&&DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\')&&DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)){
+              //收集文件信息
+              let check=[false,false,false]
+              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim')) check[0]=true
+              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\')) check[1]=true
+              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)) check[2]=true
+              if(check[0]&&check[1]&&check[2]){
                 this.stepsInfo.step = 3
               }else{
-                notification.open({
-                  message: '错误：启动盘的文件不完全',
-                  description: "步骤3操作失败，请关闭程序后尝试重新制作"
-                })
+                //生成报错报告
+                let ct="报错信息："
+                if(!check[0]) ct+=" 启动文件缺失："+this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim'
+                if(!check[1]) ct+=" 启动依赖缺失："+this.selectedVentoyPart + ':\\Edgeless\\'
+                if(!check[2]) ct+=" Ventoy插件缺失："+this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName
+                this.$error({
+                  title: '错误：启动盘的文件不完全，请关闭程序后尝试重新制作',
+                  content: ct
+                });
               }
             })
           })
@@ -508,6 +544,7 @@ export default {
     emergency(){
       //处理c#无法正常运行时的手动选择
       //生成本地磁盘数组
+      this.showConfirm=false
       for (let i = 25; i >= 0; i--) {
         if (DownloadManager.methods.exist(String.fromCharCode(65 + i) + ':\\')) {
           this.diskList.push(String.fromCharCode(65 + i))
@@ -604,9 +641,16 @@ export default {
         //获取主进程发送的磁盘信息，开始检查Ventoy是否就绪
         this.driveInfo = res
         this.selectedVentoyPart = ""
+
+        //保存找到的第一个可移动设备信息
         for (let i = 0; i < this.driveInfo.labels.length; i++) {
           //跳过本地磁盘
-          if (!this.showExecVentoyButton && this.driveInfo.removable[i] === 0) continue
+          if (!this.showExecVentoyButton && this.driveInfo.removable[i] == 0) continue
+          //保存找到的第一个可移动设备信息
+          if(!this.firstMovableInfo&&this.driveInfo.labels[i]!=='VTOYEFI'&& this.driveInfo.removable[i] ==1) this.firstMovableInfo={
+            label:this.driveInfo.labels[i],
+            name:this.driveInfo.names[i]
+          }
           //检查Ventoy在卷标中是否出现，同时排除已经制作完成的启动盘
           if (this.driveInfo.labels[i] === "Ventoy"&&!DownloadManager.methods.exist(this.driveInfo.names[i]+":\\Edgeless")) {
             this.selectedVentoyPart = this.driveInfo.names[i]
@@ -614,12 +658,17 @@ export default {
           }
         }
         if (this.selectedVentoyPart === "") {
-          //Ventoy盘未发现
-          this.showExecVentoyButton = true
-          notification.open({
-            message: '错误：没有发现Ventoy启动盘',
-            description: "请确保已经完成Ventoy的安装，再点击检查按钮！"
-          })
+          //询问是否是第一个可移动设备
+          if(this.firstMovableInfo){
+            this.showConfirm=true
+          }else{
+            //Ventoy盘未发现
+            this.showExecVentoyButton = true
+            notification.open({
+              message: '错误：没有发现Ventoy启动盘',
+              description: "请确保已经完成Ventoy的安装，再点击检查按钮！"
+            })
+          }
         } else {
           this.jumpToStep3()
         }

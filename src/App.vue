@@ -435,6 +435,7 @@ export default {
             message:'注册表读取失败',
             description:(err)?err.message:stderr
           })
+          this.$store.commit('changeDownloadDir', 'D:\\ELStore')
         }else{
           //根据注册表设置默认下载路径
           let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
