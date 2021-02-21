@@ -21,6 +21,7 @@ export default new Vuex.Store({
       name:''
     },
     hub_local_version:"", //hub的当前版本
+    hub_online_version:"", //hub的在线版本
     inited:false,//是否完成初始化
     cateData:[],
     allData:[],
@@ -296,5 +297,8 @@ export default new Vuex.Store({
     },
     updateHubVersion(state,ver){
       state.hub_local_version=ver
+    },
+    updateHubOnlineVersion(state,ver){
+      state.hub_online_version=ver
     }
 }})

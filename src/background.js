@@ -180,6 +180,10 @@ ipcMain.on('devtool-request',(event,payload)=>{
     BrowserWindow.getAllWindows()[0].webContents.openDevTools()
 })
 
+ipcMain.on('version-request',(event,payload)=>{
+    event.returnValue=app.getVersion()
+})
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
     if (process.platform === 'win32') {

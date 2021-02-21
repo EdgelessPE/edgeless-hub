@@ -19,7 +19,7 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     test(){
-      console.log(window.require("./package.json").version)
+      console.log(this.$electron.ipcRenderer.sendSync('version-request',''))
     }
   },
   created() {

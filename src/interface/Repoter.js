@@ -10,8 +10,9 @@ export function error (msg){
     appendToBuffer(msg,"error")
 }
 
-export function init() {
+export function init(online_version) {
     if(HOLIDAY) return
+    appendToBuffer(online_version,"version")
     interval=setInterval(()=>{
         if(!clearBuffer){
             writeToFile()
@@ -27,7 +28,7 @@ export function destroy() {
 const HOLIDAY=false
 const LOG_PATH='./Log.txt'
 const INTERVAL_TIME=2
-var buffer=new String('Start reporting')
+var buffer=new String('Edgeless Hub Log')
 var interval
 var clearBuffer=true
 

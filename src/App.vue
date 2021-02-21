@@ -519,7 +519,18 @@ export default {
   },
   created() {
     //获取当前版本号
-    this.$store.commit('updateHubVersion',window.require("./package.json").version)
+    this.$store.commit('updateHubVersion',this.$electron.ipcRenderer.sendSync('version-request',''))
+
+    //获取在线版本号
+    this.$axios.get("https://pineapple.edgeless.top/api/v2/info/hub_version")
+    .then((res)=>{
+      //更新在线版本号
+      this.$store.commit('updateHubOnlineVersion',res.data)
+      //修改标题
+      if(this.$store.state.hub_online_version>this.$store.state.hub_local_version){
+        document.title='Edgeless Hub '+this.$store.state.hub_local_version+' (存在新版本'+this.$store.state.hub_online_version+')'
+      }
+    })
 
     //设置标题
     document.title='Edgeless Hub '+this.$store.state.hub_local_version
@@ -528,7 +539,7 @@ export default {
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
     //初始化Reporter
-    this.$rp.init()
+    this.$rp.init(this.$store.state.hub_local_version)
 
     //检查依赖文件完整性
     if(!DownloadManager.methods.exist(this.$store.state.aria2cPath+'/aria2c.exe')){
