@@ -75,12 +75,12 @@ name: "DownloadManager",
         downloadDir:this.$store.state.downloadDir,
         userName:this.$store.state.userName
       }
-      fs.writeFileSync('./elstore_config.json',JSON.stringify(data))
+      fs.writeFileSync('./hub_config.json',JSON.stringify(data))
     },
     readConfig(){
       let json={}
-      if(fs.existsSync('./elstore_config.json')){
-        json=fs.readFileSync('./elstore_config.json').toString()
+      if(fs.existsSync('./hub_config.json')){
+        json=fs.readFileSync('./hub_config.json').toString()
         json=JSON.parse(json)
         if(fs.existsSync(json.downloadDir)) json['exist']=true
         else json['exist']=false

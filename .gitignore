@@ -3,6 +3,7 @@ node_modules
 /dist
 *.xmind
 Log.txt
+hub_config.json
 
 
 # local env files
