@@ -518,8 +518,11 @@ export default {
     }
   },
   created() {
+    //获取当前版本号
+    this.$store.commit('updateHubVersion',window.require("./package.json").version)
+
     //设置标题
-    document.title='Edgeless Hub'
+    document.title='Edgeless Hub '+this.$store.state.hub_local_version
 
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)

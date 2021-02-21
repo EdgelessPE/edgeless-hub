@@ -20,6 +20,7 @@ export default new Vuex.Store({
       getPluginList:function (cateName,callback){},
       name:''
     },
+    hub_local_version:"", //hub的当前版本
     inited:false,//是否完成初始化
     cateData:[],
     allData:[],
@@ -292,5 +293,8 @@ export default new Vuex.Store({
     finishInit(state,eventHub){
       state.inited=true
       eventHub.$emit('finish-init',"")
+    },
+    updateHubVersion(state,ver){
+      state.hub_local_version=ver
     }
 }})

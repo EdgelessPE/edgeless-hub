@@ -110,6 +110,16 @@ name: "Index",
       maxNum--
       return parseInt(Math.random() * ( maxNum - minNum + 1 ) + minNum, 10)
     },
+    getLocalVersion(stage,exp){
+      let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_"+stage+".*"+exp+"$")
+      let ver="1.0.0"
+      matchResult.forEach((item)=>{
+        let thisVer=item.split("_")[2].split("."+exp)[0]
+        if(ver<thisVer) ver=thisVer
+      })
+      if(ver!=="1.0.0") return ver
+      else return ""
+    },
     geneWelcome(){
       //获取系统用户名
       let username=this.$store.state.userName
@@ -138,7 +148,8 @@ name: "Index",
         //判断是否为新版规范
         if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\ventoy\\ventoy_wimboot.img")){
           //判断是否需要升级
-          this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
+          this.localVersion=this.getLocalVersion("Beta","wim")
+          // if(this.localVersion==="") this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
           let res=await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
           this.onlineVersion=res.data.version
           if(this.onlineVersion===this.localVersion){
@@ -146,11 +157,8 @@ name: "Index",
             let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_Alpha.*wim$")
             if(matchResult.length>0){
               //解析Alpha版本号（选最高）
-              let ver="1.0.0"
-              matchResult.forEach((item)=>{
-                let thisVer=item.split("_")[2].split(".wim")[0]
-                if(ver<thisVer) ver=thisVer
-              })
+              let ver=this.getLocalVersion("Alpha","wim")
+
               this.events.push({
                 EventLevel:2,
                 EventName:"Alpha用户",
@@ -222,11 +230,12 @@ name: "Index",
           }
         }else{
           //旧版规范，需要升级
+          this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
           this.events.push({
             EventLevel:0,
             EventName:"升级规范",
             EventFrom:"Edgeless",
-            DisplayTitle:"检测到非新版规范的启动盘",
+            DisplayTitle:"检测到非新版规范的启动盘："+this.localVersion,
             DisplayDescription:"Edgeless Hub不支持旧版规范启动盘的升级等功能，我们建议您重新制作；如果您正在使用Ventoy官方版，也请点击重新制作按钮，制作过程中不会格式化U盘",
             DisplayIcon:"meh",
             ButtonText:"重新制作",

@@ -19,10 +19,7 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     test(){
-      this.$error({
-        title: '错误：启动盘的文件不完全',
-        content: "步骤3操作失败，请关闭程序后尝试重新制作"
-      });
+      console.log(window.require("./package.json").version)
     }
   },
   created() {
