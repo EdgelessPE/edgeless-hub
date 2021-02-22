@@ -6,6 +6,7 @@ Log.txt
 hub_config.json
 elstore_config.json
 *.lock
+*.bak.json
 
 
 # local env files
