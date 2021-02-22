@@ -168,7 +168,7 @@ name: "DownloadManager",
       if(overwrite&&this.exist(dst)){
         this.delDir(dst)
       }
-      cp.exec('xcopy /s /r /y '+src+' '+dst,callback)
+      cp.exec('xcopy /s /r /y "'+src+'" "'+dst+'"',callback)
     },
     del(filePath){
       //console.log('delete'+filePath)
@@ -179,8 +179,8 @@ name: "DownloadManager",
     },
     delDir(dst){
       if(this.exist(dst)) {
-        cp.execSync('del /f /s /q '+dst)
-        cp.execSync('rd /s /q '+dst)
+        cp.execSync('del /f /s /q "'+dst+'"')
+        cp.execSync('rd /s /q "'+dst+'"')
       }
       return !this.exist(dst)
     },
@@ -432,6 +432,10 @@ name: "DownloadManager",
               //将Alpha的下载任务放置到store内
               this.$store.commit('setAlphaTask',item)
               if(method==="aria2.tellStopped") this.$store.commit('setAlphaStopped',true)
+            }else if(item.gid===this.$store.state.HotUpdateInfo.gid){
+              //将热更新的下载任务放置到store内
+              this.$store.commit('setHotTask',item)
+              if(method==="aria2.tellStopped") this.$store.commit('setHotStopped',true)
             }
           })
         }

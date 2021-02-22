@@ -1,5 +1,6 @@
 <template>
 <div>
+  <HotUpdate/>
   <a-page-header
       :title="text_welcome"
       :backIcon="false"
@@ -58,6 +59,7 @@
 <script>
 import DownloadManager from "@/components/DownloadManager";
 import CateButton from "@/components/CateButton";
+import HotUpdate from "@/components/HotUpdate";
 const fs=window.require('fs')
 export default {
 name: "Index",
@@ -97,7 +99,8 @@ name: "Index",
   }
   },
   components:{
-    CateButton
+    CateButton,
+    HotUpdate
   },
   methods:{
     openQQLink(){

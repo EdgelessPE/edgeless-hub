@@ -9,6 +9,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs')
 const edge = require("electron-edge-js")
 
+var updateOnExit=false
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
@@ -49,6 +51,10 @@ async function createWindow() {
 
     win.on('close', (event) => {
         killAria2c()
+        if(updateOnExit){
+            console.log('run updater')
+            cp.exec('start cmd /c main.cmd')
+        }
         //console.error('close')
         app.exit()
     })
@@ -182,6 +188,14 @@ ipcMain.on('devtool-request',(event,payload)=>{
 
 ipcMain.on('version-request',(event,payload)=>{
     event.returnValue=app.getVersion()
+})
+
+ipcMain.on('isDev-request',(event,payload)=>{
+    event.returnValue=isDevelopment
+})
+
+ipcMain.on('updateOnExit',(event,payload)=>{
+    updateOnExit=true
 })
 
 // Exit cleanly on request from parent process in development mode.

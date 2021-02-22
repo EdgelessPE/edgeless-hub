@@ -22,6 +22,7 @@ export default new Vuex.Store({
     },
     hub_local_version:"", //hub的当前版本
     hub_online_version:"", //hub的在线版本
+    hub_api_data:"", //从api获得的数据
     inited:false,//是否完成初始化
     cateData:[],
     allData:[],
@@ -132,6 +133,17 @@ export default new Vuex.Store({
     //Alpha相关信息
     AlphaInfo:{
       state:0,//0等待用户开始下载或其他，1正在下载中，2正在复制，3完成
+      gid:"",
+      task:{
+        "totalLength":1,
+        "completedLength":0,
+        "downloadSpeed":1
+      },
+      taskStopped:false //任务是否已经暂停
+    },
+
+    //热更新相关信息
+    HotUpdateInfo:{
       gid:"",
       task:{
         "totalLength":1,
@@ -300,5 +312,17 @@ export default new Vuex.Store({
     },
     updateHubOnlineVersion(state,ver){
       state.hub_online_version=ver
+    },
+    updateHubApiData(state,payload){
+      state.hub_api_data=payload
+    },
+    setHotTask(state,task){
+      state.HotUpdateInfo.task=task
+    },
+    setHotStopped(state,payload){
+      state.HotUpdateInfo.taskStopped=payload
+    },
+    setHotGid(state,gid){
+      state.HotUpdateInfo.gid=gid
     }
 }})
