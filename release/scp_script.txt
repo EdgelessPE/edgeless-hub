@@ -1,0 +1,10 @@
+option batch continue
+open 菠萝云小鸡
+lcd D:\Desktop\Projects\edgeless-hub\release\Workshop
+cd /hdisk/edgeless/Socket/Hub
+put "%1%"
+cd /hdisk/edgeless/Socket/Hub/Update
+put update.json
+put update.7z
+put miniupdate.7z
+exit
