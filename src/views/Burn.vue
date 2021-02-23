@@ -596,15 +596,22 @@ export default {
           //当下载Ventoy完成时unzip
           if (this.whenReadyUnzip) {
             //this.$rp.log("检查当下载Ventoy完成时unzip-Burn_setInterval")
-            if (!this.$store.state.ventoyInfo.needTrace && this.$store.state.ventoyInfo.task.completedLength === this.$store.state.ventoyInfo.task.totalLength) {
-              this.$rp.log("Ventoy下载已经完成，发送解压事件unzip-request-Burn_setInterval")
-              //此时下载已经完成
-              this.whenReadyUnzip = false
-              this.stepsInfo.stepText = "解压Ventoy"
-              this.$electron.ipcRenderer.send('unzip-request', {
-                'zip': this.$store.state.downloadDir + '\\Burn\\*.zip',
-                'path': this.$store.state.downloadDir + '\\Burn'
-              })
+            if (!this.$store.state.ventoyInfo.needTrace) {
+              if(this.$store.state.ventoyInfo.task.completedLength!==0 && this.$store.state.ventoyInfo.task.completedLength === this.$store.state.ventoyInfo.task.totalLength){
+                this.$rp.log("Ventoy下载已经完成，发送解压事件unzip-request-Burn_setInterval")
+                //此时下载已经完成
+                this.whenReadyUnzip = false
+                this.stepsInfo.stepText = "解压Ventoy"
+                this.$electron.ipcRenderer.send('unzip-request', {
+                  'zip': this.$store.state.downloadDir + '\\Burn\\*.zip',
+                  'path': this.$store.state.downloadDir + '\\Burn'
+                })
+              }else{
+                this.$error({
+                  title:"Ventoy下载失败",
+                  content:"请前往https://www.ventoy.net/cn/download.html手动下载最新的Windows版Ventoy放到"+this.$store.state.downloadDir + '\\Burn，然后重启程序重试'
+                })
+              }
             }
           }
           //更新下载完成状态，检查是确实完成了还是出错
