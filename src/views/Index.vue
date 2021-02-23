@@ -1,6 +1,8 @@
 <template>
 <div>
-  <HotUpdate/>
+  <keep-alive>
+    <HotUpdate/>
+  </keep-alive>
   <a-page-header
       :title="text_welcome"
       :backIcon="false"

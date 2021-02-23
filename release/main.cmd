@@ -93,8 +93,12 @@ cd ..
 cd ..
 xcopy /s /r /y core dist\win-unpacked\core\
 
-::重命名win-unpack
+::清理垃圾
 cd dist
+del /f /q *.exe
+del /f /q *.blockmap
+
+::重命名win-unpack
 del /f /s /q "Edgeless Hub"
 rd /s /q "Edgeless Hub"
 ren win-unpacked "Edgeless Hub"
