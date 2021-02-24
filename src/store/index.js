@@ -150,7 +150,8 @@ export default new Vuex.Store({
         "completedLength":0,
         "downloadSpeed":1
       },
-      taskStopped:false //任务是否已经暂停
+      taskStopped:false, //任务是否已经暂停
+      checked:false //已经检查过一次
     },
 
     //盘内的Edgeless版本号
@@ -324,5 +325,8 @@ export default new Vuex.Store({
     },
     setHotGid(state,gid){
       state.HotUpdateInfo.gid=gid
+    },
+    setHotChecked(state){
+      state.HotUpdateInfo.checked=true
     }
 }})

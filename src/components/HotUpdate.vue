@@ -69,6 +69,7 @@ name: "HotUpdate",
       }
     },
     confirmUpdate(){
+      this.$store.commit('setHotChecked')
       console.log(this.hotUpdateInfo.updateMethod)
       if(this.hotUpdateInfo.updateMethod==="FULL_UPDATE"){
         this.$electron.shell.openExternal(this.hotUpdateInfo.hubApiData.full_update_redirect)
@@ -134,6 +135,8 @@ name: "HotUpdate",
     }
   },
   created() {
+    if(this.$store.state.HotUpdateInfo.checked) return
+    console.log('run')
     this.generateUpdateInformation()
   }
 }

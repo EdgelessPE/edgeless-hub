@@ -21,3 +21,4 @@ xcopy /s /r /y .\core\Update\source\* .\
 ::退出
 echo Edgeless Hub 更新完成，程序将在3s后退出
 @ping 127.0.0.1 -n 3 >nul
+del /f /q "%0"
