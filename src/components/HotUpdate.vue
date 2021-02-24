@@ -136,7 +136,6 @@ name: "HotUpdate",
   },
   created() {
     if(this.$store.state.HotUpdateInfo.checked) return
-    console.log('run')
     this.generateUpdateInformation()
   }
 }

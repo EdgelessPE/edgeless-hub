@@ -229,6 +229,10 @@ export default {
       //确认扫描结果相关
       firstMovableInfo:undefined,
       showConfirm:false,
+
+      //下载失败重试次数
+      retryTimes:[0,0,0],
+      maxAllowedRetry:1
     }
   },
   methods: {
@@ -619,34 +623,64 @@ export default {
             if (this.startedTasks[0]) {
               if(!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[0]) this.$rp.log("Task0停止，totalLength="+this.$store.state.ventoyInfo.task.totalLength+" completedLength="+this.$store.state.ventoyInfo.task.completedLength+"-Burn_setInterval")
               this.finishedTasks[0] = !this.$store.state.ventoyInfo.needTrace
-              if (this.startedTasks[0] && this.finishedTasks[0] && this.$store.state.ventoyInfo.task.totalLength !== this.$store.state.ventoyInfo.task.completedLength) {
-                this.$rp.log("Task0异常，重新下载-Burn_setInterval")
-                DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.fileName)
-                DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.fileName + '.aria2')
-                this.startVentoyDownload()
-                this.finishedTasks[0] = false
+              if (this.startedTasks[0] && this.finishedTasks[0] && (this.$store.state.ventoyInfo.task.totalLength !== this.$store.state.ventoyInfo.task.completedLength || this.$store.state.ventoyInfo.task.completedLength===0)) {
+                this.retryTimes[0]++
+                if(this.retryTimes[0]>this.maxAllowedRetry){
+                  this.$error({
+                    title:"Ventoy下载失败",
+                    content:"请前往https://www.ventoy.net/cn/download.html手动下载最新的Windows版Ventoy放到"+this.$store.state.downloadDir + '\\Burn，然后重启程序重试'
+                  })
+                  this.startedTasks[0]=false
+                  this.finishedTasks[0]=false
+                }else{
+                  this.$rp.log("Task0异常，重新下载-Burn_setInterval")
+                  DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.fileName)
+                  DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.fileName + '.aria2')
+                  this.startVentoyDownload()
+                  this.finishedTasks[0] = false
+                }
               }
             }
             if (this.startedTasks[1]) {
               if(!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[1]) this.$rp.log("Task1停止，totalLength="+this.$store.state.ventoyPluginInfo.task.totalLength+" completedLength="+this.$store.state.ventoyPluginInfo.task.completedLength+"-Burn_setInterval")
               this.finishedTasks[1] = !this.$store.state.ventoyPluginInfo.needTrace
-              if (this.startedTasks[1] && this.finishedTasks[1] && this.$store.state.ventoyPluginInfo.task.totalLength !== this.$store.state.ventoyPluginInfo.task.completedLength) {
-                this.$rp.log("Task1异常，重新下载-Burn_setInterval")
-                DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.pluginName)
-                DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.pluginName + '.aria2')
-                this.startPluginDownload()
-                this.finishedTasks[1] = false
+              if (this.startedTasks[1] && this.finishedTasks[1] && (this.$store.state.ventoyPluginInfo.task.totalLength !== this.$store.state.ventoyPluginInfo.task.completedLength || this.$store.state.ventoyPluginInfo.task.completedLength===0)) {
+                this.retryTimes[1]++
+                if(this.retryTimes[1]>this.maxAllowedRetry){
+                  this.$error({
+                    title:"Ventoy插件下载失败",
+                    content:"请联系作者解决问题"
+                  })
+                  this.startedTasks[1]=false
+                  this.finishedTasks[1]=false
+                }else{
+                  this.$rp.log("Task1异常，重新下载-Burn_setInterval")
+                  DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.pluginName)
+                  DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.pluginName + '.aria2')
+                  this.startPluginDownload()
+                  this.finishedTasks[1] = false
+                }
               }
             }
             if (this.startedTasks[2]) {
               if(!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[2]) this.$rp.log("Task2停止，totalLength="+this.$store.state.isoInfo.task.totalLength+" completedLength="+this.$store.state.isoInfo.task.completedLength+"-Burn_setInterval")
               this.finishedTasks[2] = !this.$store.state.isoInfo.needTrace
-              if (this.startedTasks[2] && this.finishedTasks[2] && this.$store.state.isoInfo.task.completedLength !== this.$store.state.isoInfo.task.totalLength) {
-                this.$rp.log("Task2异常，重新下载-Burn_setInterval")
-                DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)
-                DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName + '.aria2')
-                this.startIsoDownload()
-                this.finishedTasks[2] = false
+              if (this.startedTasks[2] && this.finishedTasks[2] && (this.$store.state.isoInfo.task.completedLength !== this.$store.state.isoInfo.task.totalLength || this.$store.state.isoInfo.task.completedLength===0)) {
+                this.retryTimes[2]++
+                if(this.retryTimes[2]>this.maxAllowedRetry){
+                  this.$error({
+                    title:"ISO镜像下载失败",
+                    content:"请联系作者解决问题"
+                  })
+                  this.startedTasks[2]=false
+                  this.finishedTasks[2]=false
+                }else{
+                  this.$rp.log("Task2异常，重新下载-Burn_setInterval")
+                  DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)
+                  DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName + '.aria2')
+                  this.startIsoDownload()
+                  this.finishedTasks[2] = false
+                }
               }
             }
           }
