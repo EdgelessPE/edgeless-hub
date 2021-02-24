@@ -122,6 +122,7 @@ name: "HotUpdate",
 
       //监听unzip完成事件
       this.$electron.ipcRenderer.on('unzip-reply',(event,args)=>{
+        if(args!==this.$store.state.downloadDir + '\\Update\\update.7z'&&args!==this.$store.state.downloadDir + '\\Update\\miniupdate.7z') return
         //将./core/Update/main.cmd提到根目录
         DownloadManager.methods.copy("./core/Update/main.cmd","./main.cmd",true,()=>{})
         //注册退出时更新

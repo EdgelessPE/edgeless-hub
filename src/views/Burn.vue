@@ -761,6 +761,7 @@ export default {
       }
     })
     this.$electron.ipcRenderer.on('unzip-reply', (event, res) => {
+      if(res!==this.$store.state.downloadDir + '\\Burn\\*.zip') return
       this.$rp.log("收到解压完成的回复-unzip_reply_anonymous")
       //获取文件夹名
       let tmp = this.ventoyInfo.fileName.split('-')

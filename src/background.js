@@ -166,7 +166,7 @@ ipcMain.on('unzip-request', (event, payload) => {
     //console.log(payload)
     node7z.unzip(payload.zip, payload.path)
         .then((res) => {
-            event.reply('unzip-reply', res)
+            event.reply('unzip-reply', payload.zip)
         })
 })
 
