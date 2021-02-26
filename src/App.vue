@@ -383,7 +383,14 @@ export default {
 
           //获取Edgeless完整版本号存入store
           let ver_el="Edgeless_Beta_Ofial_Undefined_2"
-          ver_el=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString()
+          if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt")){
+            ver_el=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString()
+          }else{
+            notification.open({
+              message:'不是标准的Edgeless启动盘',
+              description:'您的启动盘缺少版本标识文件，请尝试重新制作'
+            })
+          }
           this.$store.commit('changeEdgelessVersion',ver_el)
         }else{
           if(this.reScanEdgeless===false){

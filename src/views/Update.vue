@@ -147,7 +147,15 @@ name: "Update",
     //检查启动盘是否存在
     if(DownloadManager.methods.exist(this.$store.state.pluginPath)){
       //检查盘内版本号
-      this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
+      if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt")){
+        this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString()
+      }else{
+        notification.open({
+          message:'不是标准的Edgeless启动盘',
+          description:'您的启动盘缺少版本标识文件，请尝试重新制作'
+        })
+        this.$router.back()
+      }
       //console.log(localVersion)
       this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
       .then((res)=>{
