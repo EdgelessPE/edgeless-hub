@@ -10,7 +10,7 @@ export default new Vuex.Store({
     //stationUrl:'https://pineapple.edgeless.top/api/list/1',
     stationIndex:0,
     theme:'light',
-    downloadDir:'D:\\ELStore',
+    downloadDir:'D:\\HubCache',
     userName:"",
 
     //无需保存到config的数据

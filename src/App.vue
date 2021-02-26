@@ -442,12 +442,12 @@ export default {
             message:'注册表读取失败',
             description:(err)?err.message:stderr
           })
-          this.$store.commit('changeDownloadDir', 'D:\\ELStore')
+          this.$store.commit('changeDownloadDir', 'D:\\HubCache')
         }else{
           //根据注册表设置默认下载路径
           let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
           if(DownloadManager.methods.exist(path)&&path[0]!=="C"&&path[0]!=="c") {
-            this.$store.commit('changeDownloadDir', path + '\\ELStore')
+            this.$store.commit('changeDownloadDir', path + '\\HubCache')
             //更新本组件上的userInputDownloadDir
             this.userInputDownloadDir=this.$store.state.downloadDir
           }
@@ -463,7 +463,7 @@ export default {
           //根据注册表设置默认下载路径
           let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
           if(DownloadManager.methods.exist(path)) {
-            this.$store.commit('changeDownloadDir', path + '\\ELStore')
+            this.$store.commit('changeDownloadDir', path + '\\HubCache')
             //更新本组件上的userInputDownloadDir
             this.userInputDownloadDir=this.$store.state.downloadDir
           }
@@ -493,9 +493,9 @@ export default {
       //     //根据注册表设置默认下载路径
       //     let path
       //     path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{374DE290-123F-4565-9164-39C4925E467B}'].value
-      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
+      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\HubCache')
       //     path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}'].value
-      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\ELStore')
+      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\HubCache')
       //
       //     //更新本组件上的userInputDownloadDir
       //     this.userInputDownloadDir=this.$store.state.downloadDir
@@ -583,7 +583,7 @@ export default {
     this.$store.commit('updateStationObject',this.$store.state.stationIndex)
 
     //启动aria2c进程
-    this.aria2cProcess=cp.exec('aria2c.exe  --conf-path=elstore.conf',{
+    this.aria2cProcess=cp.exec('aria2c.exe  --conf-path=elhub.conf',{
       cwd:this.$store.state.aria2cPath
     },(err)=>{
       notification.open({
