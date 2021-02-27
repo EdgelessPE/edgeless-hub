@@ -159,6 +159,15 @@
         <a-button slot="extra" v-on:click="gotoWiki">如何启动</a-button>
       </a-result>
     </div>
+    <div class="steps-content" key="4" v-else-if="stepsInfo.step===4">
+      <a-result
+          status="error"
+          title="制作过程中遇到了错误"
+          sub-title="请点击重新开始按钮尝试重新制作"
+      >
+        <a-button slot="extra" v-on:click="restartBurn" type="primary">重新开始</a-button>
+      </a-result>
+    </div>
 
   </div>
 </template>
@@ -236,6 +245,12 @@ export default {
     }
   },
   methods: {
+    restartBurn(){
+      //删除release文件夹
+      DownloadManager.methods.delDir(this.$store.state.downloadDir+"\\Burn\\release")
+      //发送强制刷新请求
+      this.$electron.ipcRenderer.send('reload-request',"")
+    },
     handleConfirm(){
       this.$rp.log("用户点击确认，前往步骤三-handleConfirm")
       this.showConfirm=false
@@ -520,7 +535,7 @@ export default {
               //收集文件信息
               let check=[false,false,false]
               if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim')) check[0]=true
-              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\')) check[1]=true
+              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\version.txt')) check[1]=true
               if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)) check[2]=true
               this.$rp.log("iso,edgeless,plugin："+check[0]+","+check[1]+","+check[2]+"-edgelessOperator")
               if(check[0]&&check[1]&&check[2]){
@@ -534,9 +549,10 @@ export default {
                 if(!check[2]) ct+=" Ventoy插件缺失："+this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName
                 this.$rp.log("向用户报告错误："+ct+"-edgelessOperator")
                 this.$error({
-                  title: '错误：启动盘的文件不完全，请关闭程序后尝试重新制作',
+                  title: '错误：启动盘的文件不完全，启动盘制作失败',
                   content: ct
                 });
+                this.stepsInfo.step = 4
               }
             })
           })

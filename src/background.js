@@ -39,6 +39,10 @@ async function createWindow() {
         icon:"./core/favicon.ico"
     })
 
+    ipcMain.on('reload-request',(event,payload)=>{
+        win.reload()
+    })
+
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
