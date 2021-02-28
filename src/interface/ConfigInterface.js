@@ -84,5 +84,12 @@ export default [
         information:"由于此开关实际上是 干预盘符整理过程-1 的高级版本，因此如果同时打开了这两个开关，程序会使用此开关的方案",
         higherThan:"3.0.0",
         folderName:"WinFirst"
+    },
+    {
+        title:"挂载所有分区",
+        description:"进入Edgeless时显示所有找到的分区，包括任何可识别的引导分区和保留分区",
+        information:"",
+        higherThan:"3.1.5",
+        folderName:"MountEveryPartition"
     }
 ]

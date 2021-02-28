@@ -12,10 +12,10 @@ echo 2.需要连依赖更新
 echo 3.需要全量更新
 set /p choice=输入序号或直接回车：
 
-if %choice%==2 (
+if "%choice%"=="2" (
     call writeJson Workshop\update.json dependencies_requirement %version:~0,-2%
 )
-if %choice%==3 (
+if "%choice%"=="3" (
     call writeJson Workshop\update.json dependencies_requirement %version:~0,-2%
     call writeJson Workshop\update.json wide_gaps.-1 %version:~0,-2%
 )
