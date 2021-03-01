@@ -105,6 +105,15 @@ name: "Alpha",
           this.alpha_name=res.data.name
           this.showDialog=false
 
+          //判断在线版本是否为0.0.0
+          if(this.alpha_version==="0.0.0") {
+            notification.open({
+              message: '不需要获取Alpha',
+              description: "现阶段没有Alpha版本提供"
+            })
+            this.$router.back()
+          }
+
           //判断本地是否已经存在alpha版本wim
           if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\"+this.alpha_name)){
             notification.open({

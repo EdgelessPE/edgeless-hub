@@ -1,5 +1,5 @@
 @echo off
-set stage=Alpha
+set stage=Beta
 
 ::∂¡»°∞Ê±æ∫≈
 call readJson ..\package.json version

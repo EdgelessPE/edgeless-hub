@@ -392,6 +392,7 @@ export default {
           index: 2,
           data: res.data.name
         })
+        this.edgelessInfo.isoName=res.data.name
         //开始下载任务
         DownloadManager.methods.aria2cDownloaderDir(res.data.url,false, this.$store.state.downloadDir + '\\Burn',(response)=>{
           this.$store.commit('changeIsoInfo', {

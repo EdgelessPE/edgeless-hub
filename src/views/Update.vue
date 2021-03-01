@@ -148,7 +148,7 @@ name: "Update",
     if(DownloadManager.methods.exist(this.$store.state.pluginPath)){
       //检查盘内版本号
       if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt")){
-        this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString()
+        this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
       }else{
         notification.open({
           message:'不是标准的Edgeless启动盘',
