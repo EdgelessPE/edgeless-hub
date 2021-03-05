@@ -554,14 +554,20 @@ export default {
     //检查依赖文件完整性
     if(!DownloadManager.methods.exist(this.$store.state.aria2cPath+'/aria2c.exe')){
       this.$error({
-        title: '启动依赖校验：错误',
+        title: '启动依赖校验错误，请完全解压后运行本程序！',
         content: "Aria2c主程序丢失"
       });
     }
     if(!DownloadManager.methods.exist(".\\core\\UltraISO\\UltraISO.exe")){
       this.$error({
-        title: '启动依赖校验：错误',
+        title: '启动依赖校验错误，请完全解压后运行本程序！',
         content: "UltraISO主程序丢失"
+      });
+    }
+    if(!DownloadManager.methods.exist(".\\core\\DiskScanner.dll")){
+      this.$error({
+        title: '启动依赖校验错误，请完全解压后运行本程序！',
+        content: "DiskScanner.dll丢失"
       });
     }
 
