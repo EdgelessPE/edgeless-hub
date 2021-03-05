@@ -45,6 +45,8 @@ export default {
   },
   methods:{
     generateRecommends(){
+      //回到顶部
+      scrollTo(0,0)
       //生成必备软件项目
       this.recommendData=[]
       this.$store.state.allData.forEach((itemI)=>{

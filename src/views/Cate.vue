@@ -52,6 +52,9 @@ name: "Cate",
       return ret
     },
     prepData(){
+      //回到顶部
+      scrollTo(0,0)
+
       let raw=this.getCateData()
       this.processedData=[]
       raw.forEach((item)=>{
