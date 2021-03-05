@@ -121,6 +121,7 @@
 import TopBar from "@/components/TopBar"
 import {notification} from 'ant-design-vue'
 import DownloadManager from "@/components/DownloadManager"
+import StationList from '@/stationpool/main'
 const cp=window.require('child_process')
 const fs=window.require('fs')
 
@@ -571,6 +572,9 @@ export default {
     if(!config['userName']){
       config['userName']=window.require('os').userInfo().username
     }
+
+    //如果stationIndex超过范围则归零
+    if(config['stationIndex']>StationList.length-1) config['stationIndex']=0
 
     //写入配置到Vuex或执行首次运行配置
     if(config.exist&&config.stationIndex!==undefined){

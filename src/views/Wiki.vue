@@ -1,6 +1,8 @@
 <template>
-  <webview id="webview" src="https://wiki.edgeless.top/v2"
-           style="display:inline-flex; width:80vw; height:40vw"/>
+  <div>
+    <webview id="webview" src="https://wiki.edgeless.top/v2"
+             style="display:inline-flex; width:80vw; height:40vw"/>
+  </div>
 </template>
 
 <script>
@@ -34,6 +36,8 @@ export default {
         }
       }
     })
+    //回到顶部
+    scrollTo(0,0)
   },
   destroyed() {
     if(this.interval!=="") clearInterval(this.interval)

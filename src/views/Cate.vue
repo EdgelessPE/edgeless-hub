@@ -1,5 +1,6 @@
 <template>
   <div>
+    <a-back-top />
     <a-page-header
         :title="cateName"
         :sub-title="'共'+processedData.length+'个插件包'"
@@ -17,8 +18,11 @@
         </a-card>
       </a-list-item>
     </a-list>
+    <a-layout-footer style="text-align: center">
+      没找到需要的插件？尝试自己
+      <a-button size="small" v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/develop/quickstart.html')">制作插件包</a-button>
+    </a-layout-footer>
   </div>
-
 </template>
 
 <script>
