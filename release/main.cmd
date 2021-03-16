@@ -115,6 +115,7 @@ title 发布Edgeless Hub %version%-生成miniupdate包（5/6）
 cd ..
 cd ..
 del /f /q release\Workshop\*.7z
+md release\Workshop
 move /y "dist\Edgeless Hub\update.7z" "release\Workshop\update.7z"
 move /y "dist\Edgeless Hub\miniupdate.7z" "release\Workshop\miniupdate.7z"
 move /y "dist\Edgeless Hub_%stage%_%version:~0,-2%.7z" "release\Workshop\Edgeless Hub_%stage%_%version:~0,-2%.7z"
@@ -122,5 +123,7 @@ move /y "dist\Edgeless Hub_%stage%_%version:~0,-2%.7z" "release\Workshop\Edgeles
 ::通过WinSCP上传三个包和update.json
 title 发布Edgeless Hub %version%-上传文件（6/6）
 cd release
-"D:\CnoRPS\WinSCP 5.15.9.10071\WinSCP.exe" /console /script=scp_script.txt /parameter // "Edgeless Hub_%stage%_%version:~0,-2%.7z"
+set winscp_path="D:\CnoRPS\WinSCP 5.15.9.10071\WinSCP.exe"
+if exist "C:\Users\Cno\AppData\Local\Programs\WinSCP\WinSCP.exe" set winscp_path="C:\Users\Cno\AppData\Local\Programs\WinSCP\WinSCP.exe"
+%winscp_path% /console /script=scp_script.txt /parameter // "Edgeless Hub_%stage%_%version:~0,-2%.7z"
 exit
