@@ -180,8 +180,8 @@ ipcMain.on('unpackISO-request', (event, payload) => {
     } else {
         cp.exec('.\\core\\UltraISO\\UltraISO.exe -input "' + payload.src + '" -extract "' + payload.dst + '"', {
             windowsHide: true
-        }, (res) => {
-            event.reply('unpackISO-reply', res)
+        }, () => {
+            event.reply('unpackISO-reply', '')
         })
     }
 })

@@ -527,7 +527,7 @@ export default {
   },
   created() {
     // //获取当前版本号
-    this.$store.commit('updateHubVersion',this.$electron.ipcRenderer.sendSync('version-request','').slice(0,3))
+    this.$store.commit('updateHubVersion',this.$electron.ipcRenderer.sendSync('version-request','').slice(0,4))
     //
     // //获取在线版本号
     // this.$axios.get("https://pineapple.edgeless.top/api/v2/info/hub_version")
