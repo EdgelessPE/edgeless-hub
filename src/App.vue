@@ -526,7 +526,7 @@ export default {
     }
   },
   created() {
-    // //获取当前版本号
+    //获取当前版本号
     this.$store.commit('updateHubVersion',this.$electron.ipcRenderer.sendSync('version-request','').slice(0,4))
     //
     // //获取在线版本号

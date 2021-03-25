@@ -206,7 +206,7 @@ export default {
         'queryUrl': 'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
       },
       edgelessInfo: {
-        isoName: "Edgeless_Beta_3.1.0.iso",
+        isoName: "Edgeless_Beta_3.2.0.iso",
         url: ""
       },
       whenReadyUnzip: false, //当检测到下载完成时发送unzip事件
@@ -818,12 +818,12 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     this.$rp.log("用户准备离开Burn-beforeRouteLeave")
-    //当step=2时阻止用户切换页面
-    if (this.stepsInfo.step === 2) {
-      this.$rp.log("step=2,阻止用户切换页面-beforeRouteLeave")
+    //当step<3时阻止用户切换页面
+    if (this.stepsInfo.step < 3 && this.stepsInfo.step>0) {
+      this.$rp.log("0<step<3,阻止用户切换页面-beforeRouteLeave")
       notification.open({
         message: '现在不能离开当前页面！',
-        description: "请耐心等待部署任务完成"
+        description: "请耐心等待当前任务完成"
       })
     } else {
       this.$rp.log("离开Burn-beforeRouteLeave")
