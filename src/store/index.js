@@ -98,7 +98,7 @@ export default new Vuex.Store({
       },
       stepsInfo:{
         hasVentoy:false,
-        step:0,
+        step:-1,
         stepText:"开始",
         step3percent:0,
         data:[

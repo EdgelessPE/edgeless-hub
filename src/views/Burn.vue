@@ -14,7 +14,7 @@
     <a-steps :current="stepsInfo.step">
       <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
     </a-steps>
-    <div class="steps-content" key="0" v-if="stepsInfo.step===0">
+    <div class="steps-content" key="0" v-if="stepsInfo.step===0||stepsInfo.step===-1">
       <a-result title="在开始之前，我们需要下载一些必要的依赖文件" subTitle="Edgeless不是维护用PE，对劣质U盘和旧型号电脑兼容性不佳，请选用知名品牌U盘制作并在4GB以上内存容量的电脑上启动">
         <template #icon>
           <a-icon type="cloud-download"/>
@@ -213,7 +213,7 @@ export default {
       showExecVentoyButton: false,
       stepsInfo: {
         hasVentoy: false,
-        step: 0,
+        step: -1,
         stepText: "开始",
         step3percent: 0,
         data: [
@@ -259,6 +259,7 @@ export default {
       this.edgelessOperator()
     },
     startNesDownload() {
+      this.stepsInfo.step=0
       this.$rp.log("开始下载依赖-startNesDownload")
       this.stepsInfo.stepText = '请求'
       this.startVentoyDownload()
@@ -819,8 +820,8 @@ export default {
   beforeRouteLeave(to, from, next) {
     this.$rp.log("用户准备离开Burn-beforeRouteLeave")
     //当step<3时阻止用户切换页面
-    if (this.stepsInfo.step < 3 && this.stepsInfo.step>0) {
-      this.$rp.log("0<step<3,阻止用户切换页面-beforeRouteLeave")
+    if (this.stepsInfo.step < 3 && this.stepsInfo.step>-1) {
+      this.$rp.log("-1<step<3,阻止用户切换页面-beforeRouteLeave")
       notification.open({
         message: '现在不能离开当前页面！',
         description: "请耐心等待当前任务完成"
