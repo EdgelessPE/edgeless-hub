@@ -548,6 +548,23 @@ export default {
     // //设置标题
     document.title='Edgeless Hub '+this.$store.state.hub_local_version
 
+    //读取aria2c端口
+    try{
+      let cfg=fs.readFileSync(this.$store.state.aria2cPath+"/elhub.conf").toString()
+      let mct=cfg.match(/[^#]rpc-listen-port=.*/)
+      if(mct.length){
+        console.log("has port change")
+        let port=mct[0].split("=")[1]
+        console.log(port)
+        this.$store.commit("changeAria2Port",port)
+      }
+    }catch (err) {
+      notification.open({
+        message:'警告：无法读取aria2c端口号',
+        description:JSON.stringify(err)
+      })
+    }
+
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
