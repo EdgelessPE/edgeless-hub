@@ -31,7 +31,7 @@
     </a-radio-group>
     <template v-if="ResolutionWay==='1'">
       <br/><br/>
-      <a-alert message="选择此项可以解决启动过程中因为分辨率过高导致显示器无法显示的问题" type="info" show-icon />
+      <a-alert message="选择此项可以解决显示器提示超出显示范围/输出参数不支持的问题" type="info" show-icon />
     </template>
     <template v-if="ResolutionWay==='2'">
       <br/><br/>

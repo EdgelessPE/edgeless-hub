@@ -7,7 +7,7 @@ hub_config.json
 elstore_config.json
 *.lock
 *.bak.json
-release/Workshop
+release/Workshop/*.7z
 
 
 # local env files

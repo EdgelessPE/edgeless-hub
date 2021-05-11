@@ -560,10 +560,22 @@ export default {
         })
       })
     },
-    unpackISO(callback) {
+    async unpackISO(callback) {
       this.$rp.log("发送解包事件unpackISO-request -unpackISO")
       //注册完成事件监听
       this.$electron.ipcRenderer.on('unpackISO-reply', callback)
+      //检查iso是否存在
+      if(!DownloadManager.methods.exist(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)){
+        this.$rp.log("iso不存在，重新请求："+this.edgelessInfo.isoName)
+        let isoData=await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
+        //更新文件名
+        this.edgelessInfo.isoName=isoData.data.name
+        this.$store.commit('changeFileName', {
+          index: 2,
+          data: res.data.name
+        })
+        this.$rp.log("文件名被更新为："+this.edgelessInfo.isoName)
+      }
       //发送解包事件
       this.$electron.ipcRenderer.send('unpackISO-request', {
         src: this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName,
