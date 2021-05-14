@@ -328,5 +328,8 @@ export default new Vuex.Store({
     },
     setHotChecked(state){
       state.HotUpdateInfo.checked=true
+    },
+    changeAria2Port(state,port){
+      state.aria2cUri='http://localhost:'+port+'/jsonrpc'
     }
 }})

@@ -507,6 +507,9 @@ export default {
     },
     test(){
       this.$electron.ipcRenderer.send('test-event',{})
+    },
+    quit(){
+      this.$electron.ipcRenderer.send('quit-request',{})
     }
   },
   components:{
@@ -545,6 +548,23 @@ export default {
     // //设置标题
     document.title='Edgeless Hub '+this.$store.state.hub_local_version
 
+    //读取aria2c端口
+    try{
+      let cfg=fs.readFileSync(this.$store.state.aria2cPath+"/elhub.conf").toString()
+      let mct=cfg.match(/[^#]rpc-listen-port=.*/)
+      if(mct.length){
+        console.log("has port change")
+        let port=mct[0].split("=")[1]
+        console.log(port)
+        this.$store.commit("changeAria2Port",port)
+      }
+    }catch (err) {
+      notification.open({
+        message:'警告：无法读取aria2c端口号',
+        description:JSON.stringify(err)
+      })
+    }
+
     //初始化DownloadManager
     DownloadManager.methods.init(this.$axios,this.$store,this.$root)
 
@@ -554,14 +574,23 @@ export default {
     //检查依赖文件完整性
     if(!DownloadManager.methods.exist(this.$store.state.aria2cPath+'/aria2c.exe')){
       this.$error({
-        title: '启动依赖校验：错误',
-        content: "Aria2c主程序丢失"
+        title: '启动依赖校验错误，请完全解压后运行本程序！',
+        content: "Aria2c主程序丢失",
+        onOk:this.quit
       });
     }
     if(!DownloadManager.methods.exist(".\\core\\UltraISO\\UltraISO.exe")){
       this.$error({
-        title: '启动依赖校验：错误',
-        content: "UltraISO主程序丢失"
+        title: '启动依赖校验错误，请完全解压后运行本程序！',
+        content: "UltraISO主程序丢失",
+        onOk:this.quit
+      });
+    }
+    if(!DownloadManager.methods.exist(".\\core\\DiskScanner.dll")){
+      this.$error({
+        title: '启动依赖校验错误，请完全解压后运行本程序！',
+        content: "DiskScanner.dll丢失",
+        onOk:this.quit
       });
     }
 
