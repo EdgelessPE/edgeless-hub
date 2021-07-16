@@ -17,11 +17,11 @@
     <a-icon type="loading" />
     安装中
   </a-button>
-  <a-button v-else-if="state===11&&version_local===version_online" disabled>
+  <a-button v-else-if="state===11&&versionCmp(version_local,version_online)!==-1" disabled>
     <a-icon type="check" />
     已安装
   </a-button>
-  <a-button v-else-if="state===11&&version_local!==version_online" v-on:click="addUpdateTask(name,url)" type="primary">
+  <a-button v-else-if="state===11&&versionCmp(version_local,version_online)===-1" v-on:click="addUpdateTask(name,url)" type="primary">
     <a-icon type="arrow-up" />
     更新
   </a-button>
@@ -81,7 +81,46 @@ name: "CateButton",
       })
       //添加下载任务
       this.addDownloadTask(name,url)
-    }
+    },
+
+    //版本号判断函数,返回1表示x>y,-1表示x<y
+    versionCmp(x,y){
+      let split_x=x.split(".")
+      let split_y=y.split(".")
+      let result=0
+      let i
+      for(i=0;i<Math.min(split_x.length,split_y.length);i++){
+        if(Number(split_x[i])<Number(split_y[i])){
+          result=-1
+          break
+        }else if(Number(split_x[i])>Number(split_y[i])){
+          result=1
+          break
+        }
+      }
+      //当长度不相等时向后搜索长位是否全0
+      if(result===0&&split_x.length!==split_y.length){
+        if(split_x.length>split_x.length){
+          //处理x
+          for(;i<split_x.length;i++){
+            if(Number(split_x[i])!==0){
+              result=1
+              break
+            }
+          }
+        }else{
+          //处理y
+          for(;i<split_y.length;i++){
+            if(Number(split_y[i])!==0){
+              result=-1
+              break
+            }
+          }
+        }
+      }
+      return result
+    },
+
   },
   watch:{
     state:function (){
@@ -121,6 +160,7 @@ name: "CateButton",
   created() {
     this.version_local=this.version_online
     //监听状态更新事件
+    //TODO 更新状态校验3个
     this.$root.eventHub.$on('state-update-node',(data)=>{
       if(data.name===this.name){
         //确认是自己，解冻按钮，从广播中获取信息

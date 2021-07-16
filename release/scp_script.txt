@@ -1,6 +1,6 @@
 option batch continue
 open 菠萝云小鸡
-lcd D:\Desktop\Projects\edgeless-hub\release\Workshop
+lcd D:\Desktop\Projects\EdgelessPE\edgeless-hub\release\Workshop
 cd /hdisk/edgeless/Socket/Hub
 put "%1%"
 cd /hdisk/edgeless/Socket/Hub/Update

@@ -67,6 +67,44 @@ name: "DownloadManager",
       })
     },
 
+    //版本号判断函数,返回1表示x>y,-1表示x<y
+    versionCmp(x,y){
+      let split_x=x.split(".")
+      let split_y=y.split(".")
+      let result=0
+      let i
+      for(i=0;i<Math.min(split_x.length,split_y.length);i++){
+        if(Number(split_x[i])<Number(split_y[i])){
+          result=-1
+          break
+        }else if(Number(split_x[i])>Number(split_y[i])){
+          result=1
+          break
+        }
+      }
+      //当长度不相等时向后搜索长位是否全0
+      if(result===0&&split_x.length!==split_y.length){
+        if(split_x.length>split_x.length){
+          //处理x
+          for(;i<split_x.length;i++){
+            if(Number(split_x[i])!==0){
+              result=1
+              break
+            }
+          }
+        }else{
+          //处理y
+          for(;i<split_y.length;i++){
+            if(Number(split_y[i])!==0){
+              result=-1
+              break
+            }
+          }
+        }
+      }
+      return result
+    },
+
     //读写配置文件相关
     writeConfig(){
       let data={
@@ -294,7 +332,7 @@ name: "DownloadManager",
           }else if(!this.stillCopying(info[0])){
             //判断是否需要升级
             data_tmp=this.getVersionAndUrl(info[0])
-            if(data_tmp.version==='null'||data_tmp.version<=info[1]){
+            if(data_tmp.version==='null'||this.versionCmp(data_tmp.version,info[1])!==1){
               result.push({
                 'name':info[0],
                 'totalLength':fs.statSync(path.join(this.$store.state.pluginPath,item)).size,
@@ -371,6 +409,7 @@ name: "DownloadManager",
       }
     },
     //负责填充参数数组、过滤结果
+    //TODO 对同名同作者的插件包去重
     getTasks(method,callback){
       let params=[]
       switch(method){
