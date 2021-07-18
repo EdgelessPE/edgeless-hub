@@ -439,11 +439,24 @@ export default {
     reg(){
       cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {374DE290-123F-4565-9164-39C4925E467B}',(err,stdout,stderr)=>{
         if(err||stderr){
-          notification.open({
-            message:'注册表读取失败',
-            description:(err)?err.message:stderr
+          //尝试读取另一个表项
+          cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {7D83EE9B-2244-4E70-B1F5-5393042AF1E4}',(err,stdout,stderr)=>{
+            if(err||stderr){
+              notification.open({
+                message:'注册表读取失败',
+                description:'请手动配置下载缓存目录为本地磁盘上某个文件夹'
+              })
+              this.$store.commit('changeDownloadDir', 'D:\\HubCache')
+            }else{
+              //根据注册表设置默认下载路径
+              let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
+              if(DownloadManager.methods.exist(path)) {
+                this.$store.commit('changeDownloadDir', path + '\\HubCache')
+                //更新本组件上的userInputDownloadDir
+                this.userInputDownloadDir=this.$store.state.downloadDir
+              }
+            }
           })
-          this.$store.commit('changeDownloadDir', 'D:\\HubCache')
         }else{
           //根据注册表设置默认下载路径
           let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
@@ -454,22 +467,7 @@ export default {
           }
         }
       })
-      cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {7D83EE9B-2244-4E70-B1F5-5393042AF1E4}',(err,stdout,stderr)=>{
-        if(err||stderr){
-          notification.open({
-            message:'注册表读取失败',
-            description:(err)?err.message:stderr
-          })
-        }else{
-          //根据注册表设置默认下载路径
-          let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
-          if(DownloadManager.methods.exist(path)) {
-            this.$store.commit('changeDownloadDir', path + '\\HubCache')
-            //更新本组件上的userInputDownloadDir
-            this.userInputDownloadDir=this.$store.state.downloadDir
-          }
-        }
-      })
+
     },
     killAria2c(){
       cp.exec('TASKKILL /F /IM aria2c.exe /T',(err,stdout,stderr)=>{
@@ -484,24 +482,7 @@ export default {
 
       //配置下载目录
       this.reg()
-      // reg.list('HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders',(err,result)=>{
-      //   if(err){
-      //     notification.open({
-      //       message:'注册表读取失败',
-      //       description:err.message
-      //     })
-      //   }else{
-      //     //根据注册表设置默认下载路径
-      //     let path
-      //     path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{374DE290-123F-4565-9164-39C4925E467B}'].value
-      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\HubCache')
-      //     path=result['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders'].values['{7D83EE9B-2244-4E70-B1F5-5393042AF1E4}'].value
-      //     if(DownloadManager.methods.exist(path)) this.$store.commit('changeDownloadDir',path+'\\HubCache')
-      //
-      //     //更新本组件上的userInputDownloadDir
-      //     this.userInputDownloadDir=this.$store.state.downloadDir
-      //   }
-      // })
+
       //展示欢迎界面
       this.showWelcome=true
     },
@@ -559,10 +540,13 @@ export default {
         this.$store.commit("changeAria2Port",port)
       }
     }catch (err) {
-      notification.open({
-        message:'警告：无法读取aria2c端口号',
-        description:JSON.stringify(err)
-      })
+      let err_str=JSON.stringify(err)
+      if(err_str!=="{}"){
+        notification.open({
+          message:'警告：无法读取aria2c端口号',
+          description:err_str
+        })
+      }
     }
 
     //初始化DownloadManager
