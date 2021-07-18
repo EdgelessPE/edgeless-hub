@@ -80,8 +80,9 @@ name: "HotUpdate",
       }
     },
     addHotUpdateTask(url){
-      //清理./core/Update/source
+      //清理目录
       DownloadManager.methods.delDir("./core/Update/source")
+      DownloadManager.methods.delDir(this.$store.state.downloadDir + '\\Update')
 
       //创建工作目录
       DownloadManager.methods.mkdir("./core/Update/source")

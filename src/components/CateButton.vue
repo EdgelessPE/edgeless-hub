@@ -160,7 +160,6 @@ name: "CateButton",
   created() {
     this.version_local=this.version_online
     //监听状态更新事件
-    //TODO 更新状态校验3个
     this.$root.eventHub.$on('state-update-node',(data)=>{
       if(data.name===this.name){
         //确认是自己，解冻按钮，从广播中获取信息

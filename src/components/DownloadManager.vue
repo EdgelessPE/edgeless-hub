@@ -409,7 +409,6 @@ name: "DownloadManager",
       }
     },
     //负责填充参数数组、过滤结果
-    //TODO 对同名同作者的插件包去重
     getTasks(method,callback){
       let params=[]
       switch(method){

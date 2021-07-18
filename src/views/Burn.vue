@@ -236,30 +236,30 @@ export default {
       diskList: [],
 
       //确认扫描结果相关
-      firstMovableInfo:undefined,
-      showConfirm:false,
+      firstMovableInfo: undefined,
+      showConfirm: false,
 
       //下载失败重试次数
-      retryTimes:[0,0,0],
-      maxAllowedRetry:1
+      retryTimes: [0, 0, 0],
+      maxAllowedRetry: 1
     }
   },
   methods: {
-    restartBurn(){
+    restartBurn() {
       //删除release文件夹
-      DownloadManager.methods.delDir(this.$store.state.downloadDir+"\\Burn\\release")
+      DownloadManager.methods.delDir(this.$store.state.downloadDir + "\\Burn\\release")
       //发送强制刷新请求
-      this.$electron.ipcRenderer.send('reload-request',"")
+      this.$electron.ipcRenderer.send('reload-request', "")
     },
-    handleConfirm(){
+    handleConfirm() {
       this.$rp.log("用户点击确认，前往步骤三-handleConfirm")
-      this.showConfirm=false
-      this.selectedVentoyPart=this.firstMovableInfo.name
+      this.showConfirm = false
+      this.selectedVentoyPart = this.firstMovableInfo.name
       this.stepsInfo.step = 2
       this.edgelessOperator()
     },
     startNesDownload() {
-      this.stepsInfo.step=0
+      this.stepsInfo.step = 0
       this.$rp.log("开始下载依赖-startNesDownload")
       this.stepsInfo.stepText = '请求'
       this.startVentoyDownload()
@@ -279,7 +279,7 @@ export default {
                 this.ventoyInfo.version = res.data.tag_name
               }
             })
-            this.$rp.log("获得ventoy的下载地址："+this.ventoyInfo.url+"-startVentoyDownload")
+            this.$rp.log("获得ventoy的下载地址：" + this.ventoyInfo.url + "-startVentoyDownload")
             if (this.ventoyInfo.url === "") {
               notification.open({
                 message: '获取Ventoy的Release信息失败',
@@ -301,7 +301,7 @@ export default {
                   index: 0,
                   data: this.ventoyInfo.fileName
                 })
-                this.$rp.log("ventoy信息：文件名="+this.ventoyInfo.fileName+" gid="+res.data.result+"-startVentoyDownload")
+                this.$rp.log("ventoy信息：文件名=" + this.ventoyInfo.fileName + " gid=" + res.data.result + "-startVentoyDownload")
                 //启动下载完成时unzip监测
                 this.whenReadyUnzip = true
                 this.startedTasks[0] = true
@@ -319,7 +319,7 @@ export default {
     startPluginDownload() {
       this.$rp.log("开始下载wim插件-startPluginDownload")
       //配置插件名称
-      this.ventoyInfo.pluginName="ventoy_wimboot.img"
+      this.ventoyInfo.pluginName = "ventoy_wimboot.img"
       //下载插件，向下载站发送请求
       DownloadManager.methods.aria2cDownloaderDir("https://pineapple.edgeless.top/api/v2/info/ventoy_plugin_addr", false, this.$store.state.downloadDir + '\\Burn', (res) => {
         this.$store.commit('changeVentoyPluginInfo', {
@@ -335,7 +335,7 @@ export default {
           index: 1,
           data: this.ventoyInfo.pluginName
         })
-        this.$rp.log("wim插件：文件名="+this.ventoyInfo.pluginName+" gid="+res.data.result+"-startPluginDownload")
+        this.$rp.log("wim插件：文件名=" + this.ventoyInfo.pluginName + " gid=" + res.data.result + "-startPluginDownload")
         this.startedTasks[1] = true
       })
     },
@@ -382,33 +382,33 @@ export default {
     //         })
     //       })
     // },
-    startIsoDownload(){
+    startIsoDownload() {
       this.$rp.log("开始下载ISO-startIsoDownload")
-      let url="https://pineapple.edgeless.top/api/v2/info/iso"
+      let url = "https://pineapple.edgeless.top/api/v2/info/iso"
       this.$axios.get(url)
-      .then((res)=>{
-        this.$rp.log("更新ISO信息：文件名="+res.data.name+" url="+res.data.url+" version="+res.data.version+"-startIsoDownload")
-        //更新文件名
-        this.$store.commit('changeFileName', {
-          index: 2,
-          data: res.data.name
-        })
-        this.edgelessInfo.isoName=res.data.name
-        //开始下载任务
-        DownloadManager.methods.aria2cDownloaderDir(res.data.url,false, this.$store.state.downloadDir + '\\Burn',(response)=>{
-          this.$store.commit('changeIsoInfo', {
-            needTrace: true,
-            gid: response.data.result,
-            task: {
-              "totalLength": 1,
-              "completedLength": 0,
-              "downloadSpeed": 1
-            }
+          .then((res) => {
+            this.$rp.log("更新ISO信息：文件名=" + res.data.name + " url=" + res.data.url + " version=" + res.data.version + "-startIsoDownload")
+            //更新文件名
+            this.$store.commit('changeFileName', {
+              index: 2,
+              data: res.data.name
+            })
+            this.edgelessInfo.isoName = res.data.name
+            //开始下载任务
+            DownloadManager.methods.aria2cDownloaderDir(res.data.url, false, this.$store.state.downloadDir + '\\Burn', (response) => {
+              this.$store.commit('changeIsoInfo', {
+                needTrace: true,
+                gid: response.data.result,
+                task: {
+                  "totalLength": 1,
+                  "completedLength": 0,
+                  "downloadSpeed": 1
+                }
+              })
+              this.$rp.log("ISO下载gid：" + response.data.result + "-startIsoDownload")
+              this.startedTasks[2] = true
+            })
           })
-          this.$rp.log("ISO下载gid："+response.data.result+"-startIsoDownload")
-          this.startedTasks[2] = true
-        })
-      })
           .catch((err) => {
             this.$rp.log("获取ISO镜像信息失败-startIsoDownload")
             notification.open({
@@ -418,23 +418,23 @@ export default {
           })
     },
     selectVentoyPart(val) {
-      this.$rp.log("用户手动选择了盘符："+val+"-selectVentoyPart")
-      if(DownloadManager.methods.exist(val+":\\Edgeless")){
+      this.$rp.log("用户手动选择了盘符：" + val + "-selectVentoyPart")
+      if (DownloadManager.methods.exist(val + ":\\Edgeless")) {
         notification.open({
-          message:'警告：'+val+"盘存在Edgeless文件夹，请检查是否存在误判",
-          description:"如果仍旧需要重新制作，请删除Edgeless文件夹"
+          message: '警告：' + val + "盘存在Edgeless文件夹，请检查是否存在误判",
+          description: "如果仍旧需要重新制作，请删除Edgeless文件夹"
         })
       }
       this.selectedVentoyPart = val
     },
     jumpToStep3() {
-      this.$rp.log("前往步骤3 this.selectedVentoyPart="+this.selectedVentoyPart+"-jumpToStep3")
+      this.$rp.log("前往步骤3 this.selectedVentoyPart=" + this.selectedVentoyPart + "-jumpToStep3")
       //console.log(this.selectedVentoyPart)
-      if (this.selectedVentoyPart===""||(!DownloadManager.methods.exist(this.selectedVentoyPart + ':\\'))) {
-        this.$rp.log("错误：盘符代表的路径不存在:"+this.selectedVentoyPart + ':\\-jumpToStep3')
+      if (this.selectedVentoyPart === "" || (!DownloadManager.methods.exist(this.selectedVentoyPart + ':\\'))) {
+        this.$rp.log("错误：盘符代表的路径不存在:" + this.selectedVentoyPart + ':\\-jumpToStep3')
         notification.open({
-          message:'错误：路径不存在',
-          description:"请选择一个存在的盘符"
+          message: '错误：路径不存在',
+          description: "请选择一个存在的盘符"
         })
         return
       }
@@ -466,12 +466,12 @@ export default {
       this.$electron.ipcRenderer.send('scanDisks-request', '')
     },
     edgelessOperator() {
-      this.$rp.log("步骤3开始 this.selectedVentoyPart="+this.selectedVentoyPart+"-edgelessOperator")
+      this.$rp.log("步骤3开始 this.selectedVentoyPart=" + this.selectedVentoyPart + "-edgelessOperator")
       //console.log(this.selectedVentoyPart)
       //return
       //校验目标盘符是否存在
-      if(this.selectedVentoyPart===""||!DownloadManager.methods.exist(this.selectedVentoyPart+":\\")){
-        this.$rp.log("错误：盘符代表的路径不存在:"+this.selectedVentoyPart + ':\\-edgelessOperator')
+      if (this.selectedVentoyPart === "" || !DownloadManager.methods.exist(this.selectedVentoyPart + ":\\")) {
+        this.$rp.log("错误：盘符代表的路径不存在:" + this.selectedVentoyPart + ':\\-edgelessOperator')
         notification.open({
           message: '错误：没有发现Ventoy启动盘',
           description: "步骤3操作失败，请检查后重试"
@@ -479,10 +479,10 @@ export default {
         return
       }
       //校验是否存在Edgeless文件夹
-      if(DownloadManager.methods.exist(this.selectedVentoyPart+":\\Edgeless")){
+      if (DownloadManager.methods.exist(this.selectedVentoyPart + ":\\Edgeless")) {
         notification.open({
-          message:'警告：'+this.selectedVentoyPart+"盘存在Edgeless文件夹，即将覆盖Edgeless文件夹",
-          description:"您可能会因此失去先前保存的插件等自定义内容"
+          message: '警告：' + this.selectedVentoyPart + "盘存在Edgeless文件夹，即将覆盖Edgeless文件夹",
+          description: "您可能会因此失去先前保存的插件等自定义内容"
         })
       }
       //复制ventoy_wimboot插件（3MB）
@@ -519,7 +519,7 @@ export default {
           DownloadManager.methods.copyDir(this.$store.state.downloadDir + '\\Burn\\release\\Edgeless', this.selectedVentoyPart + ':\\Edgeless\\', true, () => {
             this.stepsInfo.step3percent = this.stageLimit
             this.speed = (75776 / (Date.now() - startTime)) * 0.8 //MB/s，估算的写入速度
-            this.$rp.log("结束复制Edgeless文件夹，计算的写入速度："+this.speed+"-edgelessOperator")
+            this.$rp.log("结束复制Edgeless文件夹，计算的写入速度：" + this.speed + "-edgelessOperator")
             console.log('speed1=' + this.speed.toFixed(1))
             this.speed = 84.6 * (this.speed / 678)
             console.log('speed2=' + this.speed.toFixed(1))
@@ -535,21 +535,21 @@ export default {
               this.stepsInfo.stepText = "完成"
               clearInterval(this.progressInterval)
               //收集文件信息
-              let check=[false,false,false]
-              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim')) check[0]=true
-              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\version.txt')) check[1]=true
-              if(DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)) check[2]=true
-              this.$rp.log("iso,edgeless,plugin："+check[0]+","+check[1]+","+check[2]+"-edgelessOperator")
-              if(check[0]&&check[1]&&check[2]){
+              let check = [false, false, false]
+              if (DownloadManager.methods.exist(this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim')) check[0] = true
+              if (DownloadManager.methods.exist(this.selectedVentoyPart + ':\\Edgeless\\version.txt')) check[1] = true
+              if (DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)) check[2] = true
+              this.$rp.log("iso,edgeless,plugin：" + check[0] + "," + check[1] + "," + check[2] + "-edgelessOperator")
+              if (check[0] && check[1] && check[2]) {
                 this.$rp.log("跳转到完成页面-edgelessOperator")
                 this.stepsInfo.step = 3
-              }else{
+              } else {
                 //生成报错报告
-                let ct="报错信息："
-                if(!check[0]) ct+=" 启动文件缺失："+this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim'
-                if(!check[1]) ct+=" 启动依赖缺失："+this.selectedVentoyPart + ':\\Edgeless\\'
-                if(!check[2]) ct+=" Ventoy插件缺失："+this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName
-                this.$rp.log("向用户报告错误："+ct+"-edgelessOperator")
+                let ct = "报错信息："
+                if (!check[0]) ct += " 启动文件缺失：" + this.selectedVentoyPart + ':\\' + this.edgelessInfo.isoName.split('.iso')[0] + '.wim'
+                if (!check[1]) ct += " 启动依赖缺失：" + this.selectedVentoyPart + ':\\Edgeless\\'
+                if (!check[2]) ct += " Ventoy插件缺失：" + this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName
+                this.$rp.log("向用户报告错误：" + ct + "-edgelessOperator")
                 this.$error({
                   title: '错误：启动盘的文件不完全，启动盘制作失败',
                   content: ct
@@ -566,16 +566,16 @@ export default {
       //注册完成事件监听
       this.$electron.ipcRenderer.on('unpackISO-reply', callback)
       //检查iso是否存在
-      if(!DownloadManager.methods.exist(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)){
-        this.$rp.log("iso不存在，重新请求："+this.edgelessInfo.isoName)
-        let isoData=await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
+      if (!DownloadManager.methods.exist(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)) {
+        this.$rp.log("iso不存在，重新请求：" + this.edgelessInfo.isoName)
+        let isoData = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
         //更新文件名
-        this.edgelessInfo.isoName=isoData.data.name
+        this.edgelessInfo.isoName = isoData.data.name
         this.$store.commit('changeFileName', {
           index: 2,
           data: res.data.name
         })
-        this.$rp.log("文件名被更新为："+this.edgelessInfo.isoName)
+        this.$rp.log("文件名被更新为：" + this.edgelessInfo.isoName)
       }
       //发送解包事件
       this.$electron.ipcRenderer.send('unpackISO-request', {
@@ -586,11 +586,11 @@ export default {
     gotoWiki() {
       this.$router.push('/wiki?location=https://home.edgeless.top/guide')
     },
-    emergency(){
+    emergency() {
       this.$rp.log("紧急模式被调用-emergency")
       //处理c#无法正常运行时的手动选择
       //生成本地磁盘数组
-      this.showConfirm=false
+      this.showConfirm = false
       for (let i = 25; i >= 0; i--) {
         if (DownloadManager.methods.exist(String.fromCharCode(65 + i) + ':\\')) {
           this.diskList.push(String.fromCharCode(65 + i))
@@ -631,7 +631,7 @@ export default {
           if (this.whenReadyUnzip) {
             //this.$rp.log("检查当下载Ventoy完成时unzip-Burn_setInterval")
             if (!this.$store.state.ventoyInfo.needTrace) {
-              if(this.$store.state.ventoyInfo.task.completedLength!==0 && this.$store.state.ventoyInfo.task.completedLength === this.$store.state.ventoyInfo.task.totalLength){
+              if (this.$store.state.ventoyInfo.task.completedLength !== 0 && this.$store.state.ventoyInfo.task.completedLength === this.$store.state.ventoyInfo.task.totalLength) {
                 this.$rp.log("Ventoy下载已经完成，发送解压事件unzip-request-Burn_setInterval")
                 //此时下载已经完成
                 this.whenReadyUnzip = false
@@ -640,29 +640,29 @@ export default {
                   'zip': this.$store.state.downloadDir + '\\Burn\\*.zip',
                   'path': this.$store.state.downloadDir + '\\Burn'
                 })
-              }else{
+              } else {
                 this.$error({
-                  title:"Ventoy下载失败",
-                  content:"请前往https://www.ventoy.net/cn/download.html手动下载最新的Windows版Ventoy放到"+this.$store.state.downloadDir + '\\Burn，然后重启程序重试'
+                  title: "Ventoy下载失败",
+                  content: "请前往https://www.ventoy.net/cn/download.html手动下载最新的Windows版Ventoy放到" + this.$store.state.downloadDir + '\\Burn，然后重启程序重试'
                 })
               }
             }
           }
           //更新下载完成状态，检查是确实完成了还是出错
-          if(this.stepsInfo.step===0){
+          if (this.stepsInfo.step === 0) {
             if (this.startedTasks[0]) {
-              if(!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[0]) this.$rp.log("Task0停止，totalLength="+this.$store.state.ventoyInfo.task.totalLength+" completedLength="+this.$store.state.ventoyInfo.task.completedLength+"-Burn_setInterval")
+              if (!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[0]) this.$rp.log("Task0停止，totalLength=" + this.$store.state.ventoyInfo.task.totalLength + " completedLength=" + this.$store.state.ventoyInfo.task.completedLength + "-Burn_setInterval")
               this.finishedTasks[0] = !this.$store.state.ventoyInfo.needTrace
-              if (this.startedTasks[0] && this.finishedTasks[0] && (this.$store.state.ventoyInfo.task.totalLength !== this.$store.state.ventoyInfo.task.completedLength || this.$store.state.ventoyInfo.task.completedLength===0)) {
+              if (this.startedTasks[0] && this.finishedTasks[0] && (this.$store.state.ventoyInfo.task.totalLength !== this.$store.state.ventoyInfo.task.completedLength || this.$store.state.ventoyInfo.task.completedLength === 0)) {
                 this.retryTimes[0]++
-                if(this.retryTimes[0]>this.maxAllowedRetry){
+                if (this.retryTimes[0] > this.maxAllowedRetry) {
                   this.$error({
-                    title:"Ventoy下载失败",
-                    content:"请前往https://www.ventoy.net/cn/download.html手动下载最新的Windows版Ventoy放到"+this.$store.state.downloadDir + '\\Burn，然后重启程序重试'
+                    title: "Ventoy下载失败",
+                    content: "请前往https://www.ventoy.net/cn/download.html手动下载最新的Windows版Ventoy放到" + this.$store.state.downloadDir + '\\Burn，然后重启程序重试'
                   })
-                  this.startedTasks[0]=false
-                  this.finishedTasks[0]=false
-                }else{
+                  this.startedTasks[0] = false
+                  this.finishedTasks[0] = false
+                } else {
                   this.$rp.log("Task0异常，重新下载-Burn_setInterval")
                   DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.fileName)
                   DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.fileName + '.aria2')
@@ -672,18 +672,18 @@ export default {
               }
             }
             if (this.startedTasks[1]) {
-              if(!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[1]) this.$rp.log("Task1停止，totalLength="+this.$store.state.ventoyPluginInfo.task.totalLength+" completedLength="+this.$store.state.ventoyPluginInfo.task.completedLength+"-Burn_setInterval")
+              if (!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[1]) this.$rp.log("Task1停止，totalLength=" + this.$store.state.ventoyPluginInfo.task.totalLength + " completedLength=" + this.$store.state.ventoyPluginInfo.task.completedLength + "-Burn_setInterval")
               this.finishedTasks[1] = !this.$store.state.ventoyPluginInfo.needTrace
-              if (this.startedTasks[1] && this.finishedTasks[1] && (this.$store.state.ventoyPluginInfo.task.totalLength !== this.$store.state.ventoyPluginInfo.task.completedLength || this.$store.state.ventoyPluginInfo.task.completedLength===0)) {
+              if (this.startedTasks[1] && this.finishedTasks[1] && (this.$store.state.ventoyPluginInfo.task.totalLength !== this.$store.state.ventoyPluginInfo.task.completedLength || this.$store.state.ventoyPluginInfo.task.completedLength === 0)) {
                 this.retryTimes[1]++
-                if(this.retryTimes[1]>this.maxAllowedRetry){
+                if (this.retryTimes[1] > this.maxAllowedRetry) {
                   this.$error({
-                    title:"Ventoy插件下载失败",
-                    content:"请联系作者解决问题"
+                    title: "Ventoy插件下载失败",
+                    content: "请联系作者解决问题"
                   })
-                  this.startedTasks[1]=false
-                  this.finishedTasks[1]=false
-                }else{
+                  this.startedTasks[1] = false
+                  this.finishedTasks[1] = false
+                } else {
                   this.$rp.log("Task1异常，重新下载-Burn_setInterval")
                   DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.pluginName)
                   DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.ventoyInfo.pluginName + '.aria2')
@@ -693,18 +693,18 @@ export default {
               }
             }
             if (this.startedTasks[2]) {
-              if(!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[2]) this.$rp.log("Task2停止，totalLength="+this.$store.state.isoInfo.task.totalLength+" completedLength="+this.$store.state.isoInfo.task.completedLength+"-Burn_setInterval")
+              if (!this.$store.state.ventoyInfo.needTrace && !this.finishedTasks[2]) this.$rp.log("Task2停止，totalLength=" + this.$store.state.isoInfo.task.totalLength + " completedLength=" + this.$store.state.isoInfo.task.completedLength + "-Burn_setInterval")
               this.finishedTasks[2] = !this.$store.state.isoInfo.needTrace
-              if (this.startedTasks[2] && this.finishedTasks[2] && (this.$store.state.isoInfo.task.completedLength !== this.$store.state.isoInfo.task.totalLength || this.$store.state.isoInfo.task.completedLength===0)) {
+              if (this.startedTasks[2] && this.finishedTasks[2] && (this.$store.state.isoInfo.task.completedLength !== this.$store.state.isoInfo.task.totalLength || this.$store.state.isoInfo.task.completedLength === 0)) {
                 this.retryTimes[2]++
-                if(this.retryTimes[2]>this.maxAllowedRetry){
+                if (this.retryTimes[2] > this.maxAllowedRetry) {
                   this.$error({
-                    title:"ISO镜像下载失败",
-                    content:"请联系作者解决问题"
+                    title: "ISO镜像下载失败",
+                    content: "请联系作者解决问题"
                   })
-                  this.startedTasks[2]=false
-                  this.finishedTasks[2]=false
-                }else{
+                  this.startedTasks[2] = false
+                  this.finishedTasks[2] = false
+                } else {
                   this.$rp.log("Task2异常，重新下载-Burn_setInterval")
                   DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)
                   DownloadManager.methods.del(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName + '.aria2')
@@ -716,7 +716,7 @@ export default {
           }
 
           //计算是否需要显示下载进度条
-          if(this.stepsInfo.step === 0){
+          if (this.stepsInfo.step === 0) {
             this.showProgress = this.startedTasks[0] || this.startedTasks[1] || this.startedTasks[2]
             //this.$rp.log("计算是否需要显示下载进度条:"+this.showProgress+"-Burn_setInterval")
             //this.$rp.log("在step=0时判断是否需要翻页翻到step=1，finishedTasks0="+this.finishedTasks[0]+" finishedTasks1="+this.finishedTasks[1]+" finishedTasks2="+this.finishedTasks[2]+" ventoyInfo.finishUnzip="+this.ventoyInfo.finishUnzip+"-Burn_setInterval")
@@ -746,12 +746,12 @@ export default {
         for (let i = 0; i < this.driveInfo.labels.length; i++) {
           //跳过本地磁盘
           if (!this.showExecVentoyButton && this.driveInfo.removable[i] == 0) {
-            this.$rp.log("跳过本地磁盘："+this.driveInfo.names[i]+"-scanDisks_reply_anonymous")
+            this.$rp.log("跳过本地磁盘：" + this.driveInfo.names[i] + "-scanDisks_reply_anonymous")
             continue
           }
           //保存找到的第一个可移动设备信息
-          if(!this.firstMovableInfo&&this.driveInfo.labels[i]!=='VTOYEFI'&& this.driveInfo.removable[i] ==1) {
-            this.$rp.log("保存找到的第一个可移动设备信息：盘符="+this.driveInfo.names[i]+" 卷标="+this.driveInfo.labels[i]+"-scanDisks_reply_anonymous")
+          if (!this.firstMovableInfo && this.driveInfo.labels[i] !== 'VTOYEFI' && this.driveInfo.removable[i] == 1) {
+            this.$rp.log("保存找到的第一个可移动设备信息：盘符=" + this.driveInfo.names[i] + " 卷标=" + this.driveInfo.labels[i] + "-scanDisks_reply_anonymous")
             this.firstMovableInfo = {
               label: this.driveInfo.labels[i],
               name: this.driveInfo.names[i]
@@ -759,7 +759,7 @@ export default {
           }
           //检查Ventoy在卷标中是否出现 &&!DownloadManager.methods.exist(this.driveInfo.names[i]+":\\Edgeless")
           if (this.driveInfo.labels[i] === "Ventoy") {
-            this.$rp.log("发现Ventoy，位于"+this.driveInfo.names[i]+"-scanDisks_reply_anonymous")
+            this.$rp.log("发现Ventoy，位于" + this.driveInfo.names[i] + "-scanDisks_reply_anonymous")
             this.selectedVentoyPart = this.driveInfo.names[i]
             break
           }
@@ -768,10 +768,10 @@ export default {
           this.$rp.log("没有选中任何分区，第一个移动设备的信息如下-scanDisks_reply_anonymous")
           this.$rp.log(JSON.stringify(this.firstMovableInfo))
           //询问是否是第一个可移动设备
-          if(this.firstMovableInfo){
+          if (this.firstMovableInfo) {
             this.$rp.log("询问是否为第一个移动设备-scanDisks_reply_anonymous")
-            this.showConfirm=true
-          }else{
+            this.showConfirm = true
+          } else {
             this.$rp.log("未发现任何设备-scanDisks_reply_anonymous")
             //Ventoy盘未发现
             this.showExecVentoyButton = true
@@ -791,13 +791,13 @@ export default {
       }
     })
     this.$electron.ipcRenderer.on('unzip-reply', (event, res) => {
-      if(res!==this.$store.state.downloadDir + '\\Burn\\*.zip') return
+      if (res !== this.$store.state.downloadDir + '\\Burn\\*.zip') return
       this.$rp.log("收到解压完成的回复-unzip_reply_anonymous")
       //获取文件夹名
       let tmp = this.ventoyInfo.fileName.split('-')
       this.ventoyInfo.ventoyPath = this.$store.state.downloadDir + '\\Burn\\' + tmp[0] + '-' + tmp[1]
       this.ventoyInfo.finishUnzip = true
-      this.$rp.log("ventoyPath"+this.ventoyInfo.ventoyPath+"-unzip_reply_anonymous")
+      this.$rp.log("ventoyPath" + this.ventoyInfo.ventoyPath + "-unzip_reply_anonymous")
     })
   },
   destroyed() {
@@ -820,7 +820,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     this.$rp.log("用户准备离开Burn-beforeRouteLeave")
     //当step<3时阻止用户切换页面
-    if (this.stepsInfo.step < 3 && this.stepsInfo.step>-1) {
+    if (this.stepsInfo.step < 3 && this.stepsInfo.step > -1) {
       this.$rp.log("-1<step<3,阻止用户切换页面-beforeRouteLeave")
       notification.open({
         message: '现在不能离开当前页面！',
