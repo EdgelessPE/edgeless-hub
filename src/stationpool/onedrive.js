@@ -2,7 +2,7 @@ import StationInterface from "@/interface/StationInterface"
 //实例化
 const sObject=StationInterface('OneDrive')
 //内部存储变量
-let cateData=[],fileListPool={},url='https://pineapple.edgeless.top/api/list/2',counter=0,inited=false
+let cateData=[],fileListPool={},url='https://zfile.edgeless.top/api/list/2',counter=0,inited=false
 //实现接口
 sObject.init=function (axios,callback) {
     //锁止
@@ -13,7 +13,7 @@ sObject.init=function (axios,callback) {
         .then((res)=>{
             //console.log(res.data.data)
             //过滤出为文件夹的结果，并初始化计数器
-            res.data.data.forEach((item)=>{
+            res.data.data.files.forEach((item)=>{
                 if(item.type==="FOLDER") {
                     cateData.push({
                         name:item.name
@@ -29,7 +29,7 @@ sObject.init=function (axios,callback) {
                         //console.log(response.data.data)
                         let tmp_ret=[]
                         //筛选.7z文件
-                        response.data.data.forEach((item)=>{
+                        response.data.data.files.forEach((item)=>{
                             if(item.name.indexOf('.7z')!==-1) {
                                 tmp_ret.push(item)
                             }
