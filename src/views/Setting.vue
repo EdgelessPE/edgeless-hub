@@ -45,6 +45,7 @@
 <script>
 import DownloadManager from "@/components/DownloadManager";
 import StationList from '@/stationpool/main'
+import {notification} from "ant-design-vue";
 export default {
 name: "Setting",
   data(){
@@ -85,6 +86,11 @@ name: "Setting",
           break
         }
       }
+      //提示等待载入
+      notification.open({
+        message:'正在刷新镜像站索引',
+        description:'这可能需要几秒钟的时间，请耐心等待'
+      })
       //更新Vuex
       this.$store.commit('updateStationObject',position)
       //发送刷新数据事件

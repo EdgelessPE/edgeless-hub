@@ -6,7 +6,10 @@ let cateData=[],fileListPool={},url='https://pineapple.edgeless.top/api/list/1',
 //实现接口
 sObject.init=function (axios,callback) {
     //锁止
-    if(inited) return
+    if(inited) {
+        callback()
+        return
+    }
     inited=true
     //获取分类数据
     axios.get(url+'?path=插件包')

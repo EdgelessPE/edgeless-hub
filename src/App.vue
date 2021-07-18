@@ -281,7 +281,7 @@ export default {
       }
       return res
     },
-    refreshData(){ //将分类数据推至store，然后调用getPluginData()
+    refreshData(successNotification){ //将分类数据推至store，然后调用getPluginData()
       try{
         //初始化镜像站插件
         this.$store.state.stationObject.init(this.$axios,()=>{
@@ -293,13 +293,13 @@ export default {
             })
             //console.log(cData)
             this.$store.commit('setCateData',cData)
-            this.getPluginData()
+            this.getPluginData(successNotification)
           })
         })
       }catch(err){
         notification.open({
-          message:'与镜像站通讯失效',
-          description:"插件"+this.$store.state.stationObject.name+"错误："+err.message
+          message:'刷新镜像站索引失败',
+          description:"镜像站接口"+this.$store.state.stationObject.name+"错误："+err.message
         })
       }
 
@@ -318,7 +318,7 @@ export default {
       //   })
       // })
     },
-    getPluginData(){
+    getPluginData(successNotification){
       //对于每个分类获取其插件列表
       for(let i=0;i<this.cateData.length;i++){
         let queryName=this.cateData[i].name
@@ -330,6 +330,10 @@ export default {
           //如果所有数据已加载完毕，则发送数据加载完毕事件
           if(this.$store.state.allData.length===this.$store.state.cateData.length){
             this.$root.eventHub.$emit('all-data-loaded',{})
+            if(successNotification) notification.open({
+              message:'刷新镜像站索引成功',
+              description:'当前镜像站：'+this.$store.state.stationObject.name
+            })
           }
         })
       }
@@ -614,7 +618,7 @@ export default {
     if(!this.showWelcome) this.updateEdgelessDiskList(true)
 
     //获取在线列表数据
-    this.refreshData()
+    this.refreshData(false)
 
     //完成初始化，发送事件
     if(config.exist&&config.stationIndex!==undefined) this.$store.commit('finishInit',this.$root.eventHub)
@@ -748,7 +752,7 @@ export default {
     })
     this.$root.eventHub.$on('update-mirror',()=>{
       this.$store.commit('clearData',"")
-      this.refreshData()
+      this.refreshData(true)
     })
   },
   destroyed() {
