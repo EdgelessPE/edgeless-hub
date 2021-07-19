@@ -748,7 +748,7 @@ export default {
       })
     })
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
-      if(arg) this.userInputDownloadDir=arg[0]
+      if(arg) this.userInputDownloadDir=arg[0]+"\\HubCache"
     })
     this.$root.eventHub.$on('update-mirror',()=>{
       this.$store.commit('clearData',"")

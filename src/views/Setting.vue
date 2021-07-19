@@ -38,7 +38,7 @@
     <a-button @click="$router.push('/test')">
       Debug
     </a-button>
-  </a-card>
+  </a-card>F
 </div>
 </template>
 
@@ -108,7 +108,7 @@ name: "Setting",
     },1000)
     //设置事件监听
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply',(event,arg)=>{
-      if(arg) this.$store.commit('changeDownloadDir',arg[0])
+      if(arg) this.$store.commit('changeDownloadDir',arg[0]+"\\HubCache")
     })
 
     //同步userName

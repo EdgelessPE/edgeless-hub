@@ -11,5 +11,5 @@
 ## 使用
 ```
 yarn
-yarn run electron:serve
+yarn electron:serve
 ```
