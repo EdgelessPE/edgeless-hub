@@ -4,6 +4,7 @@ const urlencode = require('urlencode')
 const fs=window.require('fs')
 const cp=window.require('child_process')
 const path = require('path')
+
 export default {
 name: "DownloadManager",
   data(){
@@ -12,7 +13,8 @@ name: "DownloadManager",
     downloadDir:'',
     $store:'',
     $axios:'',
-    $root:''
+    $root:'',
+    shell:'',
   }
   },
   methods:{
@@ -209,11 +211,15 @@ name: "DownloadManager",
       cp.exec('xcopy /s /r /y "'+src+'" "'+dst+'"',callback)
     },
     del(filePath){
-      //console.log('delete'+filePath)
+      filePath=filePath.replaceAll("/","\\")
       if(fs.existsSync(filePath)){
+        try{
+          cp.execSync('del /f /s '+filePath)
+        }catch (_){
           fs.unlinkSync(filePath)
-        return true
-      }else return false
+        }
+        return !fs.existsSync(filePath)
+      }else return true
     },
     delDir(dst){
       if(this.exist(dst)) {
@@ -610,7 +616,7 @@ name: "DownloadManager",
       this.$root=root
 
       this.path=this.$store.state.aria2cUri
-    }
+    },
   }
 
 }

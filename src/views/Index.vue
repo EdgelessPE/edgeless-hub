@@ -1,5 +1,6 @@
 <template>
 <div>
+  <Patch/>
   <keep-alive>
     <HotUpdate/>
   </keep-alive>
@@ -62,6 +63,7 @@
 import DownloadManager from "@/components/DownloadManager";
 import CateButton from "@/components/CateButton";
 import HotUpdate from "@/components/HotUpdate";
+import Patch from "@/components/Patch";
 const fs=window.require('fs')
 export default {
 name: "Index",
@@ -101,6 +103,7 @@ name: "Index",
   }
   },
   components:{
+    Patch,
     CateButton,
     HotUpdate
   },

@@ -705,6 +705,8 @@ export default {
     },1000)
 
     //监听事件
+    this.$root.eventHub.$on('')
+
     this.$root.eventHub.$on('add-download-task',(data)=>{
       DownloadManager.methods.taskAdd(data.url,data.name)
     })
@@ -762,7 +764,7 @@ export default {
   destroyed() {
     this.$rp.destroy()
     this.killAria2c()
-  }
+  },
 };
 </script>
 <style>

@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, ipcMain, dialog, Menu} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, dialog, Menu,shell} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import cp from 'child_process'
@@ -200,6 +200,10 @@ ipcMain.on('version-request',(event,payload)=>{
 
 ipcMain.on('isDev-request',(event,payload)=>{
     event.returnValue=isDevelopment
+})
+
+ipcMain.on('trash-request',(event,payload)=>{
+    event.returnValue=shell.moveItemToTrash(payload)
 })
 
 ipcMain.on('updateOnExit',(event,payload)=>{

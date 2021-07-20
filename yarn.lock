@@ -3483,6 +3483,11 @@ detect-node@^2.0.4:
   resolved "https://registry.npm.taobao.org/detect-node/download/detect-node-2.0.4.tgz#014ee8f8f669c5c58023da64b8179c083a28c46c"
   integrity sha1-AU7o+PZpxcWAI9pkuBecCDooxGw=
 
+diff_match_patch@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/diff_match_patch/-/diff_match_patch-0.1.1.tgz#d3f14d5b76fb4b5a9cf44706261dadb5bd97edbc"
+  integrity sha1-0/FNW3b7S1qc9EcGJh2ttb2X7bw=
+
 diffie-hellman@^5.0.0:
   version "5.0.3"
   resolved "https://registry.npm.taobao.org/diffie-hellman/download/diffie-hellman-5.0.3.tgz#40e8ee98f55a2149607146921c63e1ae5f3d2875"
@@ -4033,6 +4038,13 @@ evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
     md5.js "^1.3.4"
     safe-buffer "^5.1.1"
 
+exceptions@latest:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/exceptions/-/exceptions-0.1.1.tgz#b703900795c28f07ad69dbac5f68786f945621b2"
+  integrity sha1-twOQB5XCjwetadusX2h4b5RWIbI=
+  dependencies:
+    formaterrors "0.1.1"
+
 execa@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/execa/download/execa-1.0.0.tgz?cache=0&sync_timestamp=1606970975645&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fexeca%2Fdownload%2Fexeca-1.0.0.tgz#c6236a5bb4df6d6f15e88e7f017798216749ddd8"
@@ -4355,6 +4367,14 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
+formaterrors@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/formaterrors/-/formaterrors-0.1.1.tgz#7e3673e474df7a8397139281829362b68fce0deb"
+  integrity sha1-fjZz5HTfeoOXE5KBgpNito/ODes=
+  dependencies:
+    diff_match_patch "0.1.1"
+    stack-trace "0.0.6"
+
 forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.npm.taobao.org/forwarded/download/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
@@ -4438,6 +4458,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/fs.realpath/download/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
+
+fs@latest:
+  version "0.0.1-security"
+  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
+  integrity sha1-invTcYa23d84E/I4WLV+yq9eQdQ=
 
 fsevents@^1.2.7:
   version "1.2.13"
@@ -5013,6 +5038,13 @@ iconv-lite@^0.6.2:
   version "0.6.2"
   resolved "https://registry.npm.taobao.org/iconv-lite/download/iconv-lite-0.6.2.tgz#ce13d1875b0c3a674bd6a04b7f76b01b1b6ded01"
   integrity sha1-zhPRh1sMOmdL1qBLf3awGxtt7QE=
+  dependencies:
+    safer-buffer ">= 2.1.2 < 3.0.0"
+
+iconv-lite@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.6.3.tgz#a52f80bf38da1952eb5c681790719871a1a72501"
+  integrity sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
@@ -6428,6 +6460,14 @@ node-releases@^1.1.67:
   version "1.1.67"
   resolved "https://registry.npm.taobao.org/node-releases/download/node-releases-1.1.67.tgz?cache=0&sync_timestamp=1605581283263&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-releases%2Fdownload%2Fnode-releases-1.1.67.tgz#28ebfcccd0baa6aad8e8d4d8fe4cbc49ae239c12"
   integrity sha1-KOv8zNC6pqrY6NTY/ky8Sa4jnBI=
+
+nodejs-md5@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/nodejs-md5/-/nodejs-md5-1.1.0.tgz#7f7d4073699f9c19bbdc41044e7c502cea8a9ce2"
+  integrity sha512-U4oSRfiATjfqBM37c5MBSo7JyLnHcWsD4xvyMUJw4AdPCOg0aMvB40M8H50yvHLMbPokY7HufPPokEJw+AwlpQ==
+  dependencies:
+    exceptions latest
+    fs latest
 
 normalize-package-data@^2.5.0:
   version "2.5.0"
@@ -8385,6 +8425,11 @@ stable@^0.1.8:
   version "0.1.8"
   resolved "https://registry.npm.taobao.org/stable/download/stable-0.1.8.tgz#836eb3c8382fe2936feaf544631017ce7d47a3cf"
   integrity sha1-g26zyDgv4pNv6vVEYxAXzn1Ho88=
+
+stack-trace@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.6.tgz#1e719bd6a2629ff09c189e17a9ef902a94fc5db0"
+  integrity sha1-HnGb1qJin/CcGJ4Xqe+QKpT8XbA=
 
 stackframe@^1.1.1:
   version "1.2.0"
