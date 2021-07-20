@@ -56,7 +56,13 @@ export default {
               console.log(JSON.stringify(e))
               throw "Can't get md5"
             }
-            return !(got_md5===right_md5)
+            if(got_md5===right_md5){
+              //颁发好人证
+              DownloadManager.methods.mkdir(local_good_tag)
+              return false
+            }else{
+              return true
+            }
           },
 
           patch:async function (cache_dir, _){
@@ -89,7 +95,13 @@ export default {
             }
 
             //检查U盘中的文件
-            let got_md5 = await getMD5(u_ventoy_wim)
+            let got_md5
+            try{
+              got_md5 = await getMD5(u_ventoy_wim)
+            }catch (e) {
+              console.log(JSON.stringify(e))
+              throw "Can't get md5"
+            }
             if(got_md5===right_md5){
               //颁发好人证
               DownloadManager.methods.mkdir(u_good_tag)
