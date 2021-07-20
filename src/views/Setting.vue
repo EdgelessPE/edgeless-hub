@@ -38,7 +38,7 @@
     <a-button @click="$router.push('/test')">
       Debug
     </a-button>
-  </a-card>F
+  </a-card>
 </div>
 </template>
 

@@ -146,6 +146,10 @@ export default {
       fileList:[],
       iconMatch:[
         {
+          name:"集成开发",
+          icon:"code"
+        },
+        {
           name:"实用工具",
           icon:"tool"
         },
@@ -167,7 +171,7 @@ export default {
         },
         {
           name:"输入法",
-          icon:"code"
+          icon:"italic"
         },
         {
           name:"录屏看图",
