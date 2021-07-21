@@ -5,7 +5,6 @@ node_modules
 Log.txt
 hub_config.json
 elstore_config.json
-*.lock
 *.bak.json
 release/Workshop/*.7z
 
