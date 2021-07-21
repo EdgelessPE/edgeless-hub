@@ -77,7 +77,6 @@ export default {
               console.log('fail to delete')
               return false
             }
-
           }
         },
         {

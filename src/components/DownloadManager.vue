@@ -214,8 +214,9 @@ name: "DownloadManager",
       filePath=filePath.replaceAll("/","\\")
       if(fs.existsSync(filePath)){
         try{
-          cp.execSync('del /f /s '+filePath)
+          cp.execSync('del /f /s \"'+filePath+'\"')
         }catch (_){
+          console.log('try unlink')
           fs.unlinkSync(filePath)
         }
         return !fs.existsSync(filePath)

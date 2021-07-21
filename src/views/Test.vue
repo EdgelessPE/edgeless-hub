@@ -2,8 +2,6 @@
 <div>
   <a-space>
     <a-button v-on:click="openDevTool">Devtool</a-button>
-    <a-input v-model:value="x"/>
-    <a-input v-model:value="y"/>
     <a-button v-on:click="test">Test</a-button>
   </a-space>
 </div>
@@ -15,7 +13,6 @@ export default {
 name: "Test",
   data(){
   return{
-    x:"0.0.0.0",y:"0.0.0.0"
   }
   },
   methods:{
@@ -23,7 +20,7 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     test(){
-      console.log(DownloadManager.methods.versionCmp(this.x,this.y))
+      console.log(DownloadManager.methods.del("D:\\360极速浏览器下载\\搜狗 拼音_10.5.0.4737_Cno.7z"))
     }
   },
   created() {
