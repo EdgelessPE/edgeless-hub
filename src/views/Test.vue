@@ -20,7 +20,7 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     test(){
-      console.log(DownloadManager.methods.del("D:\\360极速浏览器下载\\搜狗 拼音_10.5.0.4737_Cno.7z"))
+
     }
   },
   created() {
