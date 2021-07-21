@@ -4,10 +4,10 @@ import {app, protocol, BrowserWindow, ipcMain, dialog, Menu,shell} from 'electro
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import cp from 'child_process'
+import { get as getDiskInfo } from './common/diskscan';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs')
-const edge = require("electron-edge-js")
 
 var updateOnExit=false
 
@@ -119,7 +119,7 @@ ipcMain.on('openFileDialog-request', (event, arg) => {
     })
     event.reply('openFileDialog-reply', data)
 })
-ipcMain.on('scanDisks-request', (event, arg) => {
+ipcMain.on('scanDisks-request', async(event, arg) => {
     // const findUSB = edge.func(function () {/*
     // using System.IO;
     //   async (input) => {
@@ -135,14 +135,14 @@ ipcMain.on('scanDisks-request', (event, arg) => {
     //             return results;
     //     }*/
     // });
-    const getDiskInfo=edge.func({
-        assemblyFile: './core/DiskScanner.dll',
-        typeName: 'DiskScanner.Scanner',
-        methodName: 'getDiskInfo'
-    })
-    try{
+
+    // const getDiskInfo=edge.func({
+    //     assemblyFile: './core/DiskScanner.dll',
+    //     typeName: 'DiskScanner.Scanner',
+    //     methodName: 'getDiskInfo'
+    // })
         //throw 'error'
-        getDiskInfo('0', function (error, result) {
+        getDiskInfo('0').then(function (result) {
             if (error) throw error;
             console.log(result)
             //解析为Json对象
@@ -161,11 +161,10 @@ ipcMain.on('scanDisks-request', (event, arg) => {
             //console.log(json)
             if(json['names'].length===0) throw 'null result'
             event.reply('scanDisks-reply', json)
+        },function() {
+            console.log('scanDisk 运行失败')
+            event.reply('scanDisks-reply', undefined)
         })
-    }catch (e) {
-        console.log('c#运行失败')
-        event.reply('scanDisks-reply', undefined)
-    }
 
 
 })
