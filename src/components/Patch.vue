@@ -9,6 +9,7 @@ import {notification} from "ant-design-vue";
 import {log} from "@/interface/Repoter";
 const fs=window.require('fs');
 const md5 = require("nodejs-md5");
+const { shell } = window.require('electron')
 
 let $warning,$store
 
@@ -112,14 +113,15 @@ let dataset={
         patch:async function(){
           //弹窗提示
           $warning({
-            title: 'ventoy_wim插件有更新',
+            title: 'ventoy_wimboot插件有更新',
             content: '更新此组件可以解决UEFI启动时分辨率过低的问题',
             okText:'点击查看',
             cancelText:'下次再说',
             onOk() {
-              const { shell } = window.require('electron')
               shell.openExternal("https://wiki.edgeless.top/v2/faq/resolution.html")
             },
+            maskClosable:true,
+            closable:true
           });
           return true
         }
