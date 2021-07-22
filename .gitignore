@@ -1,7 +1,6 @@
 .DS_Store
 node_modules
 /dist
-*.xmind
 Log.txt
 hub_config.json
 elstore_config.json
