@@ -4,7 +4,6 @@
 
 <script>
 import DownloadManager from "@/components/DownloadManager";
-import cpt from 'crypto';
 import {notification} from "ant-design-vue";
 import {log} from "@/interface/Repoter";
 const fs=window.require('fs');
@@ -12,25 +11,6 @@ const md5 = require("nodejs-md5");
 const { shell } = window.require('electron')
 
 let $warning,$store
-
-async function getMD5(filePath) {
-  if(!DownloadManager.methods.exist(filePath)){
-    console.log("File not exist:"+filePath)
-    throw "file not exist"
-  }
-  return new Promise(resolve => {
-    md5.file(filePath,(err,md)=>{
-      if(err){
-        console.log(JSON.stringify(err))
-        throw "Can't get md5"
-      }else{
-        console.log(md)
-        let res=md.split("= ")[1]
-        resolve(res.toUpperCase())
-      }
-    })
-  });
-}
 
 let dataset={
     patchList:[
@@ -52,7 +32,7 @@ let dataset={
           //检查缓存中的文件
           let got_md5
           try{
-            got_md5 = await getMD5(local_ventoy_wim)
+            got_md5 = await DownloadManager.methods.getMD5(local_ventoy_wim)
           }catch (e) {
             console.log(JSON.stringify(e))
             throw "Can't get md5"
@@ -97,7 +77,7 @@ let dataset={
           //检查U盘中的文件
           let got_md5
           try{
-            got_md5 = await getMD5(u_ventoy_wim)
+            got_md5 = await DownloadManager.methods.getMD5(u_ventoy_wim)
           }catch (e) {
             console.log(JSON.stringify(e))
             throw "Can't get md5"

@@ -1,9 +1,11 @@
 <script>
-import {notification} from 'ant-design-vue'
-const urlencode = require('urlencode')
-const fs=window.require('fs')
-const cp=window.require('child_process')
-const path = require('path')
+import {notification} from 'ant-design-vue';
+const urlencode = require('urlencode');
+const fs=window.require('fs');
+const cp=window.require('child_process');
+const path = require('path');
+const md5 = require("nodejs-md5");
+import cpt from 'crypto';
 
 export default {
 name: "DownloadManager",
@@ -231,6 +233,21 @@ name: "DownloadManager",
     },
     ren(src,dst){
       fs.renameSync(src,dst)
+    },
+    async getMD5(filePath) {
+      return new Promise(resolve => {
+        const rs = fs.createReadStream(filePath)
+        const hash = cpt.createHash('md5')
+        let hex;
+        rs.on('data', (data)=>{
+          hash.update(Buffer.from(data))
+        })
+        rs.on('end', () => {
+          hex = hash.digest('hex')
+          console.log('Info:MD5 is ' + hex)
+          resolve(hex.toUpperCase())
+        });
+      });
     },
     //在指定目录使用正则表达式匹配文件
     matchFiles(path,exp){

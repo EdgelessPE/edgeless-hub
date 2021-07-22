@@ -339,49 +339,6 @@ export default {
         this.startedTasks[1] = true
       })
     },
-    // startIsoDownload_old() {
-    //   //下载ISO，向下载站发送请求
-    //   this.$axios.get('https://pineapple.edgeless.top/api/list/1?path=Socket')
-    //       .then((res) => {
-    //         let url = ""
-    //         res.data.data.forEach((item) => {
-    //           if (item.name.indexOf('Edgeless') === 0 && item.name.indexOf('.iso') > 0) {
-    //             url = item.url.replace('file/1', 'disk')
-    //             this.edgelessInfo.url = item.url.replace('file/1', 'disk')
-    //             this.edgelessInfo.isoName = item.name
-    //           }
-    //         })
-    //         if (url === "") {
-    //           notification.open({
-    //             message: '获取ISO镜像下载路径出错',
-    //             description: "服务器端不存在此文件"
-    //           })
-    //         } else {
-    //           DownloadManager.methods.aria2cDownloaderDir(url, false, this.$store.state.downloadDir + '\\Burn', (res) => {
-    //             this.$store.commit('changeIsoInfo', {
-    //               needTrace: true,
-    //               gid: res.data.result,
-    //               task: {
-    //                 "totalLength": 1,
-    //                 "completedLength": 0,
-    //                 "downloadSpeed": 1
-    //               }
-    //             })
-    //             this.$store.commit('changeFileName', {
-    //               index: 2,
-    //               data: this.edgelessInfo.isoName
-    //             })
-    //             this.startedTasks[2] = true
-    //           })
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         notification.open({
-    //           message: '获取ISO镜像信息失败',
-    //           description: err.message
-    //         })
-    //       })
-    // },
     startIsoDownload() {
       this.$rp.log("开始下载ISO-startIsoDownload")
       let url = "https://pineapple.edgeless.top/api/v2/info/iso"

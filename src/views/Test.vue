@@ -19,8 +19,13 @@ name: "Test",
     openDevTool(){
       this.$electron.ipcRenderer.send('devtool-request','')
     },
-    test(){
-
+    async test(){
+      try{
+        let res=await DownloadManager.methods.getMD5("D:\\Download\\vs_Community.exe")
+        console.log(res)
+      }catch (e) {
+        console.log(e)
+      }
     }
   },
   created() {
