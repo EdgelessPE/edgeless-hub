@@ -8,7 +8,10 @@
     />
     <a-list :grid="{ gutter: 16, column: 4 }" :data-source="result">
       <a-list-item slot="renderItem" slot-scope="item, index">
-        <a-card :title="item.softName">
+        <a-card>
+          <template slot="title">
+            <div @click="gotoDetails(item)" style="cursor:pointer">{{item.softName}}</div>
+          </template>
           {{'版本号：'+item.softVer}}
           <br/>
           {{'打包者：'+item.softAuthor}}
@@ -65,6 +68,9 @@ name: "Search",
     updateResult(){
       this.input=this.$route.query.keyword.toLowerCase()
       this.generateResult()
+    },
+    gotoDetails(item){
+      this.$router.push("/details?softName="+item.softName+"&softUrl="+item.softUrl+"&softVer="+item.softVer+"&softSize="+item.softSize+"&cateName="+item.cate+"&softAuthor="+item.softAuthor)
     }
   },
   created() {

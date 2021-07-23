@@ -8,7 +8,10 @@
     />
     <a-list :grid="{ gutter: 16, column: 4 }" :data-source="processedData">
       <a-list-item slot="renderItem" slot-scope="item, index">
-        <a-card :title="item.softName">
+        <a-card>
+          <template slot="title">
+            <div @click="gotoDetails(item)" style="cursor:pointer">{{item.softName}}</div>
+          </template>
           {{'版本号：'+item.softVer}}
           <br/>
           {{'打包者：'+item.softAuthor}}
@@ -73,6 +76,9 @@ name: "Cate",
       else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"
+    },
+    gotoDetails(item){
+      this.$router.push("/details?softName="+item.softName+"&softUrl="+item.softUrl+"&softVer="+item.softVer+"&softSize="+item.softSize+"&cateName="+this.cateName+"&softAuthor="+item.softAuthor)
     }
   },
   watch:{

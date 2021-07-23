@@ -8,7 +8,10 @@
     />
       <a-list :grid="{ gutter: 16, column: 4 }" :data-source="recommendData">
         <a-list-item slot="renderItem" slot-scope="item, index">
-          <a-card :title="item.softName">
+          <a-card>
+            <template slot="title">
+              <div @click="gotoDetails(item)" style="cursor:pointer">{{item.softName}}</div>
+            </template>
             {{'分类：'+item.cateName}}
             <br/>
             {{'版本号：'+item.softVer}}
@@ -81,6 +84,9 @@ export default {
       else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
       else return (size/(1024*1024*1024)).toFixed(2)+"GB"
     },
+    gotoDetails(item){
+      this.$router.push("/details?softName="+item.softName+"&softUrl="+item.softUrl+"&softVer="+item.softVer+"&softSize="+item.softSize+"&cateName="+item.cateName+"&softAuthor="+item.softAuthor)
+    }
   },
   created() {
     //所有插件列表载入完成时生成推荐列表
