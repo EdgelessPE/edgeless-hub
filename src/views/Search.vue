@@ -1,5 +1,6 @@
 <template>
   <div>
+    <a-back-top />
     <a-page-header
         :title="'搜索：'+input"
         :sub-title="'共找到'+result.length+'个结果'"

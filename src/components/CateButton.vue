@@ -85,6 +85,10 @@ name: "CateButton",
 
     //版本号判断函数,返回1表示x>y,-1表示x<y
     versionCmp(x,y){
+      //识别含-的版本号
+      x=x.replaceAll("-",".")
+      y=y.replaceAll("-",".")
+
       let split_x=x.split(".")
       let split_y=y.split(".")
       let result=0
