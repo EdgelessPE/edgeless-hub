@@ -408,6 +408,7 @@ export default {
     },
     execVentoy() {
       this.$rp.log("调用Ventoy安装程序-execVentoy")
+      DownloadManager.methods.del(this.ventoyInfo.ventoyPath+"\\log.txt")
       cp.exec('Ventoy2Disk.exe', {
         'cwd': this.ventoyInfo.ventoyPath
       }, (res) => {
