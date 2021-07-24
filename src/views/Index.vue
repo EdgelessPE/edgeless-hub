@@ -157,6 +157,18 @@ name: "Index",
         if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\ventoy\\ventoy_wimboot.img")){
           //判断是否需要升级
           this.localVersion=this.getLocalVersion("Beta","wim")
+          //处理仅有alpha的情况
+          if(this.localVersion===""){
+            if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt")){
+              this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
+            }else{
+              //弹出错误提示
+              this.$error({
+                title: '不是标准的Edgeless启动盘',
+                content: '我们无法正确识别您的启动盘，请尝试重新制作',
+              })
+            }
+          }
           // if(this.localVersion==="") this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
           let res=await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
           this.onlineVersion=res.data.version

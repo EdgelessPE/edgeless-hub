@@ -2,21 +2,28 @@
   <div>
     <a-back-top />
     <a-page-header
-        title="精选插件"
         :sub-title="'共'+recommendList.length+'个插件包'"
         @back="() => $router.go(-1)"
-    />
+    >
+      <template slot="title">
+        <a-icon type="trophy" />
+        精选插件
+      </template>
+    </a-page-header>
       <a-list :grid="{ gutter: 16, column: 4 }" :data-source="recommendData">
         <a-list-item slot="renderItem" slot-scope="item, index">
           <a-card>
             <template slot="title">
-              <div @click="gotoDetails(item)" style="cursor:pointer">{{item.softName}}</div>
+              <div @click="gotoDetails(item)" style="cursor:pointer">
+                {{item.softName}}
+                <a-tag v-if="item.botTag" color="cyan">自动构建</a-tag>
+              </div>
             </template>
             {{'分类：'+item.cateName}}
             <br/>
             {{'版本号：'+item.softVer}}
             <br/>
-            {{'打包者：'+item.softAuthor}}
+            {{'打包者：'+item.displayAuthor}}
             <br/>
             {{'大小：'+item.softSize}}
             <CateButton slot="actions" :name="item.softName" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
@@ -56,13 +63,25 @@ export default {
         itemI.files.forEach((itemJ)=>{
           if(this.insideList(itemJ.name.split('_')[0])) {
             let info=itemJ.name.split('_')
+
+            //处理author
+            let author=info[2].split('.7z')[0]
+            let botTag=false
+            let displayAuthor=author
+            if(author.includes("（bot）")){
+              displayAuthor=author.slice(0,-5)
+              botTag=true
+            }
+
             this.recommendData.push({
-              'softName':info[0],
-              'softVer':info[1],
-              'softAuthor':info[2].split('.7z')[0],
-              'softUrl':itemJ.url,
-              'softSize':this.getSizeString(itemJ.size),
-              'cateName':itemI.cateName
+              softName:info[0],
+              softVer:info[1],
+              softUrl:itemJ.url,
+              softSize:this.getSizeString(itemJ.size),
+              cateName:itemI.cateName,
+              softAuthor:author,
+              displayAuthor,
+              botTag,
             })
           }
         })

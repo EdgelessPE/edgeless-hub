@@ -13,7 +13,9 @@
         <a-statistic title="版本号" :value="item.softVer" />
       </a-col>
       <a-col :span="4">
-        <a-statistic title="打包者" :value="item.softAuthor" />
+        <a-statistic title="打包者" :value="item.softAuthor" >
+          <a-tag v-if="item.botTag" slot="suffix" color="cyan">自动构建</a-tag>
+        </a-statistic>
       </a-col>
       <a-col :span="4">
         <a-statistic title="大小" :value="item.softSize" :suffix="item.sizeUnit"/>
@@ -41,20 +43,39 @@ export default {
         softVer:"",
         softSize:"",
         sizeUnit:"",
-        softAuthor:""
+        softAuthor:"",
+        botTag:false
       },
       cateName:""
     }
   },
   methods:{
     initItem(){
+      //处理size
+      let size=this.$route.query.softSize
+      let softSize=size.slice(0,-2)
+      let sizeUnit=size.slice(-2)
+      if(sizeUnit==="0B"){
+        softSize=size.slice(0,-1)
+        sizeUnit=size.slice(-1)
+      }
+
+      //处理author
+      let author=this.$route.query.softAuthor
+      let botTag=false
+      if(author.includes("（bot）")){
+        author=author.slice(0,-5)
+        botTag=true
+      }
+
       this.item={
         softName:this.$route.query.softName,
         softUrl:this.$route.query.softUrl,
         softVer:this.$route.query.softVer,
-        softSize:this.$route.query.softSize.slice(0,-2),
-        sizeUnit:this.$route.query.softSize.slice(-2),
-        softAuthor:this.$route.query.softAuthor
+        softSize,
+        sizeUnit,
+        softAuthor:author,
+        botTag,
       }
       this.cateName=this.$route.query.cateName
     }

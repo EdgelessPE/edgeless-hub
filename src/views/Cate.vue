@@ -2,19 +2,26 @@
   <div>
     <a-back-top />
     <a-page-header
-        :title="cateName"
         :sub-title="'共'+processedData.length+'个插件包'"
         @back="() => $router.go(-1)"
-    />
+    >
+      <template slot="title">
+        <a-icon :type="cateIcon" />
+        {{cateName}}
+      </template>
+    </a-page-header>
     <a-list :grid="{ gutter: 16, column: 4 }" :data-source="processedData">
       <a-list-item slot="renderItem" slot-scope="item, index">
         <a-card>
           <template slot="title">
-            <div @click="gotoDetails(item)" style="cursor:pointer">{{item.softName}}</div>
+            <div @click="gotoDetails(item)" style="cursor:pointer">
+              {{item.softName}}
+              <a-tag v-if="item.botTag" color="cyan">自动构建</a-tag>
+            </div>
           </template>
           {{'版本号：'+item.softVer}}
           <br/>
-          {{'打包者：'+item.softAuthor}}
+          {{'打包者：'+item.displayAuthor}}
           <br/>
           {{'大小：'+item.softSize}}
           <CateButton slot="actions" :name="item.softName" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
@@ -30,12 +37,14 @@
 
 <script>
 import CateButton from "@/components/CateButton";
+import dataset from "@/utils/dataset";
 export default {
 name: "Cate",
   components: {CateButton},
   data(){
     return{
-      processedData:["233"]
+      processedData:["233"],
+      cateIcon:"gift",
     }
   },
   computed:{
@@ -54,6 +63,15 @@ name: "Cate",
       }
       return ret
     },
+    getIcon(){
+      for(let i=0;i<dataset.iconMatch.length;i++){
+        let node=dataset.iconMatch[i]
+        if(node.name===this.cateName){
+          this.cateIcon=node.icon
+          break
+        }
+      }
+    },
     prepData(){
       //回到顶部
       scrollTo(0,0)
@@ -62,14 +80,28 @@ name: "Cate",
       this.processedData=[]
       raw.forEach((item)=>{
         let info=item.name.split('_')
+        //处理author
+        let author=info[2].split('.7z')[0]
+        let botTag=false
+        let displayAuthor=author
+        if(author.includes("（bot）")){
+          displayAuthor=author.slice(0,-5)
+          botTag=true
+        }
+
         this.processedData.push({
-          'softName':info[0],
-          'softVer':info[1],
-          'softAuthor':info[2].split('.7z')[0],
-          'softUrl':item.url,
-          'softSize':this.getSizeString(item.size)
+          softName:info[0],
+          softVer:info[1],
+          softUrl:item.url,
+          softSize:this.getSizeString(item.size),
+          softAuthor:author,
+          displayAuthor,
+          botTag,
         })
       })
+
+      //获得图标
+      this.getIcon()
     },
     getSizeString(size){
       if(size<1024) return size.toFixed(2)+"B"
