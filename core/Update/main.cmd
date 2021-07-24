@@ -13,7 +13,7 @@ if not exist edgeless-hub.exe (
 ::延时2s杀死进程
 echo 正在等待主进程结束...
 @ping 127.0.0.1 -n 2 >nul
-TASKKILL /F /IM edgeless-hub.exe /T
+TASKKILL /F /IM edgeless-hub.exe /T >nul
 
 ::覆盖复制文件
 xcopy /s /r /y .\core\Update\source\* .\
