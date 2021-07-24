@@ -4,10 +4,11 @@ import {app, protocol, BrowserWindow, ipcMain, dialog, Menu,shell} from 'electro
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import cp from 'child_process'
+import vp from '@/utils/what-did-ventoy-do'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs')
-const edge = require("electron-edge-js")
+// const edge = require("electron-edge-js")
 
 var updateOnExit=false
 
@@ -119,56 +120,56 @@ ipcMain.on('openFileDialog-request', (event, arg) => {
     })
     event.reply('openFileDialog-reply', data)
 })
-ipcMain.on('scanDisks-request', (event, arg) => {
-    // const findUSB = edge.func(function () {/*
-    // using System.IO;
-    //   async (input) => {
-    //             DriveInfo[] drives = DriveInfo.GetDrives();
-    //             string[] results = new string[drives.Length];
-    //             int pointer = 0;
-    //             foreach (DriveInfo i in drives)
-    //             {
-    //                 results[pointer] = i.Name + (i.DriveType == DriveType.Removable ? 1 : 0) + i.VolumeLabel;
-    //                 //Console.WriteLine(results[pointer]);
-    //                 pointer++;
-    //             }
-    //             return results;
-    //     }*/
-    // });
-    const getDiskInfo=edge.func({
-        assemblyFile: './core/DiskScanner.dll',
-        typeName: 'DiskScanner.Scanner',
-        methodName: 'getDiskInfo'
-    })
-    try{
-        //throw 'error'
-        getDiskInfo('0', function (error, result) {
-            if (error) throw error;
-            console.log(result)
-            //解析为Json对象
-            let json = {
-                'names': [],
-                'labels': [],
-                'removable': []
-            }
-            result.forEach((i) => {
-                if(i){
-                    json['names'].push(i.slice(0, 1))
-                    json['removable'].push(i.slice(3, 4))
-                    json['labels'].push(i.slice(4))
-                }
-            })
-            //console.log(json)
-            if(json['names'].length===0) throw 'null result'
-            event.reply('scanDisks-reply', json)
-        })
-    }catch (e) {
-        console.log('c#运行失败')
-        event.reply('scanDisks-reply', undefined)
-    }
+// ipcMain.on('scanDisks-request', (event, arg) => {
+//     // const findUSB = edge.func(function () {/*
+//     // using System.IO;
+//     //   async (input) => {
+//     //             DriveInfo[] drives = DriveInfo.GetDrives();
+//     //             string[] results = new string[drives.Length];
+//     //             int pointer = 0;
+//     //             foreach (DriveInfo i in drives)
+//     //             {
+//     //                 results[pointer] = i.Name + (i.DriveType == DriveType.Removable ? 1 : 0) + i.VolumeLabel;
+//     //                 //Console.WriteLine(results[pointer]);
+//     //                 pointer++;
+//     //             }
+//     //             return results;
+//     //     }*/
+//     // });
+//     const getDiskInfo=edge.func({
+//         assemblyFile: './core/DiskScanner.dll',
+//         typeName: 'DiskScanner.Scanner',
+//         methodName: 'getDiskInfo'
+//     })
+//     try{
+//         //throw 'error'
+//         getDiskInfo('0', function (error, result) {
+//             if (error) throw error;
+//             console.log(result)
+//             //解析为Json对象
+//             let json = {
+//                 'names': [],
+//                 'labels': [],
+//                 'removable': []
+//             }
+//             result.forEach((i) => {
+//                 if(i){
+//                     json['names'].push(i.slice(0, 1))
+//                     json['removable'].push(i.slice(3, 4))
+//                     json['labels'].push(i.slice(4))
+//                 }
+//             })
+//             //console.log(json)
+//             if(json['names'].length===0) throw 'null result'
+//             event.reply('scanDisks-reply', json)
+//         })
+//     }catch (e) {
+//         console.log('c#运行失败')
+//         event.reply('scanDisks-reply', undefined)
+//     }
+// })
 
 
-})
 ipcMain.on('unzip-request', (event, payload) => {
     let node7z = require('node-7zip')
     //console.log(payload)
@@ -208,6 +209,55 @@ ipcMain.on('trash-request',(event,payload)=>{
 
 ipcMain.on('updateOnExit',(event,payload)=>{
     updateOnExit=true
+})
+
+ipcMain.on('getVentoyDisk',(event,log_path)=>{
+    try{
+        let log=fs.readFileSync(log_path).toString()
+        let result=vp(log)
+        console.log(JSON.stringify(result))
+        let target=""
+        let possibleLetter="A"
+
+        //获得最后一个安装了Ventoy的盘
+        for(let i=0;i<result.systemInfo.drives.length;i++){
+            let disk=result.systemInfo.drives[i]
+            console.log("checking ventoy "+disk.letter)
+            if(disk.ventoyStatus.installed||disk.ventoyStatus.updated){
+                if(possibleLetter<disk.letter){
+                    target=disk
+                    possibleLetter=disk.letter
+                    console.log("find ventoy in "+disk.letter)
+                }
+            }
+        }
+
+        //如果结果为空，选中最后一个可移动设备
+        if(target===""){
+            for(let i=0;i<result.systemInfo.drives.length;i++){
+                let disk=result.systemInfo.drives[i]
+                console.log("checking removable "+disk.letter)
+                if(disk.removable){
+                    if(possibleLetter<disk.letter){
+                        target=disk
+                        possibleLetter=disk.letter
+                        console.log("find removable in "+disk.letter)
+                    }
+                }
+            }
+        }
+
+        event.returnValue= {
+            target,
+            parse_result:result
+        }
+    }catch (e) {
+        console.log("Error getting VentoyDisk")
+        event.returnValue= {
+            target:"",
+            parse_result:e
+        }
+    }
 })
 
 // Exit cleanly on request from parent process in development mode.

@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-modal
-        :title="firstMovableInfo.label+'('+firstMovableInfo.name+':)'"
+        :title="firstMovableInfo.label+'('+firstMovableInfo.name+':)  容量:'+getSizeString(firstMovableInfo.capacity)"
         v-if="firstMovableInfo"
         :visible="showConfirm"
         @ok="handleConfirm"
@@ -417,10 +417,38 @@ export default {
       })
     },
     checkVentoyUDisk() {
-      this.$rp.log("校验Ventoy，发送scanDisks-request事件-checkVentoyUDisk")
+      this.$rp.log("校验Ventoy，发送getVentoyDisk事件-checkVentoyUDisk")
       this.checkingVentoy = true
       //用户点击了下一步，开始检查Ventoy启动盘是否就绪
-      this.$electron.ipcRenderer.send('scanDisks-request', '')
+      //this.$electron.ipcRenderer.send('scanDisks-request', '')
+      //发送请求
+      let reply=this.$electron.ipcRenderer.sendSync("getVentoyDisk",this.ventoyInfo.ventoyPath+"\\log.txt")
+      console.log(reply)
+      //将ventoy解析结果写日志
+      this.$rp.log("以下为Ventoy日志解析结果-getVentoyDisk_reply")
+      this.$rp.log(JSON.stringify(reply.parse_result))
+
+      let disk=reply.target
+      if(disk===""){
+        //扫描结果为空
+        this.$rp.log("未发现任何设备-getVentoyDisk_reply")
+        this.showExecVentoyButton = true
+        notification.open({
+          message: '错误：没有发现Ventoy启动盘',
+          description: "请确保已经完成Ventoy的安装，再点击检查按钮！"
+        })
+      }else{
+        this.$rp.log("获得disk对象，内容如下：-getVentoyDisk_reply")
+        this.$rp.log(JSON.stringify(disk))
+        //有结果，询问用户
+        this.firstMovableInfo={
+          label: disk.flag,
+          capacity:disk.capacity,
+          name: disk.letter
+        }
+        this.$rp.log("询问用户-getVentoyDisk_reply")
+        this.showConfirm = true
+      }
     },
     edgelessOperator() {
       this.$rp.log("步骤3开始 this.selectedVentoyPart=" + this.selectedVentoyPart + "-edgelessOperator")
@@ -691,62 +719,63 @@ export default {
         , 1000)
 
     //监听回复
-    this.$electron.ipcRenderer.on('scanDisks-reply', (event, res) => {
-      //return
-      this.$rp.log("获得scanDisks的事件回复-scanDisks_reply_anonymous")
-      this.$rp.log(JSON.stringify(res))
-      if (res) {
-        //获取主进程发送的磁盘信息，开始检查Ventoy是否就绪
-        this.driveInfo = res
-        this.selectedVentoyPart = ""
+    // this.$electron.ipcRenderer.on('scanDisks-reply', (event, res) => {
+    //   //return
+    //   this.$rp.log("获得scanDisks的事件回复-scanDisks_reply_anonymous")
+    //   this.$rp.log(JSON.stringify(res))
+    //   if (res) {
+    //     //获取主进程发送的磁盘信息，开始检查Ventoy是否就绪
+    //     this.driveInfo = res
+    //     this.selectedVentoyPart = ""
+    //
+    //     for (let i = 0; i < this.driveInfo.labels.length; i++) {
+    //       //跳过本地磁盘
+    //       if (!this.showExecVentoyButton && this.driveInfo.removable[i] == 0) {
+    //         this.$rp.log("跳过本地磁盘：" + this.driveInfo.names[i] + "-scanDisks_reply_anonymous")
+    //         continue
+    //       }
+    //       //保存找到的第一个可移动设备信息
+    //       if (!this.firstMovableInfo && this.driveInfo.labels[i] !== 'VTOYEFI' && this.driveInfo.removable[i] == 1) {
+    //         this.$rp.log("保存找到的第一个可移动设备信息：盘符=" + this.driveInfo.names[i] + " 卷标=" + this.driveInfo.labels[i] + "-scanDisks_reply_anonymous")
+    //         this.firstMovableInfo = {
+    //           label: this.driveInfo.labels[i],
+    //           name: this.driveInfo.names[i]
+    //         }
+    //       }
+    //       //检查Ventoy在卷标中是否出现 &&!DownloadManager.methods.exist(this.driveInfo.names[i]+":\\Edgeless")
+    //       if (this.driveInfo.labels[i] === "Ventoy") {
+    //         this.$rp.log("发现Ventoy，位于" + this.driveInfo.names[i] + "-scanDisks_reply_anonymous")
+    //         this.selectedVentoyPart = this.driveInfo.names[i]
+    //         break
+    //       }
+    //     }
+    //     if (this.selectedVentoyPart === "") {
+    //       this.$rp.log("没有选中任何分区，第一个移动设备的信息如下-scanDisks_reply_anonymous")
+    //       this.$rp.log(JSON.stringify(this.firstMovableInfo))
+    //       //询问是否是第一个可移动设备
+    //       if (this.firstMovableInfo) {
+    //         this.$rp.log("询问是否为第一个移动设备-scanDisks_reply_anonymous")
+    //         this.showConfirm = true
+    //       } else {
+    //         this.$rp.log("未发现任何设备-scanDisks_reply_anonymous")
+    //         //Ventoy盘未发现
+    //         this.showExecVentoyButton = true
+    //         notification.open({
+    //           message: '错误：没有发现Ventoy启动盘',
+    //           description: "请确保已经完成Ventoy的安装，再点击检查按钮！"
+    //         })
+    //       }
+    //     } else {
+    //       this.$rp.log("前往步骤3-scanDisks_reply_anonymous")
+    //       this.jumpToStep3()
+    //     }
+    //     this.checkingVentoy = false
+    //   } else {
+    //     this.$rp.log("进入紧急模式-scanDisks_reply_anonymous")
+    //     this.emergency()
+    //   }
+    // })
 
-        for (let i = 0; i < this.driveInfo.labels.length; i++) {
-          //跳过本地磁盘
-          if (!this.showExecVentoyButton && this.driveInfo.removable[i] == 0) {
-            this.$rp.log("跳过本地磁盘：" + this.driveInfo.names[i] + "-scanDisks_reply_anonymous")
-            continue
-          }
-          //保存找到的第一个可移动设备信息
-          if (!this.firstMovableInfo && this.driveInfo.labels[i] !== 'VTOYEFI' && this.driveInfo.removable[i] == 1) {
-            this.$rp.log("保存找到的第一个可移动设备信息：盘符=" + this.driveInfo.names[i] + " 卷标=" + this.driveInfo.labels[i] + "-scanDisks_reply_anonymous")
-            this.firstMovableInfo = {
-              label: this.driveInfo.labels[i],
-              name: this.driveInfo.names[i]
-            }
-          }
-          //检查Ventoy在卷标中是否出现 &&!DownloadManager.methods.exist(this.driveInfo.names[i]+":\\Edgeless")
-          if (this.driveInfo.labels[i] === "Ventoy") {
-            this.$rp.log("发现Ventoy，位于" + this.driveInfo.names[i] + "-scanDisks_reply_anonymous")
-            this.selectedVentoyPart = this.driveInfo.names[i]
-            break
-          }
-        }
-        if (this.selectedVentoyPart === "") {
-          this.$rp.log("没有选中任何分区，第一个移动设备的信息如下-scanDisks_reply_anonymous")
-          this.$rp.log(JSON.stringify(this.firstMovableInfo))
-          //询问是否是第一个可移动设备
-          if (this.firstMovableInfo) {
-            this.$rp.log("询问是否为第一个移动设备-scanDisks_reply_anonymous")
-            this.showConfirm = true
-          } else {
-            this.$rp.log("未发现任何设备-scanDisks_reply_anonymous")
-            //Ventoy盘未发现
-            this.showExecVentoyButton = true
-            notification.open({
-              message: '错误：没有发现Ventoy启动盘',
-              description: "请确保已经完成Ventoy的安装，再点击检查按钮！"
-            })
-          }
-        } else {
-          this.$rp.log("前往步骤3-scanDisks_reply_anonymous")
-          this.jumpToStep3()
-        }
-        this.checkingVentoy = false
-      } else {
-        this.$rp.log("进入紧急模式-scanDisks_reply_anonymous")
-        this.emergency()
-      }
-    })
     this.$electron.ipcRenderer.on('unzip-reply', (event, res) => {
       if (res !== this.$store.state.downloadDir + '\\Burn\\*.zip') return
       this.$rp.log("收到解压完成的回复-unzip_reply_anonymous")
