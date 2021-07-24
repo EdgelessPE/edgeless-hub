@@ -76,7 +76,7 @@ name: "Down",
       this.activeKey.push('2')
     }
     //考虑第三组
-    if(this.activeKey.length===0&&this.$store.state.fileList.length>0){
+    if(this.activeKey.length===0&&this.$store.state.fileList.length+this.$store.state.updateList.length>0){
       this.activeKey.push('3')
     }
   },
