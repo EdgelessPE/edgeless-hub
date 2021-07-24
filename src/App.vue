@@ -578,13 +578,13 @@ export default {
         onOk:this.quit
       });
     }
-    if(!DownloadManager.methods.exist(".\\core\\DiskScanner.dll")){
-      this.$error({
-        title: '启动依赖校验错误，请完全解压后运行本程序！',
-        content: "DiskScanner.dll丢失",
-        onOk:this.quit
-      });
-    }
+    // if(!DownloadManager.methods.exist(".\\core\\DiskScanner.dll")){
+    //   this.$error({
+    //     title: '启动依赖校验错误，请完全解压后运行本程序！',
+    //     content: "DiskScanner.dll丢失",
+    //     onOk:this.quit
+    //   });
+    // }
 
     //读取配置文件
     let config=DownloadManager.methods.readConfig()
