@@ -10,7 +10,7 @@ module.exports = async() => {
     v.mountpoints.forEach(({ path }) => {
       labels.push(getDriveName(path));
       names.push(path.slice(0,1));
-      removable.push(v.isRemovable);
+      removable.push(v.isRemovable ? '1' : '0');
     });
   });
   return { removable, names, labels };

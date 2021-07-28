@@ -4,8 +4,8 @@ import {app, protocol, BrowserWindow, ipcMain, dialog, Menu,shell} from 'electro
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import cp from 'child_process'
-import { get as getDiskInfo } from './common/diskscan';
 
+import getDiskInfo from './common/diskscan';
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs')
 
@@ -34,7 +34,8 @@ async function createWindow() {
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
             webSecurity: false,
-            webviewTag: true
+            webviewTag: true,
+            contextIsolation: false
         },
         icon:"./core/favicon.ico"
     })
@@ -135,38 +136,37 @@ ipcMain.on('scanDisks-request', async(event, arg) => {
     //             return results;
     //     }*/
     // });
-
     // const getDiskInfo=edge.func({
     //     assemblyFile: './core/DiskScanner.dll',
     //     typeName: 'DiskScanner.Scanner',
     //     methodName: 'getDiskInfo'
     // })
+
+    try{
         //throw 'error'
-        getDiskInfo('0').then(function (result) {
-            if (error) throw error;
-            console.log(result)
-            //解析为Json对象
-            let json = {
-                'names': [],
-                'labels': [],
-                'removable': []
-            }
-            result.forEach((i) => {
-                if(i){
-                    json['names'].push(i.slice(0, 1))
-                    json['removable'].push(i.slice(3, 4))
-                    json['labels'].push(i.slice(4))
-                }
-            })
-            //console.log(json)
-            if(json['names'].length===0) throw 'null result'
-            event.reply('scanDisks-reply', json)
-        },function() {
-            console.log('scanDisk 运行失败')
-            event.reply('scanDisks-reply', undefined)
-        })
-
-
+        const json = await getDiskInfo('0')
+        // console.log(result)
+        // //解析为Json对象
+        // let json = {
+        //     'names': [],
+        //     'labels': [],
+        //     'removable': []
+        // }
+        // result.forEach((i) => {
+        //     if(i){
+        //         json['names'].push(i.slice(0, 1))
+        //         json['removable'].push(i.slice(3, 4))
+        //         json['labels'].push(i.slice(4))
+        //     }
+        // })
+        // //console.log(json)
+        // if(json['names'].length===0) throw 'null result'
+        event.reply('scanDisks-reply', json)
+        
+    }catch (e) {
+        console.log('scandisks运行失败')
+        event.reply('scanDisks-reply', undefined)
+    }
 })
 ipcMain.on('unzip-request', (event, payload) => {
     let node7z = require('node-7zip')

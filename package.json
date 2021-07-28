@@ -1,6 +1,6 @@
 {
   "name": "edgeless-hub",
-  "version": "2.07.0",
+  "version": "2.10.0",
   "private": true,
   "author": "Cno",
   "description": "Edgeless 官方聚合客户端",
@@ -17,11 +17,9 @@
     "ant-design-vue": "^1.7.2",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
-    "drivelist": "^9.2.4",
     "drive-name": "^1.0.3",
-    "edge-js": "^15.5.2",
+    "drivelist": "^9.2.4",
     "electron": "^11.3.0",
-    "electron-edge-js": "^12.18.5",
     "iconv-lite": "^0.6.3",
     "json-rpc2": "^2.0.0",
     "node-7zip": "^1.0.1",
@@ -39,12 +37,13 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "electron-devtools-installer": "^3.1.0",
-    "vue-cli-plugin-electron-builder": "^2.0.0-rc.5",
+    "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "__npminstall_done": false
 }

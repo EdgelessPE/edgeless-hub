@@ -4,6 +4,7 @@ node_modules
 *.xmind
 Log.txt
 hub_config.json
+package-lock.*
 elstore_config.json
 *.lock
 *.bak.json
