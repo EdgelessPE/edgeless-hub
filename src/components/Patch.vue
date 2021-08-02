@@ -7,7 +7,6 @@ import DownloadManager from "@/components/DownloadManager";
 import {notification} from "ant-design-vue";
 import {log} from "@/interface/Repoter";
 const fs=window.require('fs');
-const md5 = require("nodejs-md5");
 const { shell } = window.require('electron')
 
 let $warning,$store

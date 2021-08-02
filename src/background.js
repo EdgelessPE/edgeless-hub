@@ -8,7 +8,6 @@ import vp from '@/utils/what-did-ventoy-do'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs')
-// const edge = require("electron-edge-js")
 
 var updateOnExit=false
 

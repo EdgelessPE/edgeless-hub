@@ -4,7 +4,6 @@ const urlencode = require('urlencode');
 const fs=window.require('fs');
 const cp=window.require('child_process');
 const path = require('path');
-const md5 = require("nodejs-md5");
 import cpt from 'crypto';
 
 export default {
@@ -119,7 +118,8 @@ name: "DownloadManager",
         stationIndex:this.$store.state.stationIndex,
         theme:this.$store.state.theme,
         downloadDir:this.$store.state.downloadDir,
-        userName:this.$store.state.userName
+        userName:this.$store.state.userName,
+        alphaCode:this.$store.state.alphaCode,
       }
       fs.writeFileSync('./hub_config.json',JSON.stringify(data))
     },
