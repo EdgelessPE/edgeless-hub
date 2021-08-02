@@ -12,6 +12,7 @@ export default new Vuex.Store({
     theme:'light',
     downloadDir:'D:\\HubCache',
     userName:"",
+    alphaCode:"",
 
     //无需保存到config的数据
     stationObject:{
@@ -248,6 +249,11 @@ export default new Vuex.Store({
       state.theme=config.theme
       state.stationIndex=config.stationIndex
       state.userName=config.userName
+
+      //处理alphaCode
+      if(config.hasOwnProperty("alphaCode")){
+        state.alphaCode=config.alphaCode
+      }
     },
     changeTheme(state,theme){
       state.theme=theme
@@ -331,5 +337,8 @@ export default new Vuex.Store({
     },
     changeAria2Port(state,port){
       state.aria2cUri='http://localhost:'+port+'/jsonrpc'
-    }
+    },
+    changeAlphaCode(state,code){
+      state.alphaCode=code
+    },
 }})

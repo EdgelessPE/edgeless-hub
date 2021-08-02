@@ -105,6 +105,10 @@ name: "Alpha",
           this.alpha_name=res.data.name
           this.showDialog=false
 
+          //更新本地alphaCode
+          this.$store.commit("changeAlphaCode",this.input)
+          DownloadManager.methods.writeConfig()
+
           //判断在线版本是否为0.0.0
           if(this.alpha_version==="0.0.0") {
             notification.open({
@@ -200,6 +204,9 @@ name: "Alpha",
         }
       }
     },1000)
+
+    //读取保存的alphaCode
+    this.input=this.$store.state.alphaCode
   },
   destroyed() {
     clearInterval(this.interval)

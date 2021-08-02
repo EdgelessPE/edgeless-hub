@@ -1,6 +1,6 @@
 {
   "name": "edgeless-hub",
-  "version": "2.09.0",
+  "version": "2.10.0",
   "private": true,
   "author": "Cno",
   "description": "Edgeless 官方聚合客户端",
@@ -17,9 +17,7 @@
     "ant-design-vue": "^1.7.2",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
-    "edge-js": "^15.5.2",
     "electron": "^11.3.0",
-    "electron-edge-js": "^12.18.5",
     "iconv-lite": "^0.6.3",
     "json-rpc2": "^2.0.0",
     "node-7zip": "^1.0.1",
