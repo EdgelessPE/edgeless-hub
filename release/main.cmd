@@ -27,8 +27,8 @@ cmd /c "yarn electron:build"
 
 ::¾«¼òwin-unpackÄ¿Â¼
 cd dist\win-unpacked
-del /f /s /q swiftshader
-rd swiftshader
+::del /f /s /q swiftshader
+::rd swiftshader
 del /f /q d3dcompiler_47.dll
 del /f /q LICENSE.electron.txt
 del /f /q LICENSES.chromium.html
