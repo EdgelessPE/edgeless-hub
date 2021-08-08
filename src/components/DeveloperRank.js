@@ -4,13 +4,13 @@ let finished=false
 let titleList=[
     {
         title:"Edgeless官方人员",
-        color:"green",
+        color:"red",
         list:["Cno","Copur","Oxygen","Brzh","Fir"]
     },
     {
         title:"Edgeless群管理员",
         color:"blue",
-        list:["Horatio Shaw","LittleTurtle","HHJLKK","光卡","可爱の萌新酱","天霸动霸TUA","Cpl.Kerry","柠檬味小可爱","光卡 and HHJLKK"]
+        list:["Horatio Shaw","LittleTurtle","HHJLKK","光卡","可爱の萌新酱","天霸动霸TUA","Cpl.Kerry","柠檬味小可爱","光卡 and HHJLKK","呼呼"]
     },
     {
         title:"Edgeless群活跃群友",
@@ -62,9 +62,18 @@ function finish() {
     })
 
     //写排序结果
-    arr.forEach((node,index)=>{
-        devHash[node.author].rank=index+1
-    })
+
+    for (let i = 0; i < arr.length; i++) {
+        let node=arr[i]
+        if(i===0) devHash[node.author].rank=1
+        else{
+            let prevNode=arr[i-1]
+            if(devHash[node.author].num===devHash[prevNode.author].num) {
+                devHash[node.author].rank = devHash[prevNode.author].rank
+            }
+            else devHash[node.author].rank=i+1
+        }
+    }
 
     //认证头衔
     auth()
@@ -96,7 +105,7 @@ function auth() {
 }
 
 //用于查询
-function query(author) {
+function singleQuery(author) {
     if(devHash.hasOwnProperty(author)) return devHash[author]
     else {
         console.warn("Unknown author:"+author)
@@ -107,6 +116,19 @@ function query(author) {
         }
     }
 }
+function query(rawText) {
+    if(finished){
+        let names=nameParser(rawText)
+        return singleQuery(names[0])
+    }else{
+        return {
+            num:0,
+            rank:0,
+            title:[],
+            botAuthor:false
+        }
+    }
+}
 
 //用于清除
 function clear() {
@@ -114,22 +136,30 @@ function clear() {
     finished=false
 }
 
-function mention(rawText) {
-    //处理多作者、多名情况
+//处理多作者、多名情况（将首要人物放在第一个）
+function nameParser(rawText) {
+    let res=[]
     switch (rawText) {
         case "光卡 and HHJLKK":
-            singleMention("光卡")
-            singleMention("HHJLKK")
+            res.push("HHJLKK")
+            res.push("光卡")
             break
         case "传说当中的帅锅&汪凯":
-            singleMention("汪凯")
+            res.push("汪凯")
             break
         case "WHF":
-            singleMention("王洪峰")
+            res.push("王洪峰")
             break
         default:
-            singleMention(rawText)
+            res.push(rawText)
     }
+    return res
+}
+
+function mention(rawText) {
+    nameParser(rawText).forEach((name)=>{
+        singleMention(name)
+    })
 }
 
 export default {
