@@ -218,10 +218,7 @@ export default {
           })
         })
       }catch(err){
-        notification.open({
-          message:'刷新镜像站索引失败',
-          description:"镜像站接口"+this.$store.state.stationObject.name+"错误："+err.message
-        })
+        this.$message.error('刷新镜像站索引失败，镜像站接口'+this.$store.state.stationObject.name+"错误："+err.message)
       }
 
       // let url=this.$store.state.stationUrl
@@ -251,10 +248,9 @@ export default {
           //如果所有数据已加载完毕，则发送数据加载完毕事件
           if(this.$store.state.allData.length===this.$store.state.cateData.length){
             this.$root.eventHub.$emit('all-data-loaded',{})
-            if(successNotification) notification.open({
-              message:'刷新镜像站索引成功',
-              description:'当前镜像站：'+this.$store.state.stationObject.name
-            })
+            if(successNotification) {
+              this.$message.success('刷新镜像站索引成功 ('+this.$store.state.stationObject.name+')')
+            }
           }
         })
       }

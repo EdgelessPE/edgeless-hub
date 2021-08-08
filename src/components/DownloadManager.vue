@@ -21,9 +21,9 @@ name: "DownloadManager",
   methods:{
     //添加下载任务
     taskAdd(add,name){
+      let trueName=name
       let splitResult=add.split('/')
-      let trueName=splitResult[splitResult.length-1]
-      let uriName=urlencode(trueName)
+      let uriName=urlencode(splitResult[splitResult.length-1])
       //使用缓存
       if(fs.existsSync(path.join(this.$store.state.downloadDir,trueName))&&!fs.existsSync(path.join(this.$store.state.downloadDir,uriName)+'.aria2')) {
         fs.renameSync(path.join(this.$store.state.downloadDir, trueName), path.join(this.$store.state.downloadDir, uriName))
