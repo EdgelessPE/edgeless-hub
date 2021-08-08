@@ -13,3 +13,9 @@
 yarn
 yarn electron:serve
 ```
+
+## TODO
+* 刷新镜像站改为提示条
+* 支持Edgeless文件夹更新
+* OneDrive更新失败问题
+* 改Ventoy下载位置

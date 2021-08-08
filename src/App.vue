@@ -123,6 +123,7 @@ import {notification} from 'ant-design-vue'
 import DownloadManager from "@/components/DownloadManager"
 import StationList from '@/stationpool/main'
 import dataset from "@/utils/dataset";
+import DeveloperRank from "@/components/DeveloperRank"
 const cp=window.require('child_process')
 const fs=window.require('fs')
 
@@ -257,29 +258,6 @@ export default {
           }
         })
       }
-
-      // let url=this.$store.state.stationUrl
-      // //获取插件列表
-      // for(let i=0;i<this.cateData.length;i++){
-      //   let queryName=this.cateData[i].name
-      //   this.$axios.get(url+'?path=/插件包/'+queryName)
-      //       .then((res)=>{
-      //         let tmp_ret=[]
-      //         res.data.data.fileList.forEach((item)=>{
-      //           if(item.name.indexOf('.7z')!==-1) {
-      //             tmp_ret.push(item)
-      //           }
-      //         })
-      //         this.$store.commit('appendAllData',{
-      //           'cateName':queryName,
-      //           'files':tmp_ret
-      //         })
-      //         //如果所有数据已加载完毕，则发送数据加载完毕事件
-      //         if(this.$store.state.allData.length===this.$store.state.cateData.length){
-      //           this.$root.eventHub.$emit('all-data-loaded',{})
-      //         }
-      //       })
-      // }
     },
     getTaskInfo(gid){
       //查找原任务位置
@@ -675,6 +653,18 @@ export default {
     this.$root.eventHub.$on('update-mirror',()=>{
       this.$store.commit('clearData',"")
       this.refreshData(true)
+    })
+    this.$root.eventHub.$on('all-data-loaded',()=>{
+      //执行开发者排序
+      DeveloperRank.clear()
+      this.$store.state.allData.forEach((dataNode)=>{
+        dataNode.files.forEach((item)=>{
+          let info=item.name.split('_')
+          let author=info[2].split('.7z')[0]
+          DeveloperRank.mention(author)
+        })
+      })
+      DeveloperRank.finish()
     })
   },
   destroyed() {

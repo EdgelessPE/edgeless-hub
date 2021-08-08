@@ -1,10 +1,13 @@
 <template>
 <div>
   <a-page-header
-      :title="item.softName"
       :sub-title="cateName"
       @back="() => $router.go(-1)"
   >
+    <template slot="title">
+      {{item.softName}}
+      <a-tag v-if="item.botTag" slot="suffix" color="cyan">自动构建</a-tag>
+    </template>
     <template slot="extra">
       <CateButton slot="actions" :name="item.softName" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
     </template>
@@ -13,8 +16,13 @@
         <a-statistic title="版本号" :value="item.softVer" />
       </a-col>
       <a-col :span="4">
-        <a-statistic title="打包者" :value="item.softAuthor" >
-          <a-tag v-if="item.botTag" slot="suffix" color="cyan">自动构建</a-tag>
+        <a-statistic title="打包者" :value="item.softAuthor">
+          <template slot="suffix">
+            <a-space direction="vertical">
+              <a-badge :number-style="{ backgroundColor: '#52c41a' }" :count="'贡献排名'+item.devRank.rank"/>
+              <a-tag v-for="titleNode in devRank_title" :color="titleNode.color" :key="titleNode.text">{{titleNode.text}}</a-tag>
+            </a-space>
+          </template>
         </a-statistic>
       </a-col>
       <a-col :span="4">
@@ -32,6 +40,7 @@
 
 <script>
 import CateButton from "@/components/CateButton";
+import DeveloperRank from "@/components/DeveloperRank";
 export default {
   name: "Details",
   components: {CateButton},
@@ -44,9 +53,15 @@ export default {
         softSize:"",
         sizeUnit:"",
         softAuthor:"",
-        botTag:false
+        botTag:false,
+        devRank:{
+          num:0,
+          rank:0,
+          botAuthor:false
+        }
       },
-      cateName:""
+      cateName:"",
+      devRank_title:[]
     }
   },
   methods:{
@@ -78,11 +93,18 @@ export default {
         botTag,
       }
       this.cateName=this.$route.query.cateName
+
+      //查询开发者排名
+      let result=DeveloperRank.query(author)
+      this.devRank_title=result.title
+      this.item.devRank=result
     }
   },
   mounted() {
     //回到顶部
     scrollTo(0,0)
+  },
+  created() {
     //初始化item对象
     this.initItem()
   }
