@@ -218,7 +218,7 @@ export default {
           })
         })
       }catch(err){
-        this.$message.error('刷新镜像站索引失败，镜像站接口'+this.$store.state.stationObject.name+"错误："+err.message)
+        this.$message.error({ content: '刷新镜像站索引失败，镜像站接口'+this.$store.state.stationObject.name+"错误："+err.message, key:'updateMirror' })
       }
 
       // let url=this.$store.state.stationUrl
@@ -249,7 +249,7 @@ export default {
           if(this.$store.state.allData.length===this.$store.state.cateData.length){
             this.$root.eventHub.$emit('all-data-loaded',{})
             if(successNotification) {
-              this.$message.success('刷新镜像站索引成功 ('+this.$store.state.stationObject.name+')')
+              this.$message.success({ content: '刷新镜像站索引成功 ('+this.$store.state.stationObject.name+')', key:'updateMirror' })
             }
           }
         })
