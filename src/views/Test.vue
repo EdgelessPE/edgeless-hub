@@ -20,12 +20,9 @@ name: "Test",
       this.$electron.ipcRenderer.send('devtool-request','')
     },
     async test(){
-      try{
-        let res=await DownloadManager.methods.getMD5("D:\\Download\\vs_Community.exe")
+      this.$axios.get("https://pineapple.edgeless.top/api/v2/info/ventoy_addr").then((res)=>{
         console.log(res)
-      }catch (e) {
-        console.log(e)
-      }
+      })
     }
   },
   created() {

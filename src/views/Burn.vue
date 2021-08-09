@@ -198,12 +198,12 @@ export default {
       ventoyInfo: {
         'version': "",
         'gid': "",
-        'url': "",
+        'url': "https://pineapple.edgeless.top/api/v2/info/ventoy_addr",
         'fileName': "",
         'ventoyPath': "",
         'pluginName': "ventoy_wimboot.img",
         'finishUnzip': false,
-        'queryUrl': 'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
+        'queryUrl': 'https://pineapple.edgeless.top/api/v2/info/ventoy_name',//'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
       },
       edgelessInfo: {
         isoName: "Edgeless_Beta_3.2.0.iso",
@@ -267,22 +267,20 @@ export default {
       this.startIsoDownload()
     },
     startVentoyDownload() {
-      //下载Ventoy，向码云api发送请求
+      //下载Ventoy，请求ventoy文件名
       this.$axios.get(this.ventoyInfo.queryUrl)
           .then((res) => {
-            let urls = res.data.assets
-            //查找关键词windows，解析对应的url和version
-            urls.forEach((i) => {
-              if (i['name'] && i['name'].indexOf('windows') > 0) {
-                this.ventoyInfo.fileName = i['name']
-                this.ventoyInfo.url = i['browser_download_url']
-                this.ventoyInfo.version = res.data.tag_name
-              }
-            })
+            //写文件名和版本号
+            let name=res.data
+            console.log(name)
+
+            this.ventoyInfo.fileName = name
+            this.ventoyInfo.version = name.split('-')[1]
+
             this.$rp.log("获得ventoy的下载地址：" + this.ventoyInfo.url + "-startVentoyDownload")
             if (this.ventoyInfo.url === "") {
               notification.open({
-                message: '获取Ventoy的Release信息失败',
+                message: '获取Ventoy下载信息失败',
                 description: "不存在对应的Windows版本"
               })
             } else {
@@ -311,7 +309,7 @@ export default {
           .catch((err) => {
             this.$rp.log("获取Ventoy的Release信息失败-startVentoyDownload")
             notification.open({
-              message: '获取Ventoy的Release信息失败',
+              message: '获取Ventoy下载信息失败',
               description: err.message
             })
           })
@@ -429,6 +427,7 @@ export default {
       this.$rp.log("以下为Ventoy日志解析结果-getVentoyDisk_reply")
       this.$rp.log(JSON.stringify(reply.parse_result))
 
+      this.checkingVentoy=false
       let disk=reply.target
       if(disk===""){
         //扫描结果为空
@@ -665,7 +664,7 @@ export default {
                 if (this.retryTimes[1] > this.maxAllowedRetry) {
                   this.$error({
                     title: "Ventoy插件下载失败",
-                    content: "请联系作者解决问题"
+                    content: "请检查网络连接、重启程序重试或联系作者解决问题"
                   })
                   this.startedTasks[1] = false
                   this.finishedTasks[1] = false
@@ -686,7 +685,7 @@ export default {
                 if (this.retryTimes[2] > this.maxAllowedRetry) {
                   this.$error({
                     title: "ISO镜像下载失败",
-                    content: "请联系作者解决问题"
+                    content: "请检查网络连接、重启程序重试或联系作者解决问题"
                   })
                   this.startedTasks[2] = false
                   this.finishedTasks[2] = false

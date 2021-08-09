@@ -1,1 +1,67 @@
-<mxfile host="Electron" modified="2021-07-22T17:19:44.873Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/14.5.1 Chrome/89.0.4389.82 Electron/12.0.1 Safari/537.36" etag="wxoRHhxIW2jZel-WHg0P" version="14.5.1" type="device"><diagram id="1vZOrtiiuuDL9WdPhfca" name="第 1 页">5VlNb6MwEP01c6zEN/YRAtke2kMVaXevNLjAisQROE3SX79jxyQB0rSrbQttT7GfjcHv2W9mFLAni+2PKlnltzxlJVhGugU7AssyHc/DH4ns9giRPQlkVZHqSUdgVjwxDRoaXRcpq1sTBeelKFZtcM6XSzYXLSypKr5pT3vgZfutqyRjPWA2T8o++qtIRd7swj/i16zI8ubNpkf3I4ukmax3UudJyjcnkB2DPak4F/vWYjthpSSv4WX/3PSZ0cOHVWwpXvPA1W9+9+cm4bPflvdzlu/uzKC80qs8JuVab/gmedqFfAvxFMIJELJ4BGsy56sd/khxYx+CCAiF2AWKcwKFmEAMhZgQRhA7EIYQOBB7QGIIXDlEphDYzbKapFrsGqIrvl6mTH6rAXa4yQvBZqtkLkc3eLQQy8WixJ6JTf3VrBJs+ywd5oFkPJ2ML5iocBOGfuCgiz6YHtX9zVFms5mTn0jsaSzRJys7LH0kHxua/3/QwuppsRZFWR+UyJi4jVyUQRFtQDBVtAYQEKkBDYG2G8EEAk9qgLxLeXwIHQisZsGJHKKokK8FC/eTI6UTrkyAKplxZogNCgTb0ckJGIuWtj82Le2elmwlmuvga3b3fHcuyNBcdu+F6wzNpdvjUrKFxkMVbSF6j9WjDQkQbW6SssiW2J4jEaxCQNJUoNMHemBRpKl8PKxYXTwl92opSfqKF0uhduWG4EZyrbXg9T5WyaUf+FLo0GX6TV9/i/kGmpiG29LEb/onmrhnJLHfSxLvjCSe9CEMBNKcIqD+95LEdvvX5EMl8XuSxGnGSlbXLefG6BzEysJjJZYvIwnxlGpUKvhf/nPKuvU2fuR1vN0iQ/sROetH2s8dyTBVoTVEUDGMrJLwnPk/x/nHs9yNoPbgEZSeYdmX+QZVyQlmIDrJ+STn2LXGxnBTYnUO8oXMEhGdsxjN0f4k7FsmHZmLmP3S6yL7nswPqXWSql9g3ytlpL2vsJXJ1qGGgBidByfb6imsBojKS98kkX8PW/JGJ1u/SrsoG6pFpGAYg7HyesGyvopsXa8bgWz9gux6ff+5M6Oup40gojhnLseLFe6Xrgtcd+BSzewXBuq0h0CcYzD5VpqYQ5fPZr+E2LD7x4JtXiHN4LbTMffhXedcqfCagmz0VHersnekGrvHvyLU2MkfOnb8Fw==</diagram></mxfile>
+<mxfile host="65bd71144e">
+    <diagram id="1vZOrtiiuuDL9WdPhfca" name="第 1 页">
+        <mxGraphModel dx="1374" dy="790" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-1" value="LazyBox（mv,copy,del等基础命令接口）" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="219" y="760" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-2" value="utils（getMD5,启动盘盘符检索，文件正则匹配等）" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="369" y="760" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-3" value="ept控制接口" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="219" y="610" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-5" value="底层" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=17;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="104" y="775" width="50" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-6" value="模块" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=17;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="105" y="350" width="50" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-7" value="Edgeless配置管理器" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="280" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-8" value="制作流程控制器" style="whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="390" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-9" value="缓存管理器" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="390" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-10" value="启动盘状态管理器" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="219" y="280" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-11" value="启动盘插件管理器&lt;br&gt;（调用ept）" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="369" y="280" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-12" value="启动盘主题管理器&lt;br&gt;（调用ept）" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="280" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-13" value="Hub配置管理器" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="219" y="390" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-14" value="接口" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=17;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="104" y="625" width="50" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-17" value="组件" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=17;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="105" y="105" width="50" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-18" value="webview组件" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="90" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="-XoQjLaoSX26VShyQ1Al-19" value="制作流程组件" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="90" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="通知模块" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="390" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="下载管理器" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="480" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="下载管理器" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="370" y="480" width="120" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

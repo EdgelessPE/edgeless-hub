@@ -90,12 +90,12 @@ export default new Vuex.Store({
       ventoyInfo:{
         'version':"",
         'gid':"",
-        'url':"",
+        'url':"https://pineapple.edgeless.top/api/v2/info/ventoy_addr",
         'fileName':"",
         'ventoyPath':"",
         'pluginName':"ventoy_wimboot.img",
         'finishUnzip':false,
-        'queryUrl':'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
+        'queryUrl':'https://pineapple.edgeless.top/api/v2/info/ventoy_name'//https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
       },
       stepsInfo:{
         hasVentoy:false,

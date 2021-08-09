@@ -1,6 +1,6 @@
 # Edgeless Hub
 ## 简介
-使用Electron + Vue.js + Antd (+ dotNet)打造的[Edgeless](https://home.edgeless.top)聚合客户端，作为一个electron的Hello World项目，代码有些杂乱无章，很多写法比较拙劣
+使用Electron + Vue.js + Antd打造的[Edgeless](https://home.edgeless.top)聚合客户端，作为一个electron的Hello World项目，代码有些杂乱无章，很多写法比较拙劣
 
 ## 功能
 支持Edgeless的制作、升级、内测以及插件的下载、管理等功能，另外附赠Wiki浏览器（雾
@@ -15,7 +15,4 @@ yarn electron:serve
 ```
 
 ## TODO
-* 刷新镜像站改为提示条
 * 支持Edgeless文件夹更新
-* OneDrive更新失败问题
-* 改Ventoy下载位置
