@@ -186,13 +186,12 @@ name: "Alpha",
     },
     getLocalVersion(stage,exp){
       let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_"+stage+".*"+exp+"$")
-      let ver="1.0.0"
+      let ver="0.0.0"
       matchResult.forEach((item)=>{
         let thisVer=item.split("_")[2].split("."+exp)[0]
         if(ver<thisVer) ver=thisVer
       })
-      if(ver!=="1.0.0") return ver
-      else return ""
+      return ver
     },
     startDownload(){
       this.startTimes++
