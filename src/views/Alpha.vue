@@ -92,46 +92,36 @@ name: "Alpha",
     submitToken(){
       //校验输入
       if(!this.input.match("^[A-Za-z0-9]{4,10}$")){
-        notification.open({
-          message: 'Alpha邀请码错误',
-          description: "输入的邀请码不符合要求"
-        })
+        this.$message.error("无效的Alpha邀请码")
       }else {
         //发送请求获取版本号和文件名
         let url="https://pineapple.edgeless.top/api/v2/alpha/data?token="+this.input
         this.$axios.get(url)
         .then((res)=>{
-          this.alpha_version=res.data.version
-          this.alpha_name=res.data.name
+          this.alpha_version=res.data.iso_version
+          this.alpha_name=res.data.iso_name
           this.showDialog=false
 
           //更新本地alphaCode
-          this.$store.commit("changeAlphaCode",this.input)
-          DownloadManager.methods.writeConfig()
+          if(this.$store.state.alphaCode!==this.input){
+            this.$store.commit("changeAlphaCode",this.input)
+            DownloadManager.methods.writeConfig()
+          }
 
           //判断在线版本是否为0.0.0
           if(this.alpha_version==="0.0.0") {
-            notification.open({
-              message: '不需要获取Alpha',
-              description: "现阶段没有Alpha版本提供"
-            })
+            this.$message.info("现阶段没有Alpha版本提供")
             this.$router.back()
           }
 
           //判断本地是否已经存在alpha版本wim
           if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\"+this.alpha_name)){
-            notification.open({
-              message: '不需要获取Alpha',
-              description: "您已经拥有最新版本的Alpha启动文件："+this.alpha_name
-            })
+            this.$message.success("您已经拥有最新版本的Alpha启动文件："+this.alpha_name)
             this.$router.back()
           }
         })
         .catch((_)=>{
-          notification.open({
-            message: 'Alpha邀请码错误',
-            description: "无效的邀请码"
-          })
+          this.$message.error("错误的Alpha邀请码")
         })
       }
     },
