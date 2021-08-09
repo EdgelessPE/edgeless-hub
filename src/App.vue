@@ -598,7 +598,8 @@ export default {
     this.$root.eventHub.$on('')
 
     this.$root.eventHub.$on('add-download-task',(data)=>{
-      DownloadManager.methods.taskAdd(data.url,data.name)
+      //console.log(data)
+      DownloadManager.methods.taskAdd(data.url,data.name,data.trueName)
     })
     this.$root.eventHub.$on('unpause-download-task',(data)=>{
       DownloadManager.methods.taskUnpause(data.gid)

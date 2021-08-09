@@ -20,15 +20,14 @@ name: "DownloadManager",
   },
   methods:{
     //添加下载任务
-    taskAdd(add,name){
-      let trueName=name
+    taskAdd(add,name,trueName){
       let splitResult=add.split('/')
       let uriName=urlencode(splitResult[splitResult.length-1])
       //使用缓存
-      if(fs.existsSync(path.join(this.$store.state.downloadDir,trueName))&&!fs.existsSync(path.join(this.$store.state.downloadDir,uriName)+'.aria2')) {
-        fs.renameSync(path.join(this.$store.state.downloadDir, trueName), path.join(this.$store.state.downloadDir, uriName))
-        console.log('use cache')
-      }
+      // if(fs.existsSync(path.join(this.$store.state.downloadDir,trueName))&&!fs.existsSync(path.join(this.$store.state.downloadDir,uriName)+'.aria2')) {
+      //   fs.renameSync(path.join(this.$store.state.downloadDir, trueName), path.join(this.$store.state.downloadDir, uriName))
+      //   console.log('use cache')
+      // }
       this.aria2cDownloader(add,false,(res)=>{
         //console.log(uriName+' true:'+trueName)
         this.$store.commit('appendOurTasksPool',{
@@ -379,6 +378,7 @@ name: "DownloadManager",
                 'softAuthor':info[2].split('.7z')[0],
                 'trueName':item,
                 'onlineVer':data_tmp.version,
+                'onlineName':data_tmp.fullName,
                 'url':data_tmp.url
               })
             }
@@ -406,11 +406,12 @@ name: "DownloadManager",
     //辅助工具
     //获取插件最新版本号
     getVersionAndUrl(name){
-      let version='null',url=''
+      let version='null',url='',fullName=''
       for(let i=0;i<this.$store.state.versionCache.length;i++){
         if(this.$store.state.versionCache[i].name===name) {
           version=this.$store.state.versionCache[i].version
           url=this.$store.state.versionCache[i].url
+          fullName=this.$store.state.versionCache[i].fullName
           break
         }
       }
@@ -420,20 +421,23 @@ name: "DownloadManager",
             if(this.$store.state.allData[i].files[j].name.split('_')[0]===name){
               version=this.$store.state.allData[i].files[j].name.split('_')[1]
               url=this.$store.state.allData[i].files[j].url
+              fullName=this.$store.state.allData[i].files[j].name
               break
             }
           }
         }
         //写入缓存，无论是否找到结果
         this.$store.commit('appendVersionCache',{
-          name:name,
-          version:version,
-          url:url
+          name,
+          version,
+          url,
+          fullName
         })
       }
       return {
-        version:version,
-        url:url
+        version,
+        url,
+        fullName
       }
     },
     //负责填充参数数组、过滤结果

@@ -9,7 +9,7 @@
       <a-tag v-if="item.botTag" slot="suffix" color="cyan">自动构建</a-tag>
     </template>
     <template slot="extra">
-      <CateButton slot="actions" :name="item.softName" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
+      <CateButton slot="actions" :name="item.softName" :fullName="item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z'" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
     </template>
     <a-row type="flex">
       <a-col :span="4">

@@ -33,7 +33,7 @@ import DownloadManager from "@/components/DownloadManager";
 
 export default {
 name: "CateButton",
-  props:['name','url','version_online'],
+  props:['name','fullName','url','version_online'],
   data(){
   return{
     state:-1, //-1未操作，0下载中，1暂停，2下载成功，3下载异常
@@ -58,7 +58,8 @@ name: "CateButton",
       //发送添加下载事件
       this.$root.eventHub.$emit('add-download-task',{
         'name':name,
-        'url':url
+        'url':url,
+        'trueName':this.fullName
       })
       //console.log("event sent")
     },

@@ -61,7 +61,6 @@
 
 <script>
 import DownloadManager from "@/components/DownloadManager";
-import CateButton from "@/components/CateButton";
 import HotUpdate from "@/components/HotUpdate";
 import Patch from "@/components/Patch";
 const fs=window.require('fs')
@@ -104,7 +103,6 @@ name: "Index",
   },
   components:{
     Patch,
-    CateButton,
     HotUpdate
   },
   methods:{

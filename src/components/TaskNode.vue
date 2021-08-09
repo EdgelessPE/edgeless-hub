@@ -160,7 +160,8 @@ name: "TaskNode",
       //发送添加下载事件
       this.$root.eventHub.$emit('add-download-task',{
         'name':item.name,
-        'url':item.url
+        'url':item.url,
+        'trueName':item.onlineName
       })
     },
     reMoveCopyTask(gid){
