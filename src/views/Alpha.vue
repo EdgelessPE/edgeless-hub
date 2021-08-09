@@ -73,6 +73,7 @@
 <script>
 import {notification} from "ant-design-vue";
 import DownloadManager from "@/components/DownloadManager";
+let openExternal,openUrl
 export default {
 name: "Alpha",
   data(){
@@ -86,6 +87,12 @@ name: "Alpha",
     interval:"",
     startTimes:0, //任务重新开始的次数
     waitingTip:"正在复制Alpha版启动文件", //复制时的提示信息
+    updateEdgelessFolder:false, //是否需要更新Edgeless文件夹
+    pack_info:{
+      name:'',
+      url:''
+    },
+    local_alpha_version:'', //用户Alpha版本号
   }
   },
   methods:{
@@ -119,19 +126,78 @@ name: "Alpha",
             this.$message.success("您已经拥有最新版本的Alpha启动文件："+this.alpha_name)
             this.$router.back()
           }
+
+          //判断是否需要更新Edgeless文件夹
+          this.local_alpha_version=this.getLocalVersion("Alpha","wim")
+          if(this.versionCmp(this.local_alpha_version,res.data.pack_require)!==1){
+            this.updateEdgelessFolder=true
+            this.pack_info={
+              name: res.data.pack_name,
+              url:res.data.pack_url
+            }
+            openUrl=res.data.pack_url
+          }
         })
         .catch((_)=>{
           this.$message.error("错误的Alpha邀请码")
         })
       }
     },
+    //版本号判断函数,返回1表示x>y,-1表示x<y
+    versionCmp(x,y){
+      //识别含-的版本号
+      x=x.replaceAll("-",".")
+      y=y.replaceAll("-",".")
+
+      let split_x=x.split(".")
+      let split_y=y.split(".")
+      let result=0
+      let i
+      for(i=0;i<Math.min(split_x.length,split_y.length);i++){
+        if(Number(split_x[i])<Number(split_y[i])){
+          result=-1
+          break
+        }else if(Number(split_x[i])>Number(split_y[i])){
+          result=1
+          break
+        }
+      }
+      //当长度不相等时向后搜索长位是否全0
+      if(result===0&&split_x.length!==split_y.length){
+        if(split_x.length>split_x.length){
+          //处理x
+          for(;i<split_x.length;i++){
+            if(Number(split_x[i])!==0){
+              result=1
+              break
+            }
+          }
+        }else{
+          //处理y
+          for(;i<split_y.length;i++){
+            if(Number(split_y[i])!==0){
+              result=-1
+              break
+            }
+          }
+        }
+      }
+      return result
+    },
+    getLocalVersion(stage,exp){
+      let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_"+stage+".*"+exp+"$")
+      let ver="1.0.0"
+      matchResult.forEach((item)=>{
+        let thisVer=item.split("_")[2].split("."+exp)[0]
+        if(ver<thisVer) ver=thisVer
+      })
+      if(ver!=="1.0.0") return ver
+      else return ""
+    },
     startDownload(){
       this.startTimes++
       if(this.startTimes>2) {
-        notification.open({
-          message:'下载失败次数过多，Alpha步骤被暂停',
-          description:'请联系作者解决问题'
-        })
+        this.$message.error("下载失败次数过多，Alpha步骤被暂停\n请联系作者解决问题")
         return
       }
       this.loading=true
@@ -146,6 +212,18 @@ name: "Alpha",
       DownloadManager.methods.copy(this.$store.state.downloadDir + '\\Burn\\'+this.alpha_name,this.$store.state.pluginPath[0] + ':\\' +this.alpha_name,false,()=>{
         //step2完成，翻面
         this.$store.commit('setAlphaState',3)
+
+        //判断是否弹出提示，提醒下载Edgeless.7z更新包
+        if(this.updateEdgelessFolder){
+          this.$info({
+            title: '还差最后一步！',
+            content: '此次更新还额外包含了一些组件，需要您手动下载后解压并覆盖到U盘中\n(为了确保可能存在的用户自定义组件不被覆盖，此操作需要您手动完成)',
+            onOk() {
+              openExternal(openUrl)
+            },
+            keyboard:false,
+          });
+        }
       })
     },
     getSizeString(size) {
@@ -156,6 +234,9 @@ name: "Alpha",
     },
   },
   created() {
+    //初始化
+    openExternal=this.$electron.shell.openExternal
+
     //检查启动盘是否存在
     if(!DownloadManager.methods.exist(this.$store.state.pluginPath)){
       notification.open({
@@ -202,12 +283,9 @@ name: "Alpha",
     clearInterval(this.interval)
   },
   beforeRouteLeave(to, from, next) {
-    //当step=2时阻止用户切换页面
-    if (this.$store.state.AlphaInfo.state === 2) {
-      notification.open({
-        message: '现在不能离开当前页面！',
-        description: "请耐心等待拷贝任务完成"
-      })
+    //阻止用户切换页面
+    if (this.$store.state.AlphaInfo.state !== 0&&this.$store.state.AlphaInfo.state !== 3) {
+      this.$message.error("现在不能离开当前页面，请耐心等待拷贝任务完成")
     } else {
       next()
     }
