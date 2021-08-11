@@ -129,7 +129,7 @@ name: "Alpha",
 
           //判断是否需要更新Edgeless文件夹
           this.local_alpha_version=this.getLocalVersion("Alpha","wim")
-          if(this.versionCmp(this.local_alpha_version,res.data.pack_require)!==1){
+          if(this.versionCmp(this.local_alpha_version,res.data.pack_require)===-1){
             this.updateEdgelessFolder=true
             this.pack_info={
               name: res.data.pack_name,
