@@ -15,4 +15,4 @@ yarn electron:serve
 ```
 
 ## TODO
-* 支持Edgeless文件夹更新
+* 改NewOD

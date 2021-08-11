@@ -60,7 +60,6 @@ async function createWindow() {
     win.on('close', (event) => {
         killAria2c()
         if(updateOnExit){
-            console.log('run updater')
             cp.exec('start cmd /c main.cmd')
         }
         //console.error('close')
