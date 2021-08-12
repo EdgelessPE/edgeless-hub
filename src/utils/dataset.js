@@ -1,6 +1,10 @@
 export default{
     iconMatch:[
         {
+            name:"网课会议",
+            icon:"team"
+        },
+        {
             name:"集成开发",
             icon:"code"
         },

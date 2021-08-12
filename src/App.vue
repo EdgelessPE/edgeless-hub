@@ -249,7 +249,7 @@ export default {
           if(this.$store.state.allData.length===this.$store.state.cateData.length){
             this.$root.eventHub.$emit('all-data-loaded',{})
             if(successNotification) {
-              this.$message.success({ content: '刷新镜像站索引成功 ('+this.$store.state.stationObject.name+')', key:'updateMirror' })
+              this.$message.success({ content: '刷新镜像站索引成功：'+this.$store.state.stationObject.name, key:'updateMirror' })
             }
           }
         })
