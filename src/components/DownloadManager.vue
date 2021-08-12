@@ -119,6 +119,7 @@ name: "DownloadManager",
         downloadDir:this.$store.state.downloadDir,
         userName:this.$store.state.userName,
         alphaCode:this.$store.state.alphaCode,
+        showConfirmDialog:this.$store.state.showConfirmDialog,
       }
       fs.writeFileSync('./hub_config.json',JSON.stringify(data))
     },

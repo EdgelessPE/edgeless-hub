@@ -13,6 +13,7 @@ export default new Vuex.Store({
     downloadDir:'D:\\HubCache',
     userName:"",
     alphaCode:"",
+    showConfirmDialog:true,
 
     //无需保存到config的数据
     stationObject:{
@@ -254,6 +255,10 @@ export default new Vuex.Store({
       if(config.hasOwnProperty("alphaCode")){
         state.alphaCode=config.alphaCode
       }
+
+      if(config.hasOwnProperty("showConfirmDialog")){
+        state.showConfirmDialog=config.showConfirmDialog
+      }
     },
     changeTheme(state,theme){
       state.theme=theme
@@ -341,4 +346,7 @@ export default new Vuex.Store({
     changeAlphaCode(state,code){
       state.alphaCode=code
     },
+    changeShowConfirmDialog(state,_){
+      state.showConfirmDialog=false
+    }
 }})

@@ -392,7 +392,7 @@ export default {
     }
   },
   components:{
-    'TopBar':TopBar
+    TopBar
   },
   computed:{
     selectedKey:function (){

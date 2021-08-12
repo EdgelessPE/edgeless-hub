@@ -11,11 +11,12 @@
     >
       <p>您刚刚制作的Ventoy启动盘是这个吗？</p>
     </a-modal>
+    <ConfirmDialog v-if="showConfirmDialog"/>
     <a-steps :current="stepsInfo.step">
       <a-step v-for="(i,index) in stepsInfo.data" :key="index" :title="i.title"/>
     </a-steps>
     <div class="steps-content" key="0" v-if="stepsInfo.step===0||stepsInfo.step===-1">
-      <a-result title="在开始之前，我们需要下载一些必要的依赖文件" subTitle="Edgeless不是维护用PE，对劣质U盘和旧型号电脑兼容性不佳，请选用知名品牌U盘制作并在4GB以上内存容量的电脑上启动">
+      <a-result title="在开始之前，我们需要下载一些必要的依赖文件" subTitle="请保持网络连接稳定且可靠">
         <template #icon>
           <a-icon type="cloud-download"/>
         </template>
@@ -107,8 +108,8 @@
           <template v-if="manual">
             <a-space direction="vertical">
               <a-alert
-                  message="无法自动检测Ventoy启动盘"
-                  description="请确保您已经写入了Ventoy到启动盘，然后手动选择您的盘符"
+                  message="请确保您已经写入了Ventoy到启动盘，然后手动选择您的盘符"
+                  description="如果有两个盘符，请选择卷标为Ventoy的盘符"
                   type="warning"
                   show-icon
               />
@@ -120,6 +121,7 @@
                   </a-select-option>
                 </a-select>
               </div>
+              <br/>
               <a-space>
                 <a-button type="primary" v-on:click="jumpToStep3">
                   开始部署
@@ -175,10 +177,12 @@
 <script>
 import {notification} from "ant-design-vue";
 import DownloadManager from "@/components/DownloadManager"
+import ConfirmDialog from "@/components/ConfirmDialog"
 
 const cp = window.require('child_process')
 export default {
   name: "Burn",
+  components: {ConfirmDialog},
   data() {
     return {
       interval: '',
@@ -241,7 +245,10 @@ export default {
 
       //下载失败重试次数
       retryTimes: [0, 0, 0],
-      maxAllowedRetry: 1
+      maxAllowedRetry: 1,
+
+      //是否弹确认提示
+      showConfirmDialog:false,
     }
   },
   methods: {
@@ -265,6 +272,13 @@ export default {
       this.startVentoyDownload()
       this.startPluginDownload()
       this.startIsoDownload()
+
+      //判断是否展示用户提示
+      if(this.$store.state.showConfirmDialog){
+        this.showConfirmDialog=true
+        this.$store.commit('changeShowConfirmDialog',false)
+        DownloadManager.methods.writeConfig()
+      }
     },
     startVentoyDownload() {
       //下载Ventoy，请求ventoy文件名
