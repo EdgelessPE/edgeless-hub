@@ -34,7 +34,20 @@
     </a-select>
   </a-card>
   <br/>
-  <a-card title="调试页面" style="width: 100%">
+  <a-card title="许可证与协议" style="width: 100%">
+    使用本软件即代表您已详细阅读并同意用户协议
+    <br/><br/>
+    <a-space>
+      <a-button @click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/global/contract.html')">
+        用户协议
+      </a-button>
+      <a-button @click="$router.push('/licence')">
+        开放源代码许可
+      </a-button>
+    </a-space>
+  </a-card>
+  <br/>
+  <a-card title="开发者工具" style="width: 100%">
     <a-button @click="$router.push('/test')">
       Debug
     </a-button>

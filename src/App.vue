@@ -89,6 +89,7 @@
     >
       <br/>
       <p>看起来这是您首次使用Edgeless Hub，您可以在此更改一些默认配置</p>
+      <small>使用本软件即代表您已详细阅读并同意<a v-on:click="openLicence">用户协议</a></small>
       <br/><br/>
       <a-row>
         <a-col span="2">
@@ -389,6 +390,10 @@ export default {
     },
     quit(){
       this.$electron.ipcRenderer.send('quit-request',{})
+    },
+    openLicence(){
+      const { shell } = window.require('electron')
+      shell.openExternal("https://wiki.edgeless.top/v2/global/contract.html")
     }
   },
   components:{

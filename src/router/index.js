@@ -73,6 +73,11 @@ const routes = [
     path:'/details',
     name:'Details',
     component: ()=>import("@/views/Details")
+  },
+  {
+    path:'/licence',
+    name:'Licence',
+    component: ()=>import("@/views/Licence")
   }
 ]
 
