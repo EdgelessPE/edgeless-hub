@@ -64,6 +64,7 @@
         title="Alpha版本的Edgeless已部署到您的启动盘！"
         :sub-title="'重启选择'+this.alpha_name+'即可试用'"
     >
+      <a-button slot="extra" v-on:click="openLog">查看日志</a-button>
     </a-result>
   </div>
 
@@ -231,6 +232,9 @@ name: "Alpha",
       else if (size < 1024 * 1024 * 1024) return (size / (1024 * 1024)).toFixed(2) + "MB"
       else return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
     },
+    openLog(){
+      this.$router.push('/wiki?location=https://wiki.edgeless.top/v2/global/log.html#edgeless%E6%A0%B8%E5%BF%83%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97')
+    }
   },
   created() {
     //初始化
