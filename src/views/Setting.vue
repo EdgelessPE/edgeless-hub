@@ -27,6 +27,10 @@
   </a-card>
   <br/>
   <a-card title="插件镜像源" style="width: 100%">
+    菠萝云由
+    <img v-on:click="open('https://wngamebox.cn/')" src="https://oss.wngamebox.cn/wp-content/uploads/2020/10/logo.png" height="20" width="88"/>
+    提供，亦是Edgeless后端服务托管赞助商
+    <br/><br/>
     <a-select :default-value="mirrors[$store.state.stationIndex].name" @change="changeMirror">
       <a-select-option v-for="item in mirrors" :value="item.name" :key="item.name">
         {{item.name}}
@@ -59,6 +63,7 @@
 import DownloadManager from "@/components/DownloadManager";
 import StationList from '@/stationpool/main'
 import {notification} from "ant-design-vue";
+
 export default {
 name: "Setting",
   data(){
@@ -105,7 +110,11 @@ name: "Setting",
       this.$store.commit('updateStationObject',position)
       //发送刷新数据事件
       this.$root.eventHub.$emit('update-mirror',{})
-    }
+    },
+    open(url){
+      const { shell } = window.require('electron')
+      shell.openExternal(url)
+    },
   },
   created() {
     //初始化DownloadManager

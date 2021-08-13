@@ -33,9 +33,12 @@
               </a-col>
             </a-row>
           </div>
-          <a-button v-else-if="$store.state.AlphaInfo.state===0" type="primary" v-on:click="startDownload" :loading="loading">
-            试用
-          </a-button>
+          <a-space v-else-if="$store.state.AlphaInfo.state===0">
+            <a-button type="primary" v-on:click="startDownload" :loading="loading">
+              试用
+            </a-button>
+            <a-button slot="extra" v-on:click="openLog">查看日志</a-button>
+          </a-space>
         </a-space>
       </template>
     </a-result>

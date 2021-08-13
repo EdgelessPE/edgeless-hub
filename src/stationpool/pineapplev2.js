@@ -46,4 +46,7 @@ sObject.getCateData=function (callback) {
 sObject.getPluginList=function (cateName,callback){
     callback(fileListPool[cateName])
 }
+sObject.providerLogo="https://oss.wngamebox.cn/wp-content/uploads/2020/10/logo.png"
+sObject.providerLink="https://wngamebox.cn/"
+
 export default sObject
