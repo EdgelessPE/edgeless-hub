@@ -1,7 +1,10 @@
 <template>
  <a-row>
-   <a-col span="19"/>
-
+   <a-col span="1"/>
+   <a-col span="1">
+     <a-avatar v-if="routerName==='Wiki'" icon="arrow-left" style="color: #108ee9; backgroundColor: #ffffff" v-on:click="$router.go(-1)"/>
+   </a-col>
+   <a-col span="17"/>
    <a-col span="4" v-if="!searchBarCollapsed">
      <a-input-search v-model="input" placeholder="搜索插件" class="search-bar" @search="onSearch" />
    </a-col>
@@ -77,12 +80,15 @@ name: "TopBar",
       input:'',
       interval:'',
       downloadingTasks:0,
-      globalSpeed:"0B/s"
+      globalSpeed:"0B/s",
+
+      routerName:"",
     }
   },
   created() {
     this.interval=setInterval(()=>{
       this.updateData()
+      this.routerName=this.$router.history.current.name
     },1000)
   },
   destroyed() {

@@ -6,7 +6,7 @@
   >
     <template slot="title">
       {{item.softName}}
-      <a-tag v-if="item.botTag" slot="suffix" color="cyan">自动构建</a-tag>
+      <a-tag v-if="item.botTag" slot="suffix" color="cyan" v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/develop/automake.html')">自动构建</a-tag>
     </template>
     <template slot="extra">
       <CateButton slot="actions" :name="item.softName" :fullName="item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z'" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
@@ -98,7 +98,7 @@ export default {
       let result=DeveloperRank.query(author)
       this.devRank_title=result.title
       this.item.devRank=result
-    }
+    },
   },
   mounted() {
     //回到顶部
