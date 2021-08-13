@@ -70,6 +70,17 @@
               {{ stepsInfo.stepText }}
             </a-button>
           </a-space>
+          <br/><br/>
+          <a-alert
+              message="您是否想要更新？"
+              type="info"
+              show-icon
+              v-if="$store.state.pluginPath[0]!=='A'"
+          >
+            <template slot="description">
+              重新写入会导致您的启动盘丢失自定义配置，如果您只是需要更新请前往<a v-on:click="$router.push('/update')">升级</a>页面
+            </template>
+          </a-alert>
         </template>
       </a-result>
     </div>

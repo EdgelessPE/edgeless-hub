@@ -13,6 +13,3 @@
 yarn
 yarn electron:serve
 ```
-
-## TODO
-* 改NewOD
