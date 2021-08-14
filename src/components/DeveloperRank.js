@@ -5,7 +5,8 @@ let titleList=[
     {
         title:"Edgeless官方人员",
         color:"red",
-        list:["Cno","Copur","Oxygen","Brzh","Fir"]
+        list:["Cno","Copur","Oxygen","Brzh","Fir"],
+        link:"https://github.com/EdgelessPE"
     },
     {
         title:"Edgeless群管理员",
@@ -89,7 +90,8 @@ function auth() {
             if(devHash[author]!==undefined){
                 devHash[author].title.push({
                     text:titleNode.title,
-                    color:titleNode.color
+                    color:titleNode.color,
+                    link:titleNode.link,
                 })
             }
         })

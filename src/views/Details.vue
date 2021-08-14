@@ -20,7 +20,7 @@
           <template slot="suffix">
             <a-space direction="vertical">
               <a-badge :number-style="{ backgroundColor: '#52c41a' }" :count="'贡献排名'+item.devRank.rank"/>
-              <a-tag v-for="titleNode in devRank_title" :color="titleNode.color" :key="titleNode.text">{{titleNode.text}}</a-tag>
+              <a-tag v-for="titleNode in devRank_title" :color="titleNode.color" :key="titleNode.text" v-on:click="openWiki(titleNode)">{{titleNode.text}}</a-tag>
             </a-space>
           </template>
         </a-statistic>
@@ -98,6 +98,11 @@ export default {
       let result=DeveloperRank.query(author)
       this.devRank_title=result.title
       this.item.devRank=result
+    },
+    openWiki(item){
+      if(item.link)(
+          this.$router.push("/wiki?location="+item.link)
+      )
     },
   },
   mounted() {
