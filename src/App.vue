@@ -336,10 +336,11 @@ export default {
       }
     },
     reg(){
-      cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {374DE290-123F-4565-9164-39C4925E467B}',(err,stdout,stderr)=>{
+      cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders" /v {374DE290-123F-4565-9164-39C4925E467B}',(err,stdout,stderr)=>{
+        console.log(stdout)
         if(err||stderr){
           //尝试读取另一个表项
-          cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v {7D83EE9B-2244-4E70-B1F5-5393042AF1E4}',(err,stdout,stderr)=>{
+          cp.exec('reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders" /v {7D83EE9B-2244-4E70-B1F5-5393042AF1E4}',(err,stdout,stderr)=>{
             if(err||stderr){
               notification.open({
                 message:'注册表读取失败',
@@ -348,9 +349,13 @@ export default {
               this.$store.commit('changeDownloadDir', 'D:\\HubCache')
             }else{
               //根据注册表设置默认下载路径
-              let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
-              if(DownloadManager.methods.exist(path)) {
+              let path=stdout.split('REG_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
+              if(DownloadManager.methods.exist(path)&&path[0]!=="C"&&path[0]!=="c") {
                 this.$store.commit('changeDownloadDir', path + '\\HubCache')
+                //更新本组件上的userInputDownloadDir
+                this.userInputDownloadDir=this.$store.state.downloadDir
+              }else{
+                this.$store.commit('changeDownloadDir', 'D:\\HubCache')
                 //更新本组件上的userInputDownloadDir
                 this.userInputDownloadDir=this.$store.state.downloadDir
               }
@@ -358,9 +363,14 @@ export default {
           })
         }else{
           //根据注册表设置默认下载路径
-          let path=stdout.split('REG_EXPAND_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
+          let path=stdout.split('REG_SZ')[1].replace(/(^\s*)|(\s*$)/g, "")
+          console.log(path)
           if(DownloadManager.methods.exist(path)&&path[0]!=="C"&&path[0]!=="c") {
             this.$store.commit('changeDownloadDir', path + '\\HubCache')
+            //更新本组件上的userInputDownloadDir
+            this.userInputDownloadDir=this.$store.state.downloadDir
+          }else{
+            this.$store.commit('changeDownloadDir', 'D:\\HubCache')
             //更新本组件上的userInputDownloadDir
             this.userInputDownloadDir=this.$store.state.downloadDir
           }
