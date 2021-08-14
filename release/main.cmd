@@ -1,6 +1,14 @@
 @echo off
 set stage=Beta
 
+::检查rclone是否能正常工作
+rclone ls pineapple:/hdisk/edgeless/Socket/Hub >nul
+if "%errorlevel%" neq "0" (
+    echo Please install rclone then add pineapple
+    pause
+    exit
+)
+
 ::读取版本号
 call readJson ..\package.json version
 set "version=%getValue_%"
@@ -120,10 +128,11 @@ move /y "dist\Edgeless Hub\update.7z" "release\Workshop\update.7z"
 move /y "dist\Edgeless Hub\miniupdate.7z" "release\Workshop\miniupdate.7z"
 move /y "dist\Edgeless Hub_%stage%_%version:~0,-2%.7z" "release\Workshop\Edgeless Hub_%stage%_%version:~0,-2%.7z"
 
-::通过WinSCP上传三个包和update.json
+::上传三个包和update.json
 title 发布Edgeless Hub %version%-上传文件（6/6）
-cd release
-set winscp_path="D:\CnoRPS\WinSCP 5.15.9.10071\WinSCP.exe"
-if exist "C:\Users\Cno\AppData\Local\Programs\WinSCP\WinSCP.exe" set winscp_path="C:\Users\Cno\AppData\Local\Programs\WinSCP\WinSCP.exe"
-%winscp_path% /console /script=scp_script.txt /parameter // "Edgeless Hub_%stage%_%version:~0,-2%.7z"
+cd release\Workshop
+rclone copy -P "Edgeless Hub_%stage%_%version:~0,-2%.7z" pineapple:/hdisk/edgeless/Socket/Hub
+rclone copy -P "update.json" pineapple:/hdisk/edgeless/Socket/Hub/Update
+rclone copy -P "update.7z" pineapple:/hdisk/edgeless/Socket/Hub/Update
+rclone copy -P "miniupdate.7z" pineapple:/hdisk/edgeless/Socket/Hub/Update
 exit

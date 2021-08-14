@@ -103,7 +103,7 @@ export default {
       if(item.link)(
           this.$router.push("/wiki?location="+item.link)
       )
-      else{
+      else if(typeof item=="string"){
         this.$router.push("/wiki?location="+item)
       }
     },
