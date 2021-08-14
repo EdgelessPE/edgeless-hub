@@ -2,7 +2,7 @@
  <a-row>
    <a-col span="1"/>
    <a-col span="1">
-     <a-avatar v-if="routerName==='Wiki'" icon="arrow-left" style="color: #108ee9; backgroundColor: #ffffff" v-on:click="$router.go(-1)"/>
+     <a-avatar v-if="routerName==='Wiki'" class="button" icon="arrow-left" style="color: #108ee9; backgroundColor: #ffffff" v-on:click="$router.go(-1)"/>
    </a-col>
    <a-col span="17"/>
    <a-col span="4" v-if="!searchBarCollapsed">
@@ -11,7 +11,7 @@
 
    <a-col span="3" v-if="searchBarCollapsed"/>
    <a-col span="1" v-if="searchBarCollapsed" @click="()=>{this.searchBarCollapsed=!this.searchBarCollapsed}">
-     <a-avatar icon="search" style="color: #108ee9; backgroundColor: #ffffff"/>
+     <a-avatar icon="search" class="button" style="color: #108ee9; backgroundColor: #ffffff"/>
    </a-col>
 
    <a-col span="1"/>
@@ -27,7 +27,7 @@
       }"
        v-on:click="gotoDown"
        >
-         <a-avatar icon="download" style="color: #108ee9; backgroundColor: #ffffff"/>
+         <a-avatar icon="download" class="button" style="color: #108ee9; backgroundColor: #ffffff"/>
        </a-badge>
      </a-popover>
    </a-col>
@@ -101,6 +101,8 @@ name: "TopBar",
 .search-bar{
   width: 90%;
   height: 90%;
-
+}
+.button:hover{
+  cursor: pointer;
 }
 </style>

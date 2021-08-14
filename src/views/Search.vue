@@ -16,7 +16,12 @@
           <template slot="title">
             <div @click="gotoDetails(item)" style="cursor:pointer">
               {{item.softName}}
-              <a-tag v-if="item.botTag" color="cyan">自动构建</a-tag>
+              <a-tooltip v-if="item.botTag">
+                <template slot="title">
+                  此插件由<a v-on:click="openWiki('https://wiki.edgeless.top/v2/develop/automake.html')">Edgeless Bot</a>自动构建
+                </template>
+                <a-icon type="ci" theme="twoTone" two-tone-color="#52c41a"/>
+              </a-tooltip>
             </div>
           </template>
           {{'版本号：'+item.softVer}}
@@ -90,7 +95,10 @@ name: "Search",
     },
     gotoDetails(item){
       this.$router.push("/details?softName="+item.softName+"&softUrl="+item.softUrl+"&softVer="+item.softVer+"&softSize="+item.softSize+"&cateName="+item.cate+"&softAuthor="+item.softAuthor)
-    }
+    },
+    openWiki(link){
+      this.$router.push("/wiki?location="+link)
+    },
   },
   created() {
     this.updateResult()

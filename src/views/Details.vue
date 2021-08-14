@@ -103,6 +103,9 @@ export default {
       if(item.link)(
           this.$router.push("/wiki?location="+item.link)
       )
+      else{
+        this.$router.push("/wiki?location="+item)
+      }
     },
   },
   mounted() {

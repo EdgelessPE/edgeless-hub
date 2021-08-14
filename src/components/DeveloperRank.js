@@ -101,7 +101,8 @@ function auth() {
         let node=devHash[author]
         if(node.botAuthor) devHash[author].title.push({
             text:"自动构建插件作者",
-            color:"cyan"
+            color:"cyan",
+            link:"https://wiki.edgeless.top/v2/develop/automake.html"
         })
     }
 }

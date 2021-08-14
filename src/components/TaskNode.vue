@@ -192,7 +192,3 @@ name: "TaskNode",
   }
 }
 </script>
-
-<style scoped>
-
-</style>
