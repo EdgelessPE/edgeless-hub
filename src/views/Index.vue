@@ -170,7 +170,7 @@ name: "Index",
           // if(this.localVersion==="") this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
           let res=await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
           this.onlineVersion=res.data.version
-          if(this.onlineVersion===this.localVersion){
+          if(this.versionCmp(this.onlineVersion,this.localVersion)!==1){
             //检查是否为alpha用户
             let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_Alpha.*wim$")
             if(matchResult.length>0){
@@ -320,7 +320,49 @@ name: "Index",
           this.genePluginRecommendList()
         })
       }
-    }
+    },
+    //版本号判断函数,返回1表示x>y,-1表示x<y
+    versionCmp(x,y){
+      //识别含-的版本号
+      x=x.replaceAll("-",".")
+      y=y.replaceAll("-",".")
+
+      let split_x=x.split(".")
+      let split_y=y.split(".")
+      let result=0
+      let i
+      for(i=0;i<Math.min(split_x.length,split_y.length);i++){
+        if(Number(split_x[i])<Number(split_y[i])){
+          result=-1
+          break
+        }else if(Number(split_x[i])>Number(split_y[i])){
+          result=1
+          break
+        }
+      }
+      //当长度不相等时向后搜索长位是否全0
+      if(result===0&&split_x.length!==split_y.length){
+        if(split_x.length>split_x.length){
+          //处理x
+          for(;i<split_x.length;i++){
+            if(Number(split_x[i])!==0){
+              result=1
+              break
+            }
+          }
+        }else{
+          //处理y
+          for(;i<split_y.length;i++){
+            if(Number(split_y[i])!==0){
+              result=-1
+              break
+            }
+          }
+        }
+      }
+      return result
+    },
+
   },
   created() {
     //监听启动盘拔出和插入事件
