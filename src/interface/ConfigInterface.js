@@ -1,6 +1,13 @@
 //在Config文件夹新建文件夹就可以完成的配置
 export default [
     {
+        title:"禁用固定浏览器到任务栏",
+        description:"Edgeless会在启动时将所有找到的现代浏览器固定至任务栏",
+        information:"",
+        higherThan:"4.0.2",
+        folderName:"DisablePinBrowsers"
+    },
+    {
         title:"电源键默认重启",
         description:"将开始菜单处的关机键替换为重启",
         information:"替换之后关机键将被收至折叠面板中",
