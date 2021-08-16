@@ -12,6 +12,7 @@ export default [
         description:"使外置Launcher的警告失效",
         information:"警告仍然会弹出，但是只是起到警示的作用，不会暂停外置批处理的运行",
         higherThan:"2.2.0",
+        lowerThan:"4.0.0",
         folderName:"Developer"
     },
     {
@@ -19,6 +20,7 @@ export default [
         description:"Edgeless将不会提示过期的插件包",
         information:"",
         higherThan:"2.2.0",
+        lowerThan:"4.0.0",
         folderName:"NoOutDateCheck"
     },
     {
@@ -40,6 +42,7 @@ export default [
         description:"默认情况下资源管理器上方功能区处于折叠状态",
         information:"",
         higherThan:"3.0.5",
+        lowerThan:"4.0.0",
         folderName:"UnfoldRibbon"
     },
     {

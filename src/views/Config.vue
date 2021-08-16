@@ -11,11 +11,33 @@
     </a-space>
   </a-card>
   <br/>
-  <a-card title="分辨率" style="width: 100%">
-    <a-tooltip slot="extra">
+  <a-card title="浏览器主页" style="width: 100%" v-if="versionCmp(currentVersion,'4.0.2')===1">
+    <a-tooltip slot="extra" placement="topRight">
       <a-icon type="exclamation-circle"/>
       <template slot="title">
-        在某些使用UEFI引导启动的场合下Edgeless无法改变分辨率，此项配置失效
+        <small>支持自带IE浏览器和官方提供的浏览器插件，桌面和任务栏的主页均会被更改</small>
+      </template>
+    </a-tooltip>
+    <a-input-search
+        placeholder="https://"
+        :disabled="disableHomePage"
+        enter-button="确认"
+        v-model="homePage"
+        @search="writeHomePage(homePage)"
+    >
+      <template slot="suffix">
+        <a-checkbox @change="onDisableHomePage" :checked="disableHomePage">
+          禁用
+        </a-checkbox>
+      </template>
+    </a-input-search>
+  </a-card>
+  <br/>
+  <a-card title="分辨率" style="width: 100%">
+    <a-tooltip slot="extra" placement="topRight">
+      <a-icon type="exclamation-circle"/>
+      <template slot="title">
+        <small>仅适用于Legacy引导下的启动盘，UEFI引导时请在启动菜单选择分辨率</small>
       </template>
     </a-tooltip>
     <a-radio-group v-model="ResolutionWay" @change="onChangeRadio">
@@ -86,10 +108,13 @@
   </a-card>
   <br/>
   <a-card title="偏好调整" style="width: 100%">
-    <a-tooltip slot="extra">
-      <a-icon type="exclamation-circle"/>
+    <a-tooltip slot="extra" placement="topRight">
+      <a-space>
+        当前参考版本：{{currentVersion}}
+        <a-icon type="exclamation-circle"/>
+      </a-space>
       <template slot="title">
-        仅支持针对Beta版本配置偏好，Alpha版本的特性请自行参考文档配置
+        <small>如果您的启动盘内拥有多个Edgeless启动文件，则会取最大的版本号作为当前参考版本提供配置选项</small>
       </template>
     </a-tooltip>
     <a-list
@@ -107,7 +132,12 @@
           <a-icon type="question-circle" />
           <template slot="title">
             <template v-if="!item.available">
-              需要高于{{item.higherThan}}版本可用
+              <template v-if="currentVersion<item.higherThan">
+                需要高于{{item.higherThan}}版本可用
+              </template>
+              <template v-else>
+                需要低于{{item.lowerThan}}版本可用
+              </template>
               <br/>
             </template>
             {{item.information}}
@@ -204,12 +234,18 @@ name: "Config",
       fps:60
     },
     resolution_index:0,
+    currentVersion:"",
+    homePage:"https://www.baidu.com",
+    disableHomePage:false,
   }
   },
   methods:{
     prepareData(){
       //获取当前的Edgeless版本号
-      let version=this.$store.state.EdgelessVersion.split("_")[3]
+      let version_alpha=this.getLocalVersion("Alpha","wim")
+      let version_beta=this.getLocalVersion("Beta","wim")
+      let version=version_alpha>version_beta?version_alpha:version_beta
+      this.currentVersion=version
       //处理是否显示information小问号，分离可用和不可用的选项
       let ava=[],una=[]
       ConfigInterface.forEach((item)=>{
@@ -219,7 +255,8 @@ name: "Config",
         }else{
           item['showTip']=true
         }
-        if(version>item.higherThan){
+        if(!item.hasOwnProperty('lowerThan')) item.lowerThan='999999'
+        if(this.versionCmp(version,item.higherThan)===1&&this.versionCmp(version,item.lowerThan)===-1){
           item['available']=true
           ava.push(item)
         }else{
@@ -316,6 +353,120 @@ name: "Config",
       //发送打开对话框事件
       this.$electron.ipcRenderer.send('openFileDialog-request',"")
     },
+    getLocalVersion(stage,exp){
+      let matchResult=DownloadManager.methods.matchFiles(this.$store.state.pluginPath[0]+":\\","^Edgeless_"+stage+".*"+exp+"$")
+      let ver="0.0.0"
+      matchResult.forEach((item)=>{
+        let thisVer=item.split("_")[2].split("."+exp)[0]
+        if(ver<thisVer) ver=thisVer
+      })
+      return ver
+    },
+    writeHomePage(text){
+      DownloadManager.methods.mkdir(this.$store.state.pluginPath[0]+":\\Edgeless\\Config")
+      if(text!=="Disable"){
+        //自动添加http://
+        if(text.slice(0,4)!=="http") {
+          text = "http://" + text
+          this.homePage=text
+        }
+        //校验域名
+        if(!this.isURL(text)){
+          notification.open({
+            message:'域名不规范',
+            description:'请检查后重试'
+          })
+          return
+        }
+      }
+      fs.writeFile(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\HomePage.txt",text,(res)=>{
+        //console.log(res)
+        if(!DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\HomePage.txt")){
+          notification.open({
+            message:'写入主页失败',
+            description:'无法创建文件：'+(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\HomePage.txt")
+          })
+        }else{
+          notification.open({
+            message:'写入主页成功',
+            description:'当前主页：'+(text==="Disable"?"禁用":text)
+          })
+        }
+      })
+    },
+    readHomePage(){
+      if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\HomePage.txt")){
+        let text=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\Config\\HomePage.txt").toString()
+        if(text==="Disable"){
+          this.disableHomePage=true
+          this.homePage=""
+        }else{
+          this.homePage=text
+        }
+      }
+    },
+    onDisableHomePage(e){
+      let val=e.target.checked
+      this.disableHomePage=val
+      if(val){
+        this.writeHomePage("Disable")
+      }
+    },
+    isURL(str_url) {
+      let strRegex = "^((https|http|ftp|rtsp|mms)?://)"
+          + "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" // ftp的user@
+          + "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184
+          + "|" // 允许IP和DOMAIN（域名）
+          + "([0-9a-z_!~*'()-]+\.)*" // 域名- www.
+          + "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\." // 二级域名
+          + "[a-z]{2,6})" // first level domain- .com or .museum
+          + "(:[0-9]{1,4})?" // 端口- :80
+          + "((/?)|" // a slash isn't required if there is no file name
+          + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";
+      let re = new RegExp(strRegex);
+      return re.test(str_url);
+    },
+    //版本号判断函数,返回1表示x>y,-1表示x<y
+    versionCmp(x,y){
+      //识别含-的版本号
+      x=x.replaceAll("-",".")
+      y=y.replaceAll("-",".")
+
+      let split_x=x.split(".")
+      let split_y=y.split(".")
+      let result=0
+      let i
+      for(i=0;i<Math.min(split_x.length,split_y.length);i++){
+        if(Number(split_x[i])<Number(split_y[i])){
+          result=-1
+          break
+        }else if(Number(split_x[i])>Number(split_y[i])){
+          result=1
+          break
+        }
+      }
+      //当长度不相等时向后搜索长位是否全0
+      if(result===0&&split_x.length!==split_y.length){
+        if(split_x.length>split_x.length){
+          //处理x
+          for(;i<split_x.length;i++){
+            if(Number(split_x[i])!==0){
+              result=1
+              break
+            }
+          }
+        }else{
+          //处理y
+          for(;i<split_y.length;i++){
+            if(Number(split_y[i])!==0){
+              result=-1
+              break
+            }
+          }
+        }
+      }
+      return result
+    },
   },
   created() {
     //检查启动盘是否存在
@@ -338,6 +489,8 @@ name: "Config",
     }else{
       this.ResolutionWay="0"
     }
+    //读取主页
+    this.readHomePage()
   }
 }
 </script>
