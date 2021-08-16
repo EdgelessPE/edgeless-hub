@@ -154,6 +154,21 @@ export default {
     finishWelcome(){
       //初始化用户名
       this.$store.commit('updateUserName',window.require('os').userInfo().username)
+      //校验路径规范性
+      //console.log(this.userInputDownloadDir.match(/(^[a-zA-Z]):\\.+/))
+      if(this.userInputDownloadDir.match(/(^[a-zA-Z]):\\.+/)==null||this.userInputDownloadDir.includes('\\\\')){
+        //提示重新选择
+        this.userInputDownloadDir=this.$store.state.downloadDir
+        notification.open({
+          message:'缓存路径不规范',
+          description:"请重新选择可用的目录或保持默认"
+        })
+        return
+      }
+      //去除末尾反斜杠
+      if(this.userInputDownloadDir[this.userInputDownloadDir.length-1]==='\\'){
+        this.userInputDownloadDir=this.userInputDownloadDir.slice(0,-1)
+      }
       //检查输入目录是否存在
       if(DownloadManager.methods.exist(this.userInputDownloadDir)){
         this.$store.commit('changeDownloadDir',this.userInputDownloadDir)
