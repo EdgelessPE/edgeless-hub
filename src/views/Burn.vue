@@ -167,9 +167,11 @@
       <a-result
           status="success"
           title="您的Edgeless启动盘已经就绪！"
-          sub-title="重启后选择从U盘启动即可进入Edgeless"
+          sub-title="重启后选择从U盘启动即可进入Edgeless，如果是UEFI启动需要关闭安全启动"
       >
-        <a-button slot="extra" v-on:click="gotoWiki">如何启动</a-button>
+        <template slot="extra">
+          <a-button v-on:click="gotoWiki">如何启动</a-button>
+        </template>
       </a-result>
     </div>
     <div class="steps-content" key="4" v-else-if="stepsInfo.step===4">
