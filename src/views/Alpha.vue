@@ -236,7 +236,7 @@ name: "Alpha",
       else return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
     },
     openLog(){
-      this.$router.push('/wiki?location=https://wiki.edgeless.top/v2/global/log.html#edgeless%E6%A0%B8%E5%BF%83%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97')
+      this.$router.push('/wiki?location=https://wiki.edgeless.top/v2/global/log.html#edgeless核心更新日志-当前已发布最新alpha版本-edgeless-alpha')
     }
   },
   created() {

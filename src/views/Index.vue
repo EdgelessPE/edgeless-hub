@@ -14,7 +14,7 @@
     <a-result :title="event_selected.DisplayTitle">
       <template slot="subTitle">
         <template v-if="showTags" v-for="item in event_selected.Tags">
-          <a-tag :color="item.color" v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/global/log.html#edgeless核心更新日志')">
+          <a-tag :color="item.color" v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/global/log.html#edgeless核心更新日志-当前已发布最新alpha版本-edgeless-alpha')">
             {{item.text}}
           </a-tag>
         </template>
