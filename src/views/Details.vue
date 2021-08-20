@@ -41,6 +41,9 @@
 <script>
 import CateButton from "@/components/CateButton";
 import DeveloperRank from "@/components/DeveloperRank";
+let earlierUrl="",earlierTime=0
+const validDCTime=3000
+const { shell } = window.require('electron')
 export default {
   name: "Details",
   components: {CateButton},
@@ -111,6 +114,22 @@ export default {
   mounted() {
     //回到顶部
     scrollTo(0,0)
+    let webview=document.getElementById("webview")
+    //监听新窗口事件
+    webview.addEventListener('new-window',(e)=>{
+      const date=new Date()
+      if (e.url.slice(0,4) === 'http') {
+        if(e.url===earlierUrl&&date.getTime()-earlierTime<validDCTime){
+          shell.openExternal(e.url)
+          this.$message.success({ content: '已打开外部链接', key:'URL', duration: validDCTime/1000 })
+          earlierTime=0
+        }else{
+          this.$message.info({ content: '双击以在外部浏览器中继续浏览', key:'URL', duration: validDCTime/1000 })
+          earlierUrl=e.url
+          earlierTime=date.getTime()
+        }
+      }
+    })
   },
   created() {
     //初始化item对象
