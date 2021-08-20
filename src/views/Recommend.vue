@@ -51,10 +51,10 @@ export default {
   },
   data(){
     return{
-      recommendList:['QQ','迅雷','Google Chrome','IDM','Office2010','VSCode','Wechat','Bandizip',
+      recommendList:['QQ','迅雷','Chrome','IDM','Office2010','VSCode','Wechat','Bandizip',
         '火绒安全','Edgeless密码管家','微PE工具包','adb','VMTools','PotPlayer','千千静听','网易云音乐',
-        'Edge','Firefox','分区助手','MacType','Listary','Everything','手心输入法','Python','Anydesk',
-        'FinalShell','ToDesk','微软mstsc远程桌面','向日葵远程控制','CPU-Z','iOS驱动（含爱思助手）'],
+        'Microsoft Edge','Firefox','分区助手','MacType','Listary','Everything','手心输入法','Python','TIM',
+        'FinalShell','ToDesk','微软mstsc远程桌面','向日葵远程控制','CPU-Z','iOS驱动（含爱思助手）','VirtualBoxGuest','FastCopy','腾讯会议','微软常用运行库','开机音乐','WinSCP'],
       recommendData:[]
     }
   },
