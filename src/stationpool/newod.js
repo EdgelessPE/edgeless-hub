@@ -1,6 +1,6 @@
 import StationInterface from "@/interface/StationInterface"
 //实例化
-const sObject=StationInterface('OneDrive')
+const sObject=StationInterface('SharePoint')
 //内部存储变量
 let cateData=[],fileListPool={},url='https://zfile.edgeless.top/api/list/1',counter=0,inited=false
 //实现接口

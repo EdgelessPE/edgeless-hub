@@ -205,10 +205,10 @@ name: "Index",
                 EventName:"Beta用户",
                 EventFrom:"Edgeless",
                 DisplayTitle:"您已拥有最新版本Edgeless Beta",
-                DisplayDescription:"来点新鲜插件？",
+                DisplayDescription:"遇到了驱动问题？",
                 DisplayIcon:"smile",
-                ButtonText:"前往插件市场",
-                ButtonRoute:"/reco",
+                ButtonText:"下载驱动插件",
+                ButtonRoute:encodeURI("/cate?name=驱动管理"),
                 ButtonType:"default",
                 Tags:[
                   {
