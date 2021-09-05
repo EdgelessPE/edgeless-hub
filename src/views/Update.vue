@@ -150,10 +150,7 @@ name: "Update",
       if(DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt")){
         this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
       }else{
-        notification.open({
-          message:'不是标准的Edgeless启动盘',
-          description:'您的启动盘缺少版本标识文件，请尝试重新制作'
-        })
+        this.$message.error({ content: '不是标准的Edgeless启动盘：您的启动盘缺少版本标识文件，请尝试重新制作', key:"update-tip", duration: 3 })
         this.$router.back()
       }
       //console.log(localVersion)
@@ -168,25 +165,16 @@ name: "Update",
           //判断启动盘类型以选择更新方式
           if (!DownloadManager.methods.exist(this.$store.state.pluginPath[0]+":\\ventoy\\ventoy_wimboot.img")) {
             this.updateMethod = 1
-            notification.open({
-              message:'无法执行升级操作',
-              description:'不支持旧版启动盘制作工具制作的启动盘，请先重新写入'
-            })
+            this.$message.error({ content: '不支持旧版启动盘制作工具制作的启动盘，请先重新写入', key:"update-tip", duration: 3 })
             this.$router.push("/burning")
           }
         }else{
-          notification.open({
-            message:'无法执行升级操作',
-            description:'启动盘已是最新版本:'+this.localVersion
-          })
+          this.$message.success({ content: 'Edgeless已是最新版本:'+this.localVersion, key:"update-tip", duration: 3 })
           this.$router.back()
         }
       })
     }else{
-      notification.open({
-        message:'无法执行升级操作',
-        description:'未检测到Edgeless启动盘，请执行写入步骤'
-      })
+      this.$message.error({ content: '未检测到Edgeless启动盘，请执行写入步骤', key:"update-tip", duration: 3 })
       this.$router.push("/burning")
     }
     //配置定时器
@@ -216,10 +204,7 @@ name: "Update",
   beforeRouteLeave(to, from, next) {
     //当step=2时阻止用户切换页面
     if (this.$store.state.UpdateInfo.state === 2) {
-      notification.open({
-        message: '现在不能离开当前页面！',
-        description: "请耐心等待升级任务完成"
-      })
+      this.$message.warning({ content: '现在不能离开当前页面！请耐心等待升级任务完成，如果长时间未结束请重启程序', key:"update-tip", duration: 5 })
     } else {
       next()
     }

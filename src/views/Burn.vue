@@ -835,10 +835,7 @@ export default {
     //当step<3时阻止用户切换页面
     if (this.stepsInfo.step < 3 && this.stepsInfo.step > -1) {
       this.$rp.log("-1<step<3,阻止用户切换页面-beforeRouteLeave")
-      notification.open({
-        message: '现在不能离开当前页面！',
-        description: "请耐心等待当前任务完成"
-      })
+      this.$message.warning({ content: '现在不能离开当前页面！请耐心等待当前任务完成，如果长时间未结束请重启程序', key:"burn-tip", duration: 5 })
     } else {
       this.$rp.log("离开Burn-beforeRouteLeave")
       next()
