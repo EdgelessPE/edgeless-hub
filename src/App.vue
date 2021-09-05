@@ -532,8 +532,8 @@ export default {
       cwd:this.$store.state.aria2cPath
     },(err)=>{
       notification.open({
-        message:'Child_Process：错误',
-        description:"Aria2c进程提前退出："+err.message
+        message:'Aria2c进程提前退出',
+        description:"请尝试修改./core/elhub.conf中的监听端口："+err.message
       })
     })
     //console.log(this.aria2cProcess)
