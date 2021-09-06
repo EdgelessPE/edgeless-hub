@@ -2,7 +2,7 @@
  <a-row>
    <a-col span="1"/>
    <a-col span="1">
-     <a-avatar v-if="routerName==='Wiki'" class="button" icon="arrow-left" style="color: #108ee9; backgroundColor: #ffffff" v-on:click="$router.go(-1)"/>
+     <a-avatar v-if="showBackButton" class="button" icon="arrow-left" style="color: #108ee9; backgroundColor: #ffffff" v-on:click="$router.go(-1)"/>
    </a-col>
    <a-col span="17"/>
    <a-col span="4" v-if="!searchBarCollapsed">
@@ -81,15 +81,18 @@ name: "TopBar",
       interval:'',
       downloadingTasks:0,
       globalSpeed:"0B/s",
-
-      routerName:"",
+      showBackButton:false,
     }
   },
   created() {
     this.interval=setInterval(()=>{
       this.updateData()
-      this.routerName=this.$router.history.current.name
     },1000)
+
+    //监听路由变化
+    this.$router.afterEach((_)=>{
+      this.showBackButton = this.$router.history.current.name === "Wiki"
+    })
   },
   destroyed() {
     clearInterval(this.interval)
