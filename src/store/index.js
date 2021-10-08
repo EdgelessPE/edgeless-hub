@@ -14,6 +14,7 @@ export default new Vuex.Store({
         userName: "",
         alphaCode: "",
         showConfirmDialog: true,
+        ignore_notice_id:"",
 
         //无需保存到config的数据
         stationObject: {
@@ -254,13 +255,17 @@ export default new Vuex.Store({
             state.stationIndex = config.stationIndex
             state.userName = config.userName
 
-            //处理alphaCode
+            //处理后增键
             if (config.hasOwnProperty("alphaCode")) {
                 state.alphaCode = config.alphaCode
             }
 
             if (config.hasOwnProperty("showConfirmDialog")) {
                 state.showConfirmDialog = config.showConfirmDialog
+            }
+
+            if (config.hasOwnProperty("ignore_notice_id")) {
+                state.ignore_notice_id = config.ignore_notice_id
             }
         },
         changeTheme(state, theme) {
@@ -351,6 +356,9 @@ export default new Vuex.Store({
         },
         changeShowConfirmDialog(state, _) {
             state.showConfirmDialog = false
+        },
+        updateIgnoreId(state,id){
+            state.ignore_notice_id=id
         }
     }
 })

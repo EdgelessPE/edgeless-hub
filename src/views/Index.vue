@@ -1,6 +1,7 @@
 <template>
   <div>
     <Patch/>
+    <Notice channel="Hub" :ignore-id="$store.state.ignore_notice_id"/>
     <keep-alive>
       <HotUpdate/>
     </keep-alive>
@@ -66,6 +67,7 @@
 import DownloadManager from "@/components/DownloadManager";
 import HotUpdate from "@/components/HotUpdate";
 import Patch from "@/components/Patch";
+import Notice from "@/components/Notice";
 
 const fs = window.require('fs')
 export default {
@@ -107,7 +109,8 @@ export default {
   },
   components: {
     Patch,
-    HotUpdate
+    HotUpdate,
+    Notice
   },
   methods: {
     openQQLink() {

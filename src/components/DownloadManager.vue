@@ -123,6 +123,7 @@ export default {
         userName: this.$store.state.userName,
         alphaCode: this.$store.state.alphaCode,
         showConfirmDialog: this.$store.state.showConfirmDialog,
+        ignore_notice_id:this.$store.state.ignore_notice_id
       }
       fs.writeFileSync('./hub_config.json', JSON.stringify(data))
     },

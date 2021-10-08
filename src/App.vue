@@ -234,7 +234,7 @@ export default {
             cData.sort((a, b) => {
               return a.name.localeCompare(b.name, "zh")
             })
-            console.log(cData)
+            //console.log(cData)
             //匹配icon
             cData.forEach((item) => {
               item["icon"] = this.getMatchedIconName(item.name)
