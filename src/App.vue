@@ -224,6 +224,11 @@ export default {
         this.$store.state.stationObject.init(this.$axios,()=>{
           //初始化完成，推送分类数据
           this.$store.state.stationObject.getCateData((cData)=>{
+            //分类按名称排序
+            cData.sort((a,b)=>{
+              return a.name.localeCompare(b.name,"zh")
+            })
+            console.log(cData)
             //匹配icon
             cData.forEach((item)=>{
               item["icon"]=this.getMatchedIconName(item.name)

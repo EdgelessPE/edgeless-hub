@@ -2,7 +2,7 @@ import StationInterface from "@/interface/StationInterface"
 //实例化
 const sObject=StationInterface('SharePoint')
 //内部存储变量
-let cateData=[],fileListPool={},url='https://zfile.edgeless.top/api/list/1',counter=0,inited=false
+let cateData=[],fileListPool={},url='https://zfile.edgeless.top/api/list/2',counter=0,inited=false
 //实现接口
 sObject.init=function (axios,callback) {
     //锁止
