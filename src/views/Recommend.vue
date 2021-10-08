@@ -48,6 +48,7 @@
 
 <script>
 import CateButton from "@/components/CateButton"
+import dataset from "@/utils/dataset";
 
 export default {
   name: 'Home',
@@ -56,10 +57,6 @@ export default {
   },
   data() {
     return {
-      recommendList: ['QQ', '迅雷', 'Chrome', 'IDM', 'Office2010', 'VSCode', 'Wechat', 'Bandizip',
-        '火绒安全', 'Edgeless密码管家', '微PE工具包', 'adb', 'VMTools', 'PotPlayer', '千千静听', '网易云音乐',
-        'Microsoft Edge', 'Firefox', '分区助手', 'MacType', 'Listary', 'Everything', '手心输入法', 'Python', 'TIM',
-        'FinalShell', 'ToDesk', '微软mstsc远程桌面', '向日葵远程控制', 'CPU-Z', 'iOS驱动（含爱思助手）', 'VirtualBoxGuest', 'FastCopy', '腾讯会议', '微软常用运行库', '开机音乐', 'WinSCP'],
       recommendData: []
     }
   },
@@ -119,6 +116,11 @@ export default {
     openWiki(link) {
       this.$router.push("/wiki?location=" + link)
     },
+  },
+  computed:{
+    recommendList:function () {
+      return dataset.recommendList
+    }
   },
   created() {
     //所有插件列表载入完成时生成推荐列表
