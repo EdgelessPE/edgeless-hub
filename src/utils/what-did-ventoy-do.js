@@ -25,13 +25,13 @@ var regexTable = {
             if (r) {
                 //取最后一条结果
                 return r[r.length - 1].split("<")[1];
-            }
-            else {
+            } else {
                 return "";
             }
         }
     }
 };
+
 function match(key) {
     if (!regexTable.hasOwnProperty(key)) {
         throw "QUERY_REGEX_TABLE_ERROR:" + key;
@@ -40,11 +40,11 @@ function match(key) {
     var r = log.match(mn.exp);
     if (mn.handler) {
         return mn.handler(r);
-    }
-    else {
+    } else {
         return r;
     }
 }
+
 //finder
 function findVentoyExisted() {
     //查找存在语句
@@ -65,6 +65,7 @@ function findVentoyExisted() {
     }
     return found;
 }
+
 function findVentoyInstalledOrUpdated(install) {
     //计算token
     var token = install ? "InstallVentoy2PhyDrive" : "UpdateVentoy2PhyDrive";
@@ -116,6 +117,7 @@ function findVentoyInstalledOrUpdated(install) {
     }
     return found;
 }
+
 function findLetterRemoved() {
     var result = [];
     //匹配语句
@@ -133,6 +135,7 @@ function findLetterRemoved() {
     }
     return result;
 }
+
 function findLetterWithVentoyInstalled() {
     var finalLetter = "";
     //匹配所有Logical drive letter after write ventoy: <>，读取最后一条的<>内容
@@ -144,12 +147,10 @@ function findLetterWithVentoyInstalled() {
         if (m) {
             var line = m[m.length - 1];
             finalLetter = line[line.length - 1];
-        }
-        else {
+        } else {
             return "";
         }
-    }
-    else {
+    } else {
         //检查被确认的盘符
         var matchLines = log.match(/[A-Z]:\\ is ventoy part1, already mounted/);
         var targetLetter = void 0;
@@ -160,20 +161,19 @@ function findLetterWithVentoyInstalled() {
             //使用被挂载的盘符
             var line = matchLines[matchLines.length - 1];
             targetLetter = line[line.length - 1];
-        }
-        else {
+        } else {
             //Part1即正确
             targetLetter = matchLines[matchLines.length - 1][0];
         }
         if (letters.includes(targetLetter)) {
             finalLetter = targetLetter;
-        }
-        else {
+        } else {
             return "";
         }
     }
     return finalLetter;
 }
+
 //parser
 function parseWinInfo(line) {
     return {
@@ -182,6 +182,7 @@ function parseWinInfo(line) {
         build: line.match(/Build \d*/)[0].split(" ")[1]
     };
 }
+
 function parseDrivesInfo(lines) {
     var hash = {};
     //定义解析函数
@@ -199,8 +200,7 @@ function parseDrivesInfo(lines) {
         var result = log.match(regex);
         if (result) {
             return result[0];
-        }
-        else {
+        } else {
             return null;
         }
     };
@@ -225,8 +225,7 @@ function parseDrivesInfo(lines) {
         //根据盘符去重
         if (hash.hasOwnProperty(n.letter)) {
             continue;
-        }
-        else {
+        } else {
             hash[n.letter] = true;
         }
         //获取Ventoy信息
@@ -266,8 +265,7 @@ function parseDrivesInfo(lines) {
                 ventoyStatus: ventoyInfo,
                 busType: busType_match.split(":")[1]
             });
-        }
-        else {
+        } else {
             //填充缺省值
             result.push({
                 index: Number(index),
@@ -282,6 +280,7 @@ function parseDrivesInfo(lines) {
     }
     return result;
 }
+
 export default function (input_log) {
     //使用最后一次分割作为全局log
     var spt = input_log.split(/################################ Ventoy2Disk/);

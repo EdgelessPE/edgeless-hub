@@ -8,17 +8,17 @@ import axios from 'axios'
 
 Vue.config.productionTip = false
 Vue.use(Antd)
-Vue.prototype.$axios=axios
+Vue.prototype.$axios = axios
 Vue.prototype.$electron = window.require('electron')
-Vue.prototype.$rp=require('@/interface/Repoter')
+Vue.prototype.$rp = require('@/interface/Repoter')
 
 new Vue({
-  router,
-  store,
-  render: h => h(App),
-  data(){
-    return{
-      eventHub:new Vue()
+    router,
+    store,
+    render: h => h(App),
+    data() {
+        return {
+            eventHub: new Vue()
+        }
     }
-  }
 }).$mount('#app')

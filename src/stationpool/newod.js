@@ -1,57 +1,57 @@
 import StationInterface from "@/interface/StationInterface"
 //实例化
-const sObject=StationInterface('SharePoint')
+const sObject = StationInterface('SharePoint')
 //内部存储变量
-let cateData=[],fileListPool={},url='https://zfile.edgeless.top/api/list/2',counter=0,inited=false
+let cateData = [], fileListPool = {}, url = 'https://zfile.edgeless.top/api/list/2', counter = 0, inited = false
 //实现接口
-sObject.init=function (axios,callback) {
+sObject.init = function (axios, callback) {
     //锁止
-    if(inited) {
+    if (inited) {
         callback()
         return
     }
-    inited=true
+    inited = true
     //获取分类数据
-    axios.get(url+'?path=插件包')
-        .then((res)=>{
+    axios.get(url + '?path=插件包')
+        .then((res) => {
             //console.log(res.data.data)
             //过滤出为文件夹的结果，并初始化计数器
-            res.data.data.files.forEach((item)=>{
-                if(item.type==="FOLDER") {
+            res.data.data.files.forEach((item) => {
+                if (item.type === "FOLDER") {
                     cateData.push({
-                        name:item.name
+                        name: item.name
                     })
                     counter++
                 }
             })
             //对每个分类获取插件包列表
-            for(let i=0;i<cateData.length;i++){
-                let queryName=cateData[i].name
-                axios.get(url+'?path=/插件包/'+queryName)
-                    .then((response)=>{
+            for (let i = 0; i < cateData.length; i++) {
+                let queryName = cateData[i].name
+                axios.get(url + '?path=/插件包/' + queryName)
+                    .then((response) => {
                         //console.log(response.data.data)
-                        let tmp_ret=[]
+                        let tmp_ret = []
                         //筛选.7z文件
-                        response.data.data.files.forEach((item)=>{
-                            if(item.name.indexOf('.7z')!==-1) {
+                        response.data.data.files.forEach((item) => {
+                            if (item.name.indexOf('.7z') !== -1) {
                                 tmp_ret.push(item)
                             }
                         })
                         //将其塞入pool
-                        fileListPool[queryName]=tmp_ret
+                        fileListPool[queryName] = tmp_ret
                         //计数
                         counter--
-                        if(counter===0){
+                        if (counter === 0) {
                             callback()
                         }
                     })
             }
         })
 }
-sObject.getCateData=function (callback) {
+sObject.getCateData = function (callback) {
     callback(cateData)
 }
-sObject.getPluginList=function (cateName,callback){
+sObject.getPluginList = function (cateName, callback) {
     callback(fileListPool[cateName])
 }
 export default sObject

@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, ipcMain, dialog, Menu,shell} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import cp from 'child_process'
@@ -9,7 +9,7 @@ import vp from '@/utils/what-did-ventoy-do'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs')
 
-var updateOnExit=false
+var updateOnExit = false
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -36,14 +36,14 @@ async function createWindow() {
             webSecurity: false,
             webviewTag: true
         },
-        icon:"./core/favicon.ico"
+        icon: "./core/favicon.ico"
     })
 
-    ipcMain.on('reload-request',(event,payload)=>{
+    ipcMain.on('reload-request', (event, payload) => {
         win.reload()
     })
 
-    ipcMain.on('quit-request',(event,payload)=>{
+    ipcMain.on('quit-request', (event, payload) => {
         win.close()
     })
 
@@ -59,7 +59,7 @@ async function createWindow() {
 
     win.on('close', (event) => {
         killAria2c()
-        if(updateOnExit){
+        if (updateOnExit) {
             cp.exec('start cmd /c main.cmd')
         }
         //console.error('close')
@@ -110,9 +110,9 @@ ipcMain.on('openDirectoryDialog-request', (event, arg) => {
 ipcMain.on('openFileDialog-request', (event, arg) => {
     let data = dialog.showOpenDialogSync({
         title: "请选择壁纸文件",
-        filters:[{
-            name:"jpg图像文件",
-            extensions:['jpg']
+        filters: [{
+            name: "jpg图像文件",
+            extensions: ['jpg']
         }],
         properties: ['openFile']
     })
@@ -189,71 +189,71 @@ ipcMain.on('unpackISO-request', (event, payload) => {
     }
 })
 
-ipcMain.on('devtool-request',(event,payload)=>{
+ipcMain.on('devtool-request', (event, payload) => {
     BrowserWindow.getAllWindows()[0].webContents.openDevTools()
 })
 
-ipcMain.on('version-request',(event,payload)=>{
-    event.returnValue=app.getVersion()
+ipcMain.on('version-request', (event, payload) => {
+    event.returnValue = app.getVersion()
 })
 
-ipcMain.on('isDev-request',(event,payload)=>{
-    event.returnValue=isDevelopment
+ipcMain.on('isDev-request', (event, payload) => {
+    event.returnValue = isDevelopment
 })
 
-ipcMain.on('trash-request',(event,payload)=>{
-    event.returnValue=shell.moveItemToTrash(payload)
+ipcMain.on('trash-request', (event, payload) => {
+    event.returnValue = shell.moveItemToTrash(payload)
 })
 
-ipcMain.on('updateOnExit',(event,payload)=>{
-    updateOnExit=true
+ipcMain.on('updateOnExit', (event, payload) => {
+    updateOnExit = true
 })
 
-ipcMain.on('getVentoyDisk',(event,log_path)=>{
-    try{
-        let log=fs.readFileSync(log_path).toString()
-        let result=vp(log)
+ipcMain.on('getVentoyDisk', (event, log_path) => {
+    try {
+        let log = fs.readFileSync(log_path).toString()
+        let result = vp(log)
         console.log(JSON.stringify(result))
-        let target=""
-        let possibleLetter="A"
+        let target = ""
+        let possibleLetter = "A"
 
         //获得最后一个安装了Ventoy的盘
-        for(let i=0;i<result.systemInfo.drives.length;i++){
-            let disk=result.systemInfo.drives[i]
-            console.log("checking ventoy "+disk.letter)
-            if(disk.ventoyStatus.installed||disk.ventoyStatus.updated){
-                if(possibleLetter<disk.letter){
-                    target=disk
-                    possibleLetter=disk.letter
-                    console.log("find ventoy in "+disk.letter)
+        for (let i = 0; i < result.systemInfo.drives.length; i++) {
+            let disk = result.systemInfo.drives[i]
+            console.log("checking ventoy " + disk.letter)
+            if (disk.ventoyStatus.installed || disk.ventoyStatus.updated) {
+                if (possibleLetter < disk.letter) {
+                    target = disk
+                    possibleLetter = disk.letter
+                    console.log("find ventoy in " + disk.letter)
                 }
             }
         }
 
         //如果结果为空，选中最后一个可移动设备
-        if(target===""){
-            for(let i=0;i<result.systemInfo.drives.length;i++){
-                let disk=result.systemInfo.drives[i]
-                console.log("checking removable "+disk.letter)
-                if(disk.removable){
-                    if(possibleLetter<disk.letter){
-                        target=disk
-                        possibleLetter=disk.letter
-                        console.log("find removable in "+disk.letter)
+        if (target === "") {
+            for (let i = 0; i < result.systemInfo.drives.length; i++) {
+                let disk = result.systemInfo.drives[i]
+                console.log("checking removable " + disk.letter)
+                if (disk.removable) {
+                    if (possibleLetter < disk.letter) {
+                        target = disk
+                        possibleLetter = disk.letter
+                        console.log("find removable in " + disk.letter)
                     }
                 }
             }
         }
 
-        event.returnValue= {
+        event.returnValue = {
             target,
-            parse_result:result
+            parse_result: result
         }
-    }catch (e) {
+    } catch (e) {
         console.log("Error getting VentoyDisk")
-        event.returnValue= {
-            target:"",
-            parse_result:e
+        event.returnValue = {
+            target: "",
+            parse_result: e
         }
     }
 })

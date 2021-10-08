@@ -10,37 +10,37 @@
 </template>
 
 <script>
-const { shell } = window.require('electron')
+const {shell} = window.require('electron')
 export default {
   name: "Licence",
-  data(){
-    return{
-      list:[
+  data() {
+    return {
+      list: [
         {
-          name:"Node.js",
-          link:"https://github.com/nodejs/node/blob/master/LICENSE"
+          name: "Node.js",
+          link: "https://github.com/nodejs/node/blob/master/LICENSE"
         },
         {
-          name:"Chromium",
-          link:"https://github.com/chromium/chromium/blob/master/LICENSE"
+          name: "Chromium",
+          link: "https://github.com/chromium/chromium/blob/master/LICENSE"
         },
         {
-          name:"Electron",
-          link:"https://github.com/electron/electron/blob/main/LICENSE"
+          name: "Electron",
+          link: "https://github.com/electron/electron/blob/main/LICENSE"
         },
         {
-          name:"Vue.js",
-          link:"https://github.com/vuejs/vue/blob/dev/LICENSE"
+          name: "Vue.js",
+          link: "https://github.com/vuejs/vue/blob/dev/LICENSE"
         },
         {
-          name:"Ant Design Vue",
-          link:"https://github.com/vueComponent/ant-design-vue/blob/next/LICENSE"
+          name: "Ant Design Vue",
+          link: "https://github.com/vueComponent/ant-design-vue/blob/next/LICENSE"
         },
       ]
     }
   },
-  methods:{
-    open(url){
+  methods: {
+    open(url) {
       shell.openExternal(url)
     }
   }

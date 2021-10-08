@@ -1,47 +1,51 @@
 const fs = window.require('fs')
 
 export function log(msg) {
-    appendToBuffer(msg,"log")
+    appendToBuffer(msg, "log")
 }
-export function warning (msg) {
-    appendToBuffer(msg,"warning")
+
+export function warning(msg) {
+    appendToBuffer(msg, "warning")
 }
-export function error (msg){
-    appendToBuffer(msg,"error")
+
+export function error(msg) {
+    appendToBuffer(msg, "error")
 }
 
 export function init(online_version) {
-    if(HOLIDAY) return
-    appendToBuffer(online_version,"version")
-    interval=setInterval(()=>{
-        if(!clearBuffer){
+    if (HOLIDAY) return
+    appendToBuffer(online_version, "version")
+    interval = setInterval(() => {
+        if (!clearBuffer) {
             writeToFile()
-            clearBuffer=true
+            clearBuffer = true
         }
-    },INTERVAL_TIME*1000)
+    }, INTERVAL_TIME * 1000)
 }
+
 export function destroy() {
-    if(HOLIDAY) return
+    if (HOLIDAY) return
     clearInterval(interval)
 }
 
-const HOLIDAY=false
-const LOG_PATH='./Log.txt'
-const INTERVAL_TIME=2
-var buffer=new String('Edgeless Hub Log')
+const HOLIDAY = false
+const LOG_PATH = './Log.txt'
+const INTERVAL_TIME = 2
+var buffer = new String('Edgeless Hub Log')
 var interval
-var clearBuffer=true
+var clearBuffer = true
 
-function appendToBuffer(msg,level) {
-    if(HOLIDAY) return
-    const date=new Date()
-    let content_time=date.getHours().toString()+":"+date.getMinutes().toString()+":"+date.getSeconds().toString()
+function appendToBuffer(msg, level) {
+    if (HOLIDAY) return
+    const date = new Date()
+    let content_time = date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString()
 
-    buffer=buffer.concat('\n',content_time,"-",level," ",msg)
-    clearBuffer=false
+    buffer = buffer.concat('\n', content_time, "-", level, " ", msg)
+    clearBuffer = false
 }
 
 function writeToFile() {
-    if(HOLIDAY) return
-    fs.writeFile(LOG_PATH,buffer.toString(),()=>{})
+    if (HOLIDAY) return
+    fs.writeFile(LOG_PATH, buffer.toString(), () => {
+    })
 }

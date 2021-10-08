@@ -2,7 +2,7 @@
   <div>
     <a-row>
       <a-col span="10">
-        <small>{{name}}</small>
+        <small>{{ name }}</small>
       </a-col>
       <a-col span="14">
         <a-progress :percent="percent" status="active" :show-info="false"/>
@@ -14,6 +14,6 @@
 <script>
 export default {
   name: "TaskNodeNaive",
-  props:['name','percent']
+  props: ['name', 'percent']
 }
 </script>

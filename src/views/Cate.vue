@@ -1,13 +1,13 @@
 <template>
   <div>
-    <a-back-top />
+    <a-back-top/>
     <a-page-header
         :sub-title="'共'+processedData.length+'个插件包'"
         @back="() => $router.go(-1)"
     >
       <template slot="title">
-        <a-icon :type="cateIcon" />
-        {{cateName}}
+        <a-icon :type="cateIcon"/>
+        {{ cateName }}
       </template>
     </a-page-header>
     <a-list :grid="{ gutter: 16, column: 4 }" :data-source="processedData">
@@ -15,7 +15,7 @@
         <a-card>
           <template slot="title">
             <div @click="gotoDetails(item)" style="cursor:pointer">
-              {{item.softName}}
+              {{ item.softName }}
               <a-tooltip v-if="item.botTag">
                 <template slot="title">
                   此插件由<a v-on:click="openWiki('https://wiki.edgeless.top/v2/develop/automake.html')">Edgeless Bot</a>自动构建
@@ -24,18 +24,22 @@
               </a-tooltip>
             </div>
           </template>
-          {{'版本号：'+item.softVer}}
+          {{ '版本号：' + item.softVer }}
           <br/>
-          {{'打包者：'+item.displayAuthor}}
+          {{ '打包者：' + item.displayAuthor }}
           <br/>
-          {{'大小：'+item.softSize}}
-          <CateButton slot="actions" :name="item.softName" :fullName="item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z'" :url="item.softUrl" :version_online="item.softVer" :key="item.softName"/>
+          {{ '大小：' + item.softSize }}
+          <CateButton slot="actions" :name="item.softName"
+                      :fullName="item.softName+'_'+item.softVer+'_'+item.softAuthor+'.7z'" :url="item.softUrl"
+                      :version_online="item.softVer" :key="item.softName"/>
         </a-card>
       </a-list-item>
     </a-list>
     <a-layout-footer style="text-align: center">
       没找到需要的插件？尝试自己
-      <a-button size="small" v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/develop/quickstart.html')">制作插件包</a-button>
+      <a-button size="small"
+                v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/develop/quickstart.html')">制作插件包
+      </a-button>
     </a-layout-footer>
   </div>
 </template>
@@ -43,63 +47,64 @@
 <script>
 import CateButton from "@/components/CateButton";
 import dataset from "@/utils/dataset";
+
 export default {
-name: "Cate",
+  name: "Cate",
   components: {CateButton},
-  data(){
-    return{
-      processedData:["233"],
-      cateIcon:"gift",
+  data() {
+    return {
+      processedData: ["233"],
+      cateIcon: "gift",
     }
   },
-  computed:{
-    cateName:function (){
+  computed: {
+    cateName: function () {
       return this.$route.query.name
     }
   },
-  methods:{
-    getCateData(){
-      let ret=[]
-      for(let i=0;i<this.$store.state.allData.length;i++){
-        if(this.$store.state.allData[i].cateName===this.cateName) {
-          ret=this.$store.state.allData[i].files
+  methods: {
+    getCateData() {
+      let ret = []
+      for (let i = 0; i < this.$store.state.allData.length; i++) {
+        if (this.$store.state.allData[i].cateName === this.cateName) {
+          ret = this.$store.state.allData[i].files
           break
         }
       }
       return ret
     },
-    getIcon(){
-      for(let i=0;i<dataset.iconMatch.length;i++){
-        let node=dataset.iconMatch[i]
-        if(node.name===this.cateName){
-          this.cateIcon=node.icon
+    getIcon() {
+      for (let i = 0; i < dataset.iconMatch.length; i++) {
+        let node = dataset.iconMatch[i]
+        if (node.name === this.cateName) {
+          this.cateIcon = node.icon
           break
         }
       }
     },
-    prepData(){
+    prepData() {
       //回到顶部
-      scrollTo(0,0)
+      scrollTo(0, 0)
 
-      let raw=this.getCateData()
-      this.processedData=[]
-      raw.forEach((item)=>{
-        let info=item.name.split('_')
+      let raw = this.getCateData()
+      this.processedData = []
+      raw.forEach((item) => {
+        let info = item.name.split('_')
         //处理author
-        let author=info[2].split('.7z')[0]
-        let botTag=false
-        let displayAuthor=author
-        if(author.includes("（bot）")){
-          displayAuthor=author.slice(0,-5)
-          botTag=true
+        let author = info[2].split('.7z')[0]
+        let botTag = false
+        let displayAuthor = author
+        if (author.includes("（bot）")) {
+          displayAuthor = author.slice(0, -5)
+          botTag = true
         }
 
         this.processedData.push({
-          softName:info[0],
-          softVer:info[1],
-          softUrl:item.url,
-          softSize:this.getSizeString(item.size),
-          softAuthor:author,
+          softName: info[0],
+          softVer: info[1],
+          softUrl: item.url,
+          softSize: this.getSizeString(item.size),
+          softAuthor: author,
           displayAuthor,
           botTag,
         })
@@ -108,21 +113,21 @@ name: "Cate",
       //获得图标
       this.getIcon()
     },
-    getSizeString(size){
-      if(size<1024) return size.toFixed(2)+"B"
-      else if(size<1024*1024) return (size/1024).toFixed(2)+"KB"
-      else if(size<1024*1024*1024) return (size/(1024*1024)).toFixed(2)+"MB"
-      else return (size/(1024*1024*1024)).toFixed(2)+"GB"
+    getSizeString(size) {
+      if (size < 1024) return size.toFixed(2) + "B"
+      else if (size < 1024 * 1024) return (size / 1024).toFixed(2) + "KB"
+      else if (size < 1024 * 1024 * 1024) return (size / (1024 * 1024)).toFixed(2) + "MB"
+      else return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
     },
-    gotoDetails(item){
-      this.$router.push("/details?softName="+item.softName+"&softUrl="+item.softUrl+"&softVer="+item.softVer+"&softSize="+item.softSize+"&cateName="+this.cateName+"&softAuthor="+item.softAuthor)
+    gotoDetails(item) {
+      this.$router.push("/details?softName=" + item.softName + "&softUrl=" + item.softUrl + "&softVer=" + item.softVer + "&softSize=" + item.softSize + "&cateName=" + this.cateName + "&softAuthor=" + item.softAuthor)
     },
-    openWiki(link){
-      this.$router.push("/wiki?location="+link)
+    openWiki(link) {
+      this.$router.push("/wiki?location=" + link)
     },
   },
-  watch:{
-    cateName(){
+  watch: {
+    cateName() {
       this.prepData()
     }
   },

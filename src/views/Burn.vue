@@ -261,7 +261,7 @@ export default {
       maxAllowedRetry: 1,
 
       //是否弹确认提示
-      showConfirmDialog:false,
+      showConfirmDialog: false,
     }
   },
   methods: {
@@ -287,9 +287,9 @@ export default {
       this.startIsoDownload()
 
       //判断是否展示用户提示
-      if(this.$store.state.showConfirmDialog){
-        this.showConfirmDialog=true
-        this.$store.commit('changeShowConfirmDialog',false)
+      if (this.$store.state.showConfirmDialog) {
+        this.showConfirmDialog = true
+        this.$store.commit('changeShowConfirmDialog', false)
         DownloadManager.methods.writeConfig()
       }
     },
@@ -298,7 +298,7 @@ export default {
       this.$axios.get(this.ventoyInfo.queryUrl)
           .then((res) => {
             //写文件名和版本号
-            let name=res.data
+            let name = res.data
             console.log(name)
 
             this.ventoyInfo.fileName = name
@@ -433,7 +433,7 @@ export default {
     },
     execVentoy() {
       this.$rp.log("调用Ventoy安装程序-execVentoy")
-      DownloadManager.methods.del(this.ventoyInfo.ventoyPath+"\\log.txt")
+      DownloadManager.methods.del(this.ventoyInfo.ventoyPath + "\\log.txt")
       cp.exec('Ventoy2Disk.exe', {
         'cwd': this.ventoyInfo.ventoyPath
       }, (res) => {
@@ -448,15 +448,15 @@ export default {
       //用户点击了下一步，开始检查Ventoy启动盘是否就绪
       //this.$electron.ipcRenderer.send('scanDisks-request', '')
       //发送请求
-      let reply=this.$electron.ipcRenderer.sendSync("getVentoyDisk",this.ventoyInfo.ventoyPath+"\\log.txt")
+      let reply = this.$electron.ipcRenderer.sendSync("getVentoyDisk", this.ventoyInfo.ventoyPath + "\\log.txt")
       console.log(reply)
       //将ventoy解析结果写日志
       this.$rp.log("以下为Ventoy日志解析结果-getVentoyDisk_reply")
       this.$rp.log(JSON.stringify(reply.parse_result))
 
-      this.checkingVentoy=false
-      let disk=reply.target
-      if(disk===""){
+      this.checkingVentoy = false
+      let disk = reply.target
+      if (disk === "") {
         //扫描结果为空
         this.$rp.log("未发现任何设备-getVentoyDisk_reply")
         this.showExecVentoyButton = true
@@ -464,13 +464,13 @@ export default {
           message: '错误：没有发现Ventoy启动盘',
           description: "请确保已经完成Ventoy的安装，再点击检查按钮！"
         })
-      }else{
+      } else {
         this.$rp.log("获得disk对象，内容如下：-getVentoyDisk_reply")
         this.$rp.log(JSON.stringify(disk))
         //有结果，询问用户
-        this.firstMovableInfo={
+        this.firstMovableInfo = {
           label: disk.flag,
-          capacity:disk.capacity,
+          capacity: disk.capacity,
           name: disk.letter
         }
         this.$rp.log("询问用户-getVentoyDisk_reply")
@@ -835,7 +835,7 @@ export default {
     //当step<3时阻止用户切换页面
     if (this.stepsInfo.step < 3 && this.stepsInfo.step > -1) {
       this.$rp.log("-1<step<3,阻止用户切换页面-beforeRouteLeave")
-      this.$message.warning({ content: '现在不能离开当前页面！请耐心等待当前任务完成，如果长时间未结束请重启程序', key:"burn-tip", duration: 5 })
+      this.$message.warning({content: '现在不能离开当前页面！请耐心等待当前任务完成，如果长时间未结束请重启程序', key: "burn-tip", duration: 5})
     } else {
       this.$rp.log("离开Burn-beforeRouteLeave")
       next()
