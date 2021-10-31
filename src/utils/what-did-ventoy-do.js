@@ -282,7 +282,7 @@ function parseDrivesInfo(lines) {
     }
     return result;
 }
-function default_1(input_log) {
+export default function (input_log) {
     //使用最后一次分割作为全局log
     var spt = input_log.split(/################################ Ventoy2Disk/);
     log = "################################ Ventoy2Disk" + spt[spt.length - 1];
@@ -311,4 +311,3 @@ function default_1(input_log) {
         ventoyOperationLog: operation_log
     };
 }
-exports["default"] = default_1;
