@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-layout id="main" :style="{ height: '100%' , width:'100%'}">
-      <a-layout-sider v-model="collapsed" :trigger="null" collapsible :theme="theme">
+      <a-layout-sider v-model="collapsed" :trigger="null" collapsible :theme="theme" :style="{ overflow: 'auto', height: '100vh'}">
         <div class="logo" :style="{ height: '3vw' , width:'100%' , color:(theme==='light')?'black':'white'}"
              @click="() => {this.collapsed = !this.collapsed}">
           {{ collapsed ? 'e' : 'edgElEss' }}
