@@ -1,13 +1,21 @@
 "use strict";
 exports.__esModule = true;
 var log = "";
+var ventoy_version = "";
 var operation_log = [];
 //match util
 var regexTable = {
     Ventoy2Disk_Version: {
-        exp: /Ventoy2Disk \d(.+)/,
+        exp: /Ventoy2DiskX86 [^#]+/,
         handler: function (r) {
-            return r[0].match(/\d+.\d+(.\d+)*/)[0];
+            return r[0].match(/\d(\.\d+){3}/)[0];
+        }
+    },
+    Ventoy_Version: {
+        exp: /Ventoy2DiskX86 [^#]+/,
+        handler: function (r) {
+            var m = r[0].match(/\(\d(\.\d+){2}\)/)[0];
+            return m.slice(1, -1);
         }
     },
     Win_line: {
@@ -103,7 +111,7 @@ function findVentoyInstalledOrUpdated(install) {
             installed: success || !install,
             updated: !install && success,
             secureBoot: secureBoot,
-            version: "Unknown",
+            version: ventoy_version,
             success: success
         };
         //记录到ventoy操作日志
@@ -291,6 +299,8 @@ export default function (input_log) {
     if (!v2dVer) {
         throw "INPUT_INVALID_LOG";
     }
+    //获得内置的Ventoy版本号
+    ventoy_version = match("Ventoy_Version");
     //匹配Windows信息
     var w_line = match("Win_line");
     var winInfo = parseWinInfo(w_line);
@@ -303,7 +313,8 @@ export default function (input_log) {
         windows: winInfo
     };
     var ventoy2DiskInfo = {
-        version: v2dVer
+        version: v2dVer,
+        ventoy_version: ventoy_version
     };
     return {
         systemInfo: systemInfo,

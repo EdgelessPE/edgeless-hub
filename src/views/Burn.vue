@@ -100,19 +100,14 @@
             <a-button type="primary" v-on:click="checkVentoyUDisk" :loading="checkingVentoy">
               检查
             </a-button>
-            <a-button v-on:click="emergency" v-if="checkingVentoy">紧急出口</a-button>
+            <a-button v-on:click="emergency" v-if="checkingVentoy">手动选择</a-button>
           </template>
           <template v-if="showExecVentoyButton&&!manual">
             <a-space direction="vertical">
-              <a-alert message="如果您将Ventoy安装到了移动硬盘，请点击再次检查按钮" type="info"/>
+              <a-alert message="如果您确实已经完成了Ventoy启动盘的制作，也可以点击手动选择按钮" type="info"/>
               <a-space>
-                <a-button type="primary" v-on:click="checkVentoyUDisk" :loading="checkingVentoy">
-                  再次检查
-                </a-button>
-                <a-button v-on:click="execVentoy">
-                  重启Ventoy
-                </a-button>
-                <a-button v-on:click="emergency">紧急出口</a-button>
+                <a-button type="primary" v-on:click="execVentoy">重启Ventoy</a-button>
+                <a-button v-on:click="emergency">手动选择</a-button>
               </a-space>
             </a-space>
           </template>

@@ -25,7 +25,7 @@ export default {
           "miniupdate_pack_addr": "https://pineapple.edgeless.top/disk/Socket/Hub/Update/miniupdate.7z",
           "update_pack_addr": "https://pineapple.edgeless.top/disk/Socket/Hub/Update/update.7z",
           "full_update_redirect": "https://down.edgeless.top",
-          "update_info": {"dependencies_requirement": "1.5", "wide_gaps": ["1.5"]}
+          "update_info": {"dependencies_requirement": "1.5", "wide_gaps": ["1.5"],"version":"2.02"}
         },
         updateMethod: "FULL_UPDATE",//FULL_UPDATE,HOT_UPDATE,MINI_UPDATE，分别对应手动全量更新、含依赖的增量更新和最小更新，最常用的是最小更新
       },
@@ -36,24 +36,19 @@ export default {
     async generateUpdateInformation() {
       //检查是否在开发版本
       if (!this.$electron.ipcRenderer.sendSync('isDev-request')) {
-        //如果没获取过在线版本号则发送请求
-        if (this.$store.state.hub_online_version === "") {
-          let online_version_res = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/hub_version")
-          this.$store.commit('updateHubOnlineVersion', online_version_res.data)
+        //获取hub聚合信息
+        if (this.$store.state.hub_api_data === "") {
+          let res = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/hub")
+          this.hotUpdateInfo.hubApiData = res.data
+          this.$store.commit('updateHubApiData', res.data)
+        } else {
+          this.hotUpdateInfo.hubApiData = this.$store.state.hub_api_data
         }
         //检查版本号
         if (this.versionCmp(this.$store.state.hub_online_version, this.$store.state.hub_local_version) === 1) {
           this.hotUpdateInfo.needUpdate = true
           //修改标题
           document.title = 'Edgeless Hub ' + this.$store.state.hub_local_version + '  (' + this.$store.state.hub_online_version + '版本已可用)'
-          //获取hub聚合信息
-          if (this.$store.state.hub_api_data === "") {
-            let res = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/hub")
-            this.hotUpdateInfo.hubApiData = res.data
-            this.$store.commit('updateHubApiData', res.data)
-          } else {
-            this.hotUpdateInfo.hubApiData = this.$store.state.hub_api_data
-          }
           //console.log(this.hotUpdateInfo.hubApiData)
           //检查是否跨越了鸿沟
           let needFullUpdate = false

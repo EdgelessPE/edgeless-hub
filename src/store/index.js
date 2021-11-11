@@ -330,11 +330,9 @@ export default new Vuex.Store({
         updateHubVersion(state, ver) {
             state.hub_local_version = ver
         },
-        updateHubOnlineVersion(state, ver) {
-            state.hub_online_version = ver
-        },
         updateHubApiData(state, payload) {
             state.hub_api_data = payload
+            state.hub_online_version = payload.version
         },
         setHotTask(state, task) {
             state.HotUpdateInfo.task = task

@@ -142,7 +142,7 @@ async function executor(index) {
   let item = dataset.patchList[index]
   return new Promise(async (resolve) => {
     //检查必要性
-    console.log('Check needy ' + item.name)
+    //console.log('Check needy ' + item.name)
     let needy = false
     try {
       needy = await item.check_needy(cache_dir, u_disk)
@@ -183,7 +183,7 @@ async function executor(index) {
         resolve(true)
       }
     } else {
-      console.log('no needy,pass')
+      //console.log('no needy,pass')
       resolve(true)
     }
   })
