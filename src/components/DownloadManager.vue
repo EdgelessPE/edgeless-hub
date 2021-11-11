@@ -297,7 +297,7 @@ export default {
         //执行异步拷贝
         fs.copyFile(path.join(this.$store.state.downloadDir, task.trueName), path.join(this.$store.state.pluginPath, task.trueName), () => {
           //检查是否为7zl插件包，是则重命名为7zl
-          if (this.matchFiles(this.$store.state.pluginPath + "\\过期插件包\\", "^" + task.trueName.split("_")[0] + ".*7zlf$").length > 0) {
+          if (this.matchFiles(this.$store.state.pluginPath + "\\过期插件包\\", "^" + task.trueName.split("_")[0].replace("+","\\+") + ".*7zlf$").length > 0) {
             this.ren(path.join(this.$store.state.pluginPath, task.trueName), path.join(this.$store.state.pluginPath, task.trueName + "l"))
             //console.log("ren "+task.trueName)
           }
