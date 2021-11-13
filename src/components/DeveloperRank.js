@@ -10,13 +10,13 @@ let titleList = [
     },
     {
         title: "Edgeless群管理员",
-        color: "blue",
-        list: ["Horatio Shaw", "LittleTurtle", "HHJLKK", "光卡", "可爱の萌新酱", "天霸动霸TUA", "Cpl.Kerry", "柠檬味小可爱", "光卡 and HHJLKK", "呼呼"]
+        color: "orange",
+        list: ["Horatio Shaw", "LittleTurtle", "HHJLKK", "光卡", "可爱の萌新酱", "天霸动霸TUA", "Cpl.Kerry", "柠檬味小可爱"]
     },
     {
         title: "Edgeless群活跃群友",
         color: "blue",
-        list: ["路人甲", "Ran", "as2o3", "Heven Kin", "WangJack", "漉鲸", "汪凯"]
+        list: ["路人甲", "Ran", "as2o3", "Heven Kin", "WangJack", "漉鲸", "汪凯","undefined","Beluga"]
     }
 ]
 
@@ -61,6 +61,7 @@ function finish() {
     arr.sort((a, b) => {
         return b.num - a.num
     })
+    console.log(arr)
 
     //写排序结果
 
