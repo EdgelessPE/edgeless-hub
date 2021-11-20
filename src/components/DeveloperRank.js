@@ -61,7 +61,7 @@ function finish() {
     arr.sort((a, b) => {
         return b.num - a.num
     })
-    console.log(arr)
+    //console.log(arr)
 
     //写排序结果
 

@@ -271,6 +271,11 @@ export default {
       for (let i = 0; i < this.cateData.length; i++) {
         let queryName = this.cateData[i].name
         this.$store.state.stationObject.getPluginList(queryName, (pData) => {
+          //按名称排序
+          pData.sort((a, b) => {
+            return a.name.localeCompare(b.name, "zh")
+          })
+          //追加到库
           this.$store.commit('appendAllData', {
             'cateName': queryName,
             'files': pData

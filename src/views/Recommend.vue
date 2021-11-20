@@ -93,6 +93,10 @@ export default {
           }
         })
       })
+      //按名称排序
+      this.recommendData.sort((a, b) => {
+        return a.softName.localeCompare(b.softName, "zh")
+      })
     },
     insideList(name) {
       let found = false
