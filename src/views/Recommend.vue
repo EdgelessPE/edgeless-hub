@@ -64,6 +64,7 @@ export default {
     generateRecommends() {
       //回到顶部
       scrollTo(0, 0)
+      document.getElementsByClassName("ant-layout-content").item(0).scrollTop=0
       //生成必备软件项目
       this.recommendData = []
       this.$store.state.allData.forEach((itemI) => {
