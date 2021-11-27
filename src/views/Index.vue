@@ -53,7 +53,7 @@
               >
               </a-list-item-meta>
               <template slot="extra">
-                <a-button size="small" @click="routeTo('/cate?name='+item.cateName)">查看</a-button>
+                <a-button size="small" @click="routeTo(`/details?softName=${item.pluginName}&softVer=${item.pluginVer}&softAuthor=${item.pluginAuthor}&cateName=${item.cateName}&softSize=${item.size}&softUrl=${item.fileInfo.url}`)">查看</a-button>
               </template>
             </a-list-item>
           </a-list>
@@ -311,10 +311,17 @@ export default {
           fileInfo,
           pluginName: spr[0],
           pluginVer: spr[1],
-          pluginAuthor: spr[2].split(".7z")[0]
+          pluginAuthor: spr[2].split(".7z")[0],
+          size:this.getSizeString(fileInfo.size)
         })
       }
       this.loadingPluginRecommendList = false
+    },
+    getSizeString(size) {
+      if (size < 1024) return size.toFixed(2) + "B"
+      else if (size < 1024 * 1024) return (size / 1024).toFixed(2) + "KB"
+      else if (size < 1024 * 1024 * 1024) return (size / (1024 * 1024)).toFixed(2) + "MB"
+      else return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
     },
     geneMaster() {
       this.geneWelcome()

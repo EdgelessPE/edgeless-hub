@@ -93,6 +93,8 @@ export default {
       else return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
     },
     updateResult() {
+      //返回顶部
+      document.getElementsByClassName("ant-layout-content").item(0).scrollTop=0
       this.input = this.$route.query.keyword.toLowerCase()
       this.generateResult()
     },

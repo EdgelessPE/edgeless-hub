@@ -40,7 +40,7 @@
     <a-divider>插件详情页面由百度提供，搜索结果仅供参考，与Edgeless无关</a-divider>
 
     <webview id="webview" :src="'https://www.baidu.com/s?wd='+item.softName"
-             style="display:inline-flex; width:80vw; height:40vw"/>
+             style="display:inline-flex; width:100%; height:30vw"/>
   </div>
 </template>
 
@@ -121,8 +121,10 @@ export default {
   mounted() {
     //回到顶部
     scrollTo(0, 0)
-    let webview = document.getElementById("webview")
+    document.getElementsByClassName("ant-layout-content").item(0).scrollTop=0
+
     //监听新窗口事件
+    let webview = document.getElementById("webview")
     webview.addEventListener('new-window', (e) => {
       const date = new Date()
       if (e.url.slice(0, 4) === 'http') {

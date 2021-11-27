@@ -85,6 +85,7 @@ export default {
     prepData() {
       //回到顶部
       scrollTo(0, 0)
+      document.getElementsByClassName("ant-layout-content").item(0).scrollTop=0
 
       let raw = this.getCateData()
       this.processedData = []
