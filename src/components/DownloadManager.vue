@@ -296,6 +296,15 @@ export default {
         this.$store.commit('addCopyingTask', task)
         //执行异步拷贝
         fs.copyFile(path.join(this.$store.state.downloadDir, task.trueName), path.join(this.$store.state.pluginPath, task.trueName), () => {
+          //如果在PE内则执行加载
+          if(this.exist("X:/")){
+            try {
+              cp.execSync(`"X:\\Program Files\\Edgeless\\plugin_loader\\load.cmd" "${this.$store.state.downloadDir}\\${task.trueName}"`)
+            }catch (e) {
+              console.log("load in PE failed")
+              console.log(e)
+            }
+          }
           //检查是否为7zl插件包，是则重命名为7zl
           if (this.matchFiles(this.$store.state.pluginPath + "\\过期插件包\\", "^" + task.trueName.split("_")[0].replace("+","\\+") + ".*7zlf$").length > 0) {
             this.ren(path.join(this.$store.state.pluginPath, task.trueName), path.join(this.$store.state.pluginPath, task.trueName + "l"))
