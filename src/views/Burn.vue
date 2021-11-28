@@ -75,7 +75,7 @@
               message="您是否想要更新？"
               type="info"
               show-icon
-              v-if="$store.state.pluginPath[0]!=='A'"
+              v-if="showBurnWarning"
           >
             <template slot="description">
               重新写入会导致您的启动盘丢失自定义配置，如果您只是需要更新请前往<a v-on:click="$router.push('/update')">升级</a>页面
@@ -610,6 +610,9 @@ export default {
   computed: {
     showNormalButton: function () {
       return !this.showExecVentoyButton && !this.manual
+    },
+    showBurnWarning(){
+      return this.$store.state.pluginPath[0]!=='A'&&!DownloadManager.methods.exist(`${this.$store.state.pluginPath[0]}:/sources/boot.wim`)
     }
   },
   created() {

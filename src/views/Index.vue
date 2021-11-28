@@ -261,7 +261,7 @@ export default {
             EventName: "升级规范",
             EventFrom: "Edgeless",
             DisplayTitle: "检测到非新版规范的启动盘：" + this.localVersion,
-            DisplayDescription: "Edgeless Hub不支持旧版规范启动盘的升级等功能，我们建议您重新制作；如果您正在使用Ventoy官方版，也请点击重新制作按钮，制作过程中不会格式化U盘",
+            DisplayDescription: "Edgeless Hub不支持旧版规范启动盘的升级等功能，我们强烈建议您重新制作",
             DisplayIcon: "meh",
             ButtonText: "重新制作",
             ButtonRoute: "/burning",
