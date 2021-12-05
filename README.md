@@ -1,4 +1,10 @@
 # Edgeless Hub
+
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Electron.js](https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=Electron&logoColor=white)
+![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
+![Ant-Design](https://img.shields.io/badge/-AntDesign-%230170FE?style=for-the-badge&logo=ant-design&logoColor=white)
+
 ## 简介
 使用Electron + Vue.js + Antd打造的[Edgeless](https://home.edgeless.top)聚合客户端，作为一个electron的Hello World项目，代码有些杂乱无章，很多写法比较拙劣
 
