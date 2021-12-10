@@ -253,6 +253,7 @@ export default {
         description: '未检测到Edgeless启动盘，请先执行写入步骤'
       })
       this.$router.push("/burning")
+      return
     }
 
     //拒绝旧版规范的启动盘
@@ -262,6 +263,7 @@ export default {
         description: '不支持旧版启动盘制作工具制作的启动盘，请先重新写入'
       })
       this.$router.push("/burning")
+      return
     }
 
     //配置定时器
