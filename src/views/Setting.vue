@@ -54,9 +54,12 @@
     </a-card>
     <br/>
     <a-card title="开发者工具" style="width: 100%">
-      <a-button @click="$router.push('/test')">
-        Debug
-      </a-button>
+      <a-space>
+        <a-button v-on:click="openDevTool">Devtool</a-button>
+        <a-button @click="$router.push('/test')">
+          调试页面
+        </a-button>
+      </a-space>
     </a-card>
   </div>
 </template>
@@ -117,6 +120,9 @@ export default {
       const {shell} = window.require('electron')
       shell.openExternal(url)
     },
+    openDevTool() {
+      this.$electron.ipcRenderer.send('devtool-request', '')
+    }
   },
   created() {
     //初始化DownloadManager

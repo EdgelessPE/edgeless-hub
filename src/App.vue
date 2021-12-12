@@ -481,9 +481,9 @@ export default {
       let cfg = fs.readFileSync(this.$store.state.aria2cPath + "/elhub.conf").toString()
       let mct = cfg.match(/[^#]rpc-listen-port=.*/)
       if (mct.length) {
-        console.log("has port change")
+        //console.log("has port change")
         let port = mct[0].split("=")[1]
-        console.log(port)
+        //console.log(port)
         this.$store.commit("changeAria2Port", port)
       }
     } catch (err) {

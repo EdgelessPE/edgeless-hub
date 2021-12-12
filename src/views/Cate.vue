@@ -12,7 +12,7 @@
     </a-page-header>
     <a-list :grid="{ gutter: 16, column: 4 }" :data-source="processedData">
       <a-list-item slot="renderItem" slot-scope="item, index">
-        <a-card>
+        <a-card hoverable style="width: 100%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
           <template slot="title">
             <div @click="gotoDetails(item)" style="cursor:pointer">
               {{ item.softName }}

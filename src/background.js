@@ -190,7 +190,8 @@ ipcMain.on('unpackISO-request', (event, payload) => {
 })
 
 ipcMain.on('devtool-request', (event, payload) => {
-    BrowserWindow.getAllWindows()[0].webContents.openDevTools()
+    let wc=BrowserWindow.getAllWindows()[0].webContents
+    wc.toggleDevTools()
 })
 
 ipcMain.on('version-request', (event, payload) => {
