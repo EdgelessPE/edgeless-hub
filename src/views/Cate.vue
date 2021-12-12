@@ -36,9 +36,12 @@
       </a-list-item>
     </a-list>
     <a-layout-footer style="text-align: center">
-      没找到需要的插件？尝试自己
-      <a-button size="small"
-                v-on:click="$router.push('/wiki?location=https://wiki.edgeless.top/v2/develop/quickstart.html')">制作插件包
+      没找到需要的{{cateName==="驱动管理"?"驱动":"插件"}}？尝试自己
+      <a-button size="small" v-if="cateName==='驱动管理'"
+                v-on:click="$router.push(`/wiki?location=https://wiki.edgeless.top/v2/playground/driver.html`)">添加自定义驱动
+      </a-button>
+      <a-button size="small" v-else
+                v-on:click="$router.push(`/wiki?location=https://wiki.edgeless.top/v2/develop/quickstart.html`)">制作插件包
       </a-button>
     </a-layout-footer>
   </div>
