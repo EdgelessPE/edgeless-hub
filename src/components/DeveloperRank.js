@@ -5,7 +5,7 @@ let titleList = [
     {
         title: "Edgeless官方人员",
         color: "red",
-        list: ["Cno", "Copur", "Oxygen", "Brzh", "Fir"],
+        list: ["Cno", "Copur", "Oxygen", "Hydrogen". "Brzh", "Fir"],
         link: "https://github.com/EdgelessPE"
     },
     {
