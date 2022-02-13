@@ -105,7 +105,7 @@ export default {
   methods: {
     submitToken() {
       //校验输入
-      if (!this.input.match("^[A-Za-z0-9]{4,10}$")) {
+      if (this.input.length>10||this.input.length<4) {
         this.$message.error("无效的Alpha邀请码")
       } else {
         //发送请求获取版本号和文件名
