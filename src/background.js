@@ -118,54 +118,6 @@ ipcMain.on('openFileDialog-request', (event, arg) => {
     })
     event.reply('openFileDialog-reply', data)
 })
-// ipcMain.on('scanDisks-request', (event, arg) => {
-//     // const findUSB = edge.func(function () {/*
-//     // using System.IO;
-//     //   async (input) => {
-//     //             DriveInfo[] drives = DriveInfo.GetDrives();
-//     //             string[] results = new string[drives.Length];
-//     //             int pointer = 0;
-//     //             foreach (DriveInfo i in drives)
-//     //             {
-//     //                 results[pointer] = i.Name + (i.DriveType == DriveType.Removable ? 1 : 0) + i.VolumeLabel;
-//     //                 //Console.WriteLine(results[pointer]);
-//     //                 pointer++;
-//     //             }
-//     //             return results;
-//     //     }*/
-//     // });
-//     const getDiskInfo=edge.func({
-//         assemblyFile: './core/DiskScanner.dll',
-//         typeName: 'DiskScanner.Scanner',
-//         methodName: 'getDiskInfo'
-//     })
-//     try{
-//         //throw 'error'
-//         getDiskInfo('0', function (error, result) {
-//             if (error) throw error;
-//             console.log(result)
-//             //解析为Json对象
-//             let json = {
-//                 'names': [],
-//                 'labels': [],
-//                 'removable': []
-//             }
-//             result.forEach((i) => {
-//                 if(i){
-//                     json['names'].push(i.slice(0, 1))
-//                     json['removable'].push(i.slice(3, 4))
-//                     json['labels'].push(i.slice(4))
-//                 }
-//             })
-//             //console.log(json)
-//             if(json['names'].length===0) throw 'null result'
-//             event.reply('scanDisks-reply', json)
-//         })
-//     }catch (e) {
-//         console.log('c#运行失败')
-//         event.reply('scanDisks-reply', undefined)
-//     }
-// })
 
 
 ipcMain.on('unzip-request', (event, payload) => {
