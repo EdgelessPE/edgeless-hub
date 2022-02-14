@@ -135,7 +135,13 @@ export default {
     }, 1000)
     //设置事件监听
     this.$electron.ipcRenderer.on('openDirectoryDialog-reply', (event, arg) => {
-      if (arg) this.$store.commit('changeDownloadDir', arg[0] + "\\HubCache")
+      if (arg){
+        if(!arg[0].endsWith("HubCache")){
+          this.$store.commit('changeDownloadDir', arg[0] + "\\HubCache")
+        }else{
+          this.$store.commit('changeDownloadDir', arg[0])
+        }
+      }
     })
 
     //同步userName
