@@ -5,7 +5,7 @@
       兼容性警告
     </template>
     <a-button slot="footer" :loading="loading" :type="type" v-on:click="handleOk">{{ okText }}</a-button>
-    <p>Edgeless不是维护用PE，对劣质U盘和旧型号电脑兼容性不佳，请选用支持USB3.x+的知名品牌U盘制作并在近5年内生产的、内存大于8GB的电脑上启动</p>
+    <p>Edgeless不是维护用PE，对劣质U盘和旧型号电脑兼容性不佳，请不要使用不知名品牌U盘制作并在近5年内生产的、内存大于8GB的电脑上启动</p>
   </a-modal>
 </template>
 
