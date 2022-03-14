@@ -69,7 +69,7 @@ export default [
     },
     {
         title: "使用微PE同款的盘符整理方案",
-        description: "如果您认为盘符整理不尽人意可以尝试此选项",
+        description: "如果您认为盘符整理不尽如人意可以尝试此选项",
         information: "Edgeless自带的盘符整理程序与victor888大神发布的最新版本保持同步，至少为2019年及之后发布的版本；而此开关调用的盘符整理程序为victor888大神于2013-09-25发布的版本，因此如果您启用了此开关但是没有看到显著的效果属于正常现象",
         higherThan: "3.0.5",
         folderName: "OrderDrvAnotherWay"
