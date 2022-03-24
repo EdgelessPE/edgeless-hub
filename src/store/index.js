@@ -100,7 +100,7 @@ export default new Vuex.Store({
                 'ventoyPath': "",
                 'pluginName': "ventoy_wimboot.img",
                 'finishUnzip': false,
-                'queryUrl': 'https://pineapple.edgeless.top/api/v2/info/ventoy_name'//https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
+                'queryUrl': 'https://pineapple.edgeless.top/api/v2/info/ventoy_name'
             },
             stepsInfo: {
                 hasVentoy: false,
