@@ -33,7 +33,7 @@
       <a-avatar
         icon="search"
         class="button"
-        style="color: #108ee9; backgroundcolor: #ffffff"
+        style="color: #108ee9; back-groundcolor: #ffffff"
       />
     </a-col>
 
@@ -52,17 +52,13 @@
         </template>
         <a-badge
           :count="downloadingTasks"
-          :number-style="{
-            backgroundColor: '#fff',
-            color: '#999',
-            boxShadow: '0 0 0 1px #d9d9d9 inset',
-          }"
+          :number-style="{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset'}"
           v-on:click="gotoDown"
         >
           <a-avatar
             icon="download"
             class="button"
-            style="color: #108ee9; backgroundcolor: #ffffff"
+            style="color: #108ee9; background-color: #ffffff"
           />
         </a-badge>
       </a-popover>
