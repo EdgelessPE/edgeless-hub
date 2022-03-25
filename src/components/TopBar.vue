@@ -6,7 +6,7 @@
         v-if="showBackButton"
         class="button"
         icon="arrow-left"
-        style="color: #108ee9; backgroundcolor: #ffffff"
+        style="color: #108ee9; background-color: #ffffff"
         v-on:click="$router.go(-1)"
       />
     </a-col>
@@ -33,7 +33,7 @@
       <a-avatar
         icon="search"
         class="button"
-        style="color: #108ee9; back-groundcolor: #ffffff"
+        style="color: #108ee9; background-color: #ffffff"
       />
     </a-col>
 
