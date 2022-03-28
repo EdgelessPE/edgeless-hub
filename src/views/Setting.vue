@@ -29,8 +29,8 @@
     <br/>
     <a-card title="插件镜像源" style="width: 100%">
       菠萝云由
-      <img v-on:click="open('https://wngamebox.cn/')" src="https://oss.wngamebox.cn/wp-content/uploads/2020/10/logo.png"
-           height="20" width="88"/>
+      <img v-on:click="open('https://wngamebox.cn/')" src="https://home.edgeless.top/img/wngamebox.png"
+           height="20" width="80"/>
       提供，亦是Edgeless后端服务托管赞助商
       <br/><br/>
       <a-select :default-value="mirrors[$store.state.stationIndex].name" @change="changeMirror">
