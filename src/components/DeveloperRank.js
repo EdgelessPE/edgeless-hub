@@ -5,7 +5,7 @@ let titleList = [
     {
         title: "Edgeless官方人员",
         color: "red",
-        list: ["Cno", "Copur", "Oxygen", "Hydrogen", "Brzh", "Fir"],
+        list: ["Cno", "Copur", "Oxygen", "Hydrogen", "Brzh", "Fir","undefined"],
         link: "https://github.com/EdgelessPE"
     },
     {
@@ -16,7 +16,7 @@ let titleList = [
     {
         title: "Edgeless群活跃群友",
         color: "blue",
-        list: ["路人甲", "Ran", "as2o3", "Heven Kin", "WangJack", "漉鲸", "汪凯","undefined","Beluga"]
+        list: ["路人甲", "Ran", "as2o3", "Heven Kin", "WangJack", "漉鲸", "汪凯","Beluga"]
     }
 ]
 
