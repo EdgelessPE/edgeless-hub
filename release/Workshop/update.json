@@ -1,4 +1,4 @@
 {
-    "dependencies_requirement":2.23,
-    "wide_gaps":[]
+    "dependencies_requirement":2.28,
+    "wide_gaps":[2.28]
 }
