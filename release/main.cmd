@@ -109,17 +109,22 @@ del /f /q *.blockmap
 ::重命名win-unpack
 del /f /s /q "Edgeless Hub"
 rd /s /q "Edgeless Hub"
+timeout 3
 ren win-unpacked "Edgeless Hub"
+if not exist "Edgeless Hub" (
+    echo Can't rename
+    exit
+)
 
 ::生成三种压缩包
 title 发布Edgeless Hub %version%-生成完整包（3/6）
-"C:\Program Files\7-Zip\7z.exe" a -t7z -mx9 "Edgeless Hub_%stage%_%version:~0,-2%.7z" "Edgeless Hub"
+7z a -t7z -mx9 "Edgeless Hub_%stage%_%version:~0,-2%.7z" "Edgeless Hub"
 
 cd "Edgeless Hub"
 title 发布Edgeless Hub %version%-生成update包（4/6）
-"C:\Program Files\7-Zip\7z.exe" a -t7z -mx9 "update.7z" "core" "resources"
+7z a -t7z -mx9 "update.7z" "core" "resources"
 title 发布Edgeless Hub %version%-生成miniupdate包（5/6）
-"C:\Program Files\7-Zip\7z.exe" a -t7z -mx9 "miniupdate.7z" "resources\app.asar"
+7z a -t7z -mx9 "miniupdate.7z" "resources\app.asar"
 cd ..
 cd ..
 del /f /q release\Workshop\*.7z
