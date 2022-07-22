@@ -8,7 +8,8 @@ var regexTable = {
     Ventoy2Disk_Version: {
         exp: /Ventoy2DiskX86 [^#]+/,
         handler: function (r) {
-            return r[0].match(/\d(\.\d+){3}/)[0];
+            var m = r[0].match(/\(\d(\.\d+){2}\)/)[0];
+            return m.slice(1, -1);
         }
     },
     Ventoy_Version: {
