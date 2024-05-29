@@ -1,8 +1,8 @@
 import StationInterface from "@/interface/StationInterface"
 //实例化
-const sObject = StationInterface('菠萝云')
+const sObject = StationInterface('卡诺云Legacy（推荐）')
 //内部存储变量
-let cateData = [], fileListPool = {}, url = 'https://pineapple.edgeless.top/api/v2/plugin', counter = 0, inited = false,
+let cateData = [], fileListPool = {}, url = 'https://legacy.edgeless.top/api/v2/plugin', counter = 0, inited = false,
     formatCateData = []
 //实现接口
 sObject.init = function (axios, callback) {
