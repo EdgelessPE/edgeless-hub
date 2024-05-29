@@ -24,7 +24,7 @@ export default {
     taskAdd(add, name, trueName) {
       let splitResult = add.split("/");
       let uriName = urlencode(splitResult[splitResult.length - 1]);
-      this.aria2cDownloader(add, false, (res) => {
+      this.aria2cDownloader(add,trueName, false, (res) => {
         //console.log(uriName+' true:'+trueName)
         this.$store.commit("appendOurTasksPool", {
           name: name,
@@ -55,7 +55,7 @@ export default {
       }
 
       //重新提交任务
-      this.aria2cDownloader(info.uri, true, (res) => {
+      this.aria2cDownloader(info.uri,info.trueName, true, (res) => {
         this.$store.commit("appendOurTasksPool", {
           name: info.name,
           gid: res.data.result,
@@ -705,7 +705,7 @@ export default {
           }
         });
     },
-    aria2cDownloader(address, overwrite, callback) {
+    aria2cDownloader(address,fileName, overwrite, callback) {
       this.$axios
         .post(this.path, {
           id: this.generateID(),
@@ -715,6 +715,7 @@ export default {
             [address],
             {
               dir: this.$store.state.downloadDir,
+              out:fileName,
               "allow-overwrite": overwrite ? "true" : "false",
             },
           ],
