@@ -6,6 +6,7 @@ const fs = window.require("fs");
 const cp = window.require("child_process");
 const path = require("path");
 import cpt from "crypto";
+import {fileNameFetcher} from "@/components/utils";
 
 export default {
   name: "DownloadManager",
@@ -729,6 +730,9 @@ export default {
         });
     },
     aria2cDownloaderDir(address, overwrite, dir, callback) {
+      console.log('aria2cDownloaderDir',address, overwrite, dir)
+      fileNameFetcher(address).then(out=>{
+        console.log('out',out)
       this.$axios
         .post(this.path, {
           id: this.generateID(),
@@ -738,6 +742,7 @@ export default {
             [address],
             {
               dir: dir,
+              out,
               "allow-overwrite": overwrite ? "true" : "false",
             },
           ],
@@ -749,6 +754,7 @@ export default {
             description: "aria2c通讯错误：" + err.message,
           });
         });
+    })
     },
 
     //初始化
