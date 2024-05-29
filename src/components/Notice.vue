@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     async fetchNotice() {
-      const url = "https://pineapple.edgeless.top/api/v2/info/notice"
+      const url = "https://legacy.edgeless.top/api/v2/info/notice"
       let axiosRes = await this.$axios.get(url)
       //选出符合当前通道和版本的公告
       axiosRes.data.forEach((item)=>{

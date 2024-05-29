@@ -95,12 +95,12 @@ export default new Vuex.Store({
             ventoyInfo: {
                 'version': "",
                 'gid': "",
-                'url': "https://pineapple.edgeless.top/api/v2/info/ventoy_addr",
+                'url': "https://legacy.edgeless.top/api/v2/info/ventoy_addr",
                 'fileName': "",
                 'ventoyPath': "",
                 'pluginName': "ventoy_wimboot.img",
                 'finishUnzip': false,
-                'queryUrl': 'https://pineapple.edgeless.top/api/v2/info/ventoy_name'
+                'queryUrl': 'https://legacy.edgeless.top/api/v2/info/ventoy_name'
             },
             stepsInfo: {
                 hasVentoy: false,

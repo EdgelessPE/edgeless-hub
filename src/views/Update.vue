@@ -103,7 +103,7 @@ export default {
       }
       this.loading = true
       //发送下载任务
-      let url = "https://pineapple.edgeless.top/api/v2/info/iso_addr"
+      let url = "https://legacy.edgeless.top/api/v2/info/iso_addr"
       DownloadManager.methods.aria2cDownloaderDir(url, false, this.$store.state.downloadDir + '\\Burn', (res) => {
         this.$store.commit('setUpdateGid', res.data.result)
         this.$store.commit('setUpdateState', 1)
@@ -157,7 +157,7 @@ export default {
         this.$router.back()
       }
       //console.log(localVersion)
-      this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
+      this.$axios.get("https://legacy.edgeless.top/api/v2/info/iso")
           .then((res) => {
             //console.log(res.data)
             this.onlineVersion = res.data.version

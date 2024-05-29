@@ -210,12 +210,12 @@ export default {
       ventoyInfo: {
         'version': "",
         'gid': "",
-        'url': "https://pineapple.edgeless.top/api/v2/info/ventoy_addr",
+        'url': "https://legacy.edgeless.top/api/v2/info/ventoy_addr",
         'fileName': "",
         'ventoyPath': "",
         'pluginName': "ventoy_wimboot.img",
         'finishUnzip': false,
-        'queryUrl': 'https://pineapple.edgeless.top/api/v2/info/ventoy_name',//'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
+        'queryUrl': 'https://legacy.edgeless.top/api/v2/info/ventoy_name',//'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest' //'https://gitee.com/api/v5/repos/longpanda/Ventoy/releases/latest'
       },
       edgelessInfo: {
         isoName: "Edgeless_Beta_3.2.0.iso",
@@ -341,7 +341,7 @@ export default {
       //配置插件名称
       this.ventoyInfo.pluginName = "ventoy_wimboot.img"
       //下载插件，向下载站发送请求
-      DownloadManager.methods.aria2cDownloaderDir("https://pineapple.edgeless.top/api/v2/info/ventoy_plugin_addr", false, this.$store.state.downloadDir + '\\Burn', (res) => {
+      DownloadManager.methods.aria2cDownloaderDir("https://legacy.edgeless.top/api/v2/info/ventoy_plugin_addr", false, this.$store.state.downloadDir + '\\Burn', (res) => {
         this.$store.commit('changeVentoyPluginInfo', {
           needTrace: true,
           gid: res.data.result,
@@ -361,7 +361,7 @@ export default {
     },
     startIsoDownload() {
       this.$rp.log("开始下载ISO-startIsoDownload")
-      let url = "https://pineapple.edgeless.top/api/v2/info/iso"
+      let url = "https://legacy.edgeless.top/api/v2/info/iso"
       this.$axios.get(url)
           .then((res) => {
             this.$rp.log("更新ISO信息：文件名=" + res.data.name + " url=" + res.data.url + " version=" + res.data.version + "-startIsoDownload")
@@ -575,7 +575,7 @@ export default {
       //检查iso是否存在
       if (!DownloadManager.methods.exist(this.$store.state.downloadDir + '\\Burn\\' + this.edgelessInfo.isoName)) {
         this.$rp.log("iso不存在，重新请求：" + this.edgelessInfo.isoName)
-        let isoData = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
+        let isoData = await this.$axios.get("https://legacy.edgeless.top/api/v2/info/iso")
         //更新文件名
         this.edgelessInfo.isoName = isoData.data.name
         this.$store.commit('changeFileName', {

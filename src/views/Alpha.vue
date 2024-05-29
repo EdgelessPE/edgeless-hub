@@ -109,7 +109,7 @@ export default {
         this.$message.error("无效的Alpha邀请码")
       } else {
         //发送请求获取版本号和文件名
-        let url = "https://pineapple.edgeless.top/api/v2/alpha/data?token=" + this.input
+        let url = "https://legacy.edgeless.top/api/v2/alpha/data?token=" + this.input
         this.$axios.get(url)
             .then((res) => {
               this.alpha_version = res.data.iso_version
@@ -208,7 +208,7 @@ export default {
       }
       this.loading = true
       //发送下载任务
-      let url = "https://pineapple.edgeless.top/api/v2/alpha/addr?token=" + this.input
+      let url = "https://legacy.edgeless.top/api/v2/alpha/addr?token=" + this.input
       DownloadManager.methods.aria2cDownloaderDir(url, false, this.$store.state.downloadDir + '\\Burn', (res) => {
         this.$store.commit('setAlphaGid', res.data.result)
         this.$store.commit('setAlphaState', 1)

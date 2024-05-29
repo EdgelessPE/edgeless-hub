@@ -22,8 +22,8 @@ export default {
       hotUpdateInfo: {
         needUpdate: false,//总开关
         hubApiData: {
-          "miniupdate_pack_addr": "https://pineapple.edgeless.top/disk/Socket/Hub/Update/miniupdate.7z",
-          "update_pack_addr": "https://pineapple.edgeless.top/disk/Socket/Hub/Update/update.7z",
+          "miniupdate_pack_addr": "https://legacy.edgeless.top/disk/Socket/Hub/Update/miniupdate.7z",
+          "update_pack_addr": "https://legacy.edgeless.top/disk/Socket/Hub/Update/update.7z",
           "full_update_redirect": "https://down.edgeless.top",
           "update_info": {"dependencies_requirement": "1.5", "wide_gaps": ["1.5"],"version":"2.02"}
         },
@@ -38,7 +38,7 @@ export default {
       if (!this.$electron.ipcRenderer.sendSync('isDev-request')) {
         //获取hub聚合信息
         if (this.$store.state.hub_api_data === "") {
-          let res = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/hub")
+          let res = await this.$axios.get("https://legacy.edgeless.top/api/v2/info/hub")
           this.hotUpdateInfo.hubApiData = res.data
           this.$store.commit('updateHubApiData', res.data)
         } else {

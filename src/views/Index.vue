@@ -175,7 +175,7 @@ export default {
             }
           }
           // if(this.localVersion==="") this.localVersion=fs.readFileSync(this.$store.state.pluginPath[0]+":\\Edgeless\\version.txt").toString().split("_")[3]
-          let res = await this.$axios.get("https://pineapple.edgeless.top/api/v2/info/iso")
+          let res = await this.$axios.get("https://legacy.edgeless.top/api/v2/info/iso")
           this.onlineVersion = res.data.version
           if (this.versionCmp(this.onlineVersion, this.localVersion) !== 1) {
             //检查是否为alpha用户
