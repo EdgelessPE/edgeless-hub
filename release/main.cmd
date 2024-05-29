@@ -1,6 +1,13 @@
 @echo off
 set stage=Beta
 
+:: 配置 fnm
+if not defined FNM_AUTORUN_GUARD (
+    set "FNM_AUTORUN_GUARD=AutorunGuard"
+    FOR /f "tokens=*" %%z IN ('fnm env --use-on-cd') DO CALL %%z
+)
+fnm use 16
+
 ::检查rclone是否能正常工作
 rclone ls pineapple:/hdisk/edgeless/Socket/Hub >nul
 if "%errorlevel%" neq "0" (
@@ -109,7 +116,7 @@ del /f /q *.blockmap
 ::重命名win-unpack
 del /f /s /q "Edgeless Hub"
 rd /s /q "Edgeless Hub"
-timeout 3
+timeout 10
 ren win-unpacked "Edgeless Hub"
 if not exist "Edgeless Hub" (
     echo Can't rename
