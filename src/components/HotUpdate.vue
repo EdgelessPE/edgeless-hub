@@ -22,8 +22,8 @@ export default {
       hotUpdateInfo: {
         needUpdate: false,//总开关
         hubApiData: {
-          "miniupdate_pack_addr": "https://legacy.edgeless.top/disk/Socket/Hub/Update/miniupdate.7z",
-          "update_pack_addr": "https://legacy.edgeless.top/disk/Socket/Hub/Update/update.7z",
+          "miniupdate_pack_addr": "https://legacy.edgeless.top/api/v2/redirect?path=/Socket/Hub/Update/miniupdate.7z",
+          "update_pack_addr": "https://legacy.edgeless.top/api/v2/redirect?path=/Socket/Hub/Update/update.7z",
           "full_update_redirect": "https://down.edgeless.top",
           "update_info": {"dependencies_requirement": "1.5", "wide_gaps": ["1.5"],"version":"2.02"}
         },
