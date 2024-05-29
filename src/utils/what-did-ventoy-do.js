@@ -6,17 +6,15 @@ var operation_log = [];
 //match util
 var regexTable = {
     Ventoy2Disk_Version: {
-        exp: /Ventoy2DiskX86 [^#]+/,
+        exp: /Current Ventoy Version: Ventoy2DiskX86 [^#]+/,
         handler: function (r) {
-            var m = r[0].match(/\(\d(\.\d+){2}\)/)[0];
-            return m.slice(1, -1);
+            return r[0].match(/\d(\.\d+){2}/)[0];
         }
     },
     Ventoy_Version: {
-        exp: /Ventoy2DiskX86 [^#]+/,
+        exp: /Current Ventoy Version: Ventoy2DiskX86 [^#]+/,
         handler: function (r) {
-            var m = r[0].match(/\(\d(\.\d+){2}\)/)[0];
-            return m.slice(1, -1);
+            return r[0].match(/\d(\.\d+){2}/)[0];
         }
     },
     Win_line: {
