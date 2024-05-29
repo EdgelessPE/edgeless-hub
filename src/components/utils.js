@@ -10,7 +10,6 @@ async function fetchURL(url) {
             console.log('text',text)
             if(text){
                 const m=text.match(regex)
-                console.log('m',m)
                 if(m?.length&&m.length>1){
                      resolve(m[1])
                     return
@@ -25,10 +24,8 @@ async function fetchURL(url) {
                     e.response.status === 302 ||
                     e.response.status === 303)
             ) {
-                console.log('resolve',decodeURI(e.response.headers.location))
                 resolve(decodeURI(e.response.headers.location));
             } else {
-                console.log('reject')
                 reject();
             }
         });

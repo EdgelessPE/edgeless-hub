@@ -730,7 +730,6 @@ export default {
         });
     },
     aria2cDownloaderDir(address, overwrite, dir, callback) {
-      console.log('aria2cDownloaderDir',address, overwrite, dir)
       fileNameFetcher(address).then(out=>{
         console.log('out',out)
       this.$axios
