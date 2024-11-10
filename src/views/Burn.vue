@@ -186,6 +186,7 @@
 import {notification} from "ant-design-vue";
 import DownloadManager from "@/components/DownloadManager"
 import ConfirmDialog from "@/components/ConfirmDialog"
+import { mkdirSync } from "original-fs";
 
 const cp = window.require('child_process')
 export default {
@@ -548,6 +549,11 @@ export default {
               if (DownloadManager.methods.exist(this.selectedVentoyPart + ':\\ventoy\\' + this.ventoyInfo.pluginName)) check[2] = true
               this.$rp.log("iso,edgeless,plugin：" + check[0] + "," + check[1] + "," + check[2] + "-edgelessOperator")
               if (check[0] && check[1] && check[2]) {
+              // 打补丁：创建 Resource 目录
+                const resourceDir=this.selectedVentoyPart + ':\\Edgeless\\Resource'
+                if(!DownloadManager.methods.exist(resourceDir)){
+                  DownloadManager.methods.mkdir(resourceDir)
+                }
                 this.$rp.log("跳转到完成页面-edgelessOperator")
                 this.stepsInfo.step = 3
               } else {
