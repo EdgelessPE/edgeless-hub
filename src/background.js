@@ -169,7 +169,7 @@ ipcMain.on('getVentoyDisk', (event, log_path) => {
         for (let i = 0; i < result.systemInfo.drives.length; i++) {
             let disk = result.systemInfo.drives[i]
             console.log("checking ventoy " + disk.letter)
-            if (disk.ventoyStatus.installed || disk.ventoyStatus.updated) {
+            if ((disk.ventoyStatus.installed || disk.ventoyStatus.updated)&&disk.capacity>64*1024*1024) {
                 if (possibleLetter < disk.letter) {
                     target = disk
                     possibleLetter = disk.letter

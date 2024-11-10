@@ -186,7 +186,6 @@
 import {notification} from "ant-design-vue";
 import DownloadManager from "@/components/DownloadManager"
 import ConfirmDialog from "@/components/ConfirmDialog"
-import { mkdirSync } from "original-fs";
 
 const cp = window.require('child_process')
 export default {
