@@ -129,7 +129,6 @@
       title="欢迎来到Edgeless Hub"
       placement="top"
       :visible="showWelcome"
-      :closable="false"
       @close="finishWelcome"
     >
       <br />
