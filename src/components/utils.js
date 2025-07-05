@@ -7,7 +7,12 @@ async function fetchURL(url) {
     return new Promise((resolve, reject) => {
         axios.get(url, { maxRedirects: 0, headers: { "x-get-redirect": "true" } }).then((res) => {
             // 从 header 里面拿出真实文件名
-            const text = res.headers['content-disposition'] ||res.headers['location']
+            const location = res.headers['location']
+            if (location) {
+                return resolve(decodeURI(location));
+            }
+
+            const text = res.headers['content-disposition']
             console.log('text', text)
             if (text) {
                 const m = text.match(regex)
