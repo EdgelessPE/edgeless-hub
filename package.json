@@ -44,6 +44,7 @@
     "not dead"
   ],
   "resolutions": {
-    "pbkdf2":"3.1.1"
-  }
+    "pbkdf2": "3.1.1"
+  },
+  "packageManager": "yarn@1.22.21"
 }
